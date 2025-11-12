@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { 
   Box, 
   Typography, 
@@ -9,12 +8,9 @@ import {
   Divider, 
   useTheme, 
   useMediaQuery, 
-  TextField,
   IconButton
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
-import { motion } from 'framer-motion';
-
 // Ícones do Lucide React
 import { 
   MapPin, 
@@ -26,7 +22,6 @@ import {
   Linkedin, 
   Instagram, 
   Youtube,
-  Send,
   ArrowUpRight,
   ChevronRight
 } from 'lucide-react';
@@ -363,35 +358,27 @@ const Footer = () => {
       </Container>
 
       {/* Botão de voltar ao topo */}
-      <motion.div
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        style={{
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={scrollToTop}
+        sx={{
           position: 'fixed',
           bottom: 24,
           right: 24,
-          zIndex: 1000,
+          minWidth: 'auto',
+          width: 48,
+          height: 48,
+          borderRadius: '50%',
+          p: 0,
+          boxShadow: '0 5px 20px rgba(26, 35, 126, 0.3)',
+          '&:hover': {
+            boxShadow: '0 8px 25px rgba(26, 35, 126, 0.4)',
+          },
         }}
       >
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={scrollToTop}
-          sx={{
-            minWidth: 'auto',
-            width: 48,
-            height: 48,
-            borderRadius: '50%',
-            p: 0,
-            boxShadow: '0 5px 20px rgba(26, 35, 126, 0.3)',
-            '&:hover': {
-              boxShadow: '0 8px 25px rgba(26, 35, 126, 0.4)',
-            },
-          }}
-        >
-          <ArrowUpRight size={20} style={{ transform: 'rotate(-45deg)' }} />
-        </Button>
-      </motion.div>
+        <ArrowUpRight size={20} style={{ transform: 'rotate(-45deg)' }} />
+      </Button>
     </Box>
   );
 };

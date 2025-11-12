@@ -1,5 +1,4 @@
 import { Container, Typography, Box, Grid, Card, CardContent, Button } from '@mui/material';
-import { motion } from 'framer-motion';
 import { Link as RouterLink } from 'react-router-dom';
 import { ArrowRight, BarChart2, Users, Shield, Zap, Clock, Award, TrendingUp } from 'lucide-react';
 import React from 'react';
@@ -13,15 +12,10 @@ interface StatItemProps {
 }
 
 // Componente de estatística
-const StatItem = ({ value, label, icon: Icon, delay = 0 }: StatItemProps) => {
+const StatItem = ({ value, label, icon: Icon }: Omit<StatItemProps, 'delay'>) => {
   return (
     <Grid item xs={12} sm={6} md={4} lg={3}>
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-100px' }}
-        transition={{ duration: 0.6, delay: delay * 0.15 }}
-      >
+      <div style={{ height: '100%' }}>
         <Box 
           sx={{
             textAlign: 'center',
@@ -84,7 +78,7 @@ const StatItem = ({ value, label, icon: Icon, delay = 0 }: StatItemProps) => {
             {label}
           </Typography>
         </Box>
-      </motion.div>
+      </div>
     </Grid>
   );
 };
@@ -97,16 +91,11 @@ interface SolutionCardProps {
 }
 
 // Componente de solução
-const SolutionCard = ({ title, description, icon: Icon, delay = 0 }: SolutionCardProps) => {
+const SolutionCard = ({ title, description, icon: Icon }: Omit<SolutionCardProps, 'delay'>) => {
   
   return (
     <Grid item xs={12} sm={6} md={4} lg={3}>
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-100px' }}
-        transition={{ duration: 0.6, delay: delay * 0.1 }}
-      >
+      <div>
         <Card 
           sx={{ 
             height: '100%',
@@ -196,7 +185,7 @@ const SolutionCard = ({ title, description, icon: Icon, delay = 0 }: SolutionCar
             </Button>
           </CardContent>
         </Card>
-      </motion.div>
+      </div>
     </Grid>
   );
 };
@@ -250,14 +239,12 @@ function About() {
   ];
 
   return (
-    <Box 
-      id="sobre"
-      component="section"
-      sx={{ 
+    <Box
+      sx={{
+        pt: { xs: 6, md: 8 },
+        pb: { xs: 8, md: 12 },
         position: 'relative',
         overflow: 'hidden',
-        py: { xs: 8, md: 12 },
-        scrollMarginTop: '80px', // Altura do header fixo
       }}
     >
       {/* Elemento decorativo */}
@@ -276,12 +263,7 @@ function About() {
       <Container maxWidth="xl">
         {/* Seção Sobre Nós */}
         <Box sx={{ mb: { xs: 8, md: 12 } }}>
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
+          <div>
             <Box 
               sx={{ 
                 textAlign: 'center',
@@ -305,7 +287,7 @@ function About() {
               </Typography>
               <Typography 
                 variant="h2" 
-                component="h2"
+                component="h1"
                 sx={{ 
                   fontWeight: 800,
                   mb: 3,
@@ -331,7 +313,7 @@ function About() {
                 Somos a evolução da gestão pública, com soluções inovadoras para arrecadar mais, atender melhor e acelerar a transformação digital com um sistema de gestão pública em nuvem.
               </Typography>
             </Box>
-          </motion.div>
+          </div>
 
           {/* Estatísticas */}
           <Grid container spacing={2} justifyContent="center">
@@ -340,8 +322,7 @@ function About() {
                 key={index} 
                 value={stat.value} 
                 label={stat.label} 
-                icon={stat.icon} 
-                delay={index}
+                icon={stat.icon}
               />
             ))}
           </Grid>
@@ -352,12 +333,7 @@ function About() {
           mb: { xs: 8, md: 12 },
           scrollMarginTop: '80px' // Altura do header fixo
         }}>
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
+          <div>
             <Box 
               sx={{ 
                 textAlign: 'center',
@@ -408,7 +384,7 @@ function About() {
                 Oferecemos um ecossistema completo de soluções em nuvem para modernizar e otimizar todos os processos da gestão pública.
               </Typography>
             </Box>
-          </motion.div>
+          </div>
 
           <Grid container spacing={4}>
             {solutions.map((solution, index) => (
@@ -417,7 +393,6 @@ function About() {
                 title={solution.title}
                 description={solution.description}
                 icon={solution.icon}
-                delay={index}
               />
             ))}
           </Grid>
@@ -429,22 +404,23 @@ function About() {
               variant="contained"
               color="primary"
               size="large"
-              endIcon={<ArrowRight size={20} />}
+              endIcon={<ArrowRight />}
               sx={{
                 px: 4,
                 py: 1.5,
-                borderRadius: '50px',
+                borderRadius: 2,
                 fontWeight: 600,
                 textTransform: 'none',
-                fontSize: '1rem',
-                background: 'linear-gradient(45deg, #1a237e 0%, #2979ff 100%)',
+                fontSize: '1.1rem',
+                boxShadow: '0 4px 20px rgba(41, 121, 255, 0.3)',
                 '&:hover': {
-                  background: 'linear-gradient(45deg, #121858 0%, #1a56cb 100%)',
-                  boxShadow: '0 10px 25px rgba(26, 35, 126, 0.3)',
+                  boxShadow: '0 6px 25px rgba(41, 121, 255, 0.4)',
+                  transform: 'translateY(-2px)',
                 },
+                transition: 'all 0.3s ease',
               }}
             >
-              Conheça todas as soluções
+              Conheça todas as nossas soluções
             </Button>
           </Box>
         </Box>

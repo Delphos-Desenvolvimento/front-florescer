@@ -1,33 +1,32 @@
 import { useState, useEffect } from 'react';
 import { Box, Container, Typography, Grid, Card, CardContent, CardActionArea, Button, CircularProgress, Alert } from '@mui/material';
-import { motion } from 'framer-motion';
 import { Link as RouterLink } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import NoticesService from '../../API/Notices';
+import NewsService from '../../API/news';
 
-// Tipagem para as notícias
-interface NewsItem {
-  id: number;
-  title: string;
+// Importando a interface diretamente do serviço de notícias
+import type { NewsItem } from '../../API/news';
+
+// Extendendo a interface para incluir a descrição que é usada no frontend
+interface ExtendedNewsItem extends Omit<NewsItem, 'content'> {
   description: string;
-  date: string;
-  category: string;
-  imageUrl: string;
 }
 
 // Tipagem para as props do componente NewsCard
-interface NewsCardProps extends NewsItem {}
+interface NewsCardProps extends ExtendedNewsItem {}
 
 // Componente de cartão de notícia
-const NewsCard = ({ id, title, description, date, category, imageUrl }: NewsCardProps) => {
+const NewsCard = ({ 
+  id, 
+  title, 
+  description, 
+  date, 
+  category, 
+  imageUrl 
+}: NewsCardProps) => {
   return (
     <Grid item xs={12} sm={6} md={4} lg={4} sx={{ px: { xs: 1, sm: 2 } }}>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-      >
+      <div style={{ height: '100%' }}>
         <CardActionArea component={RouterLink} to={`/noticias/${id}`}>
           <Card sx={{ 
             height: '100%', 
@@ -111,7 +110,7 @@ const NewsCard = ({ id, title, description, date, category, imageUrl }: NewsCard
             </CardContent>
           </Card>
         </CardActionArea>
-      </motion.div>
+      </div>
     </Grid>
   );
 };
@@ -119,7 +118,7 @@ const NewsCard = ({ id, title, description, date, category, imageUrl }: NewsCard
 // Using NoticesService for API calls
 
 function Notices() {
-  const [news, setNews] = useState<NewsItem[]>([]);
+  const [news, setNews] = useState<ExtendedNewsItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -127,8 +126,20 @@ function Notices() {
     const fetchNews = async () => {
       try {
         setLoading(true);
-        const newsData = await NoticesService.getAll();
-        setNews(newsData);
+        const newsData = await NewsService.getAll();
+        // Garantir que todos os itens tenham os campos necessários
+        const formattedNews = newsData.map(item => ({
+          id: item.id || 0, // Garantir que id não seja undefined
+          title: item.title,
+          description: item.content?.substring(0, 100) + (item.content?.length > 100 ? '...' : '') || '',
+          content: item.content || '',
+          date: item.date || new Date().toISOString().split('T')[0],
+          category: item.category || 'Geral',
+          status: item.status || 'publicada',
+          views: item.views || 0,
+          imageUrl: item.imageUrl || `https://picsum.photos/300/200?random=${item.id || Math.random()}`
+        } as ExtendedNewsItem));
+        setNews(formattedNews);
       } catch (err) {
         console.error('Erro ao buscar notícias:', err);
         setError('Não foi possível carregar as notícias. Por favor, tente novamente mais tarde.');

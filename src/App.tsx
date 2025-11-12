@@ -53,6 +53,15 @@ function App() {
               </ProtectedRoute>
             } 
           />
+          
+          <Route 
+            path="/admin/noticias" 
+            element={
+              <ProtectedRoute>
+                <AdminHome />
+              </ProtectedRoute>
+            } 
+          />
         </Routes>
       </Router>
     </ThemeProvider>

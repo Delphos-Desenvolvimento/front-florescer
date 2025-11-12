@@ -1,5 +1,4 @@
 import { Box, Typography, Container, Button } from '@mui/material';
-import { motion } from 'framer-motion';
 import { Link as RouterLink } from 'react-router-dom';
 
 // Componente de partículas para o fundo
@@ -36,29 +35,15 @@ const ParticlesBackground = () => (
     {[...Array(15)].map((_, i) => (
       <Box
         key={i}
-        component={motion.div}
-        initial={{
-          x: Math.random() * window.innerWidth,
-          y: Math.random() * window.innerHeight,
-          opacity: Math.random() * 0.5 + 0.1,
-          scale: Math.random() * 0.5 + 0.5,
-        }}
-        animate={{
-          y: [null, -50, 50, 0],
-          x: [null, 20, -20, 0],
-        }}
-        transition={{
-          duration: Math.random() * 10 + 10,
-          repeat: Infinity,
-          repeatType: 'reverse',
-          ease: 'easeInOut',
-          delay: Math.random() * 5,
-        }}
         sx={{
           position: 'absolute',
-          width: 4,
-          height: 4,
+          width: '6px',
+          height: '6px',
           borderRadius: '50%',
+          opacity: Math.random() * 0.5 + 0.1,
+          transform: `scale(${Math.random() * 0.5 + 0.5})`,
+          left: `${Math.random() * 100}%`,
+          top: `${Math.random() * 100}%`,
           backgroundColor: 'rgba(255, 255, 255, 0.6)',
           boxShadow: '0 0 10px 2px rgba(255, 255, 255, 0.5)',
         }}
@@ -119,12 +104,7 @@ function Hero() {
           paddingBottom: '40px'
         }}
       >
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          style={{ width: '100%' }}
-        >
+        <div style={{ width: '100%' }}>
           <Box
             component="div"
             sx={{
@@ -188,7 +168,7 @@ function Hero() {
           >
             Fale com um especialista
           </Button>
-        </motion.div>
+        </div>
       </Container>
     </Box>
   );

@@ -9,12 +9,10 @@ import {
   Menu,
   MenuItem,
   alpha,
-  styled,
-  type ButtonProps
+  styled
 } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { ChevronDown, Phone } from 'lucide-react';
 
 // Componente simplificado sem efeito de scroll
@@ -38,7 +36,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 }));
 
 // Estilo para os itens do menu
-const MenuButton = styled(Button)<ButtonProps & { component?: React.ElementType }>(({ theme }) => ({
+const MenuButton = styled(Button)(({ theme }) => ({
   color: theme.palette.text.primary,
   fontWeight: 600,
   fontSize: '0.95rem',
@@ -107,17 +105,17 @@ const menuItems = [
             { 
               title: 'Prefeitura e Gestão', 
               path: '/solucoes/prefeitura',
-              onClick: (e: React.MouseEvent) => {}
+              onClick: (event: React.MouseEvent) => scrollToSection(event, 'solucoes')
             },
             { 
               title: 'Saúde', 
               path: '/solucoes/saude',
-              onClick: (e: React.MouseEvent) => {}
+              onClick: (event: React.MouseEvent) => scrollToSection(event, 'solucoes')
             },
             { 
               title: 'Educação', 
               path: '/solucoes/educacao',
-              onClick: (e: React.MouseEvent) => {}
+              onClick: (event: React.MouseEvent) => scrollToSection(event, 'solucoes')
             },
         ],
     },
@@ -146,7 +144,7 @@ function Header() {
     setMobileOpen(false);
   }, [location]);
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -170,10 +168,6 @@ function Header() {
           <Toolbar disableGutters>
               {/* Logo */}
               <Box 
-                component={motion.div}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
@@ -221,7 +215,7 @@ function Header() {
                     {item.submenu ? (
                       <>
                         <MenuButton
-                          onClick={(e) => {
+                          onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                             if (item.onClick) {
                               item.onClick(e);
                             }
@@ -364,18 +358,24 @@ function Header() {
                 key={item.title}
                 component={RouterLink}
                 to={item.path}
-                fullWidth
+                onClick={item.onClick}
+                variant="text"
+                color="inherit"
                 sx={{
-                  justifyContent: 'flex-start',
-                  py: 1.5,
-                  color: 'text.primary',
+                  mx: 1,
+                  textTransform: 'none',
+                  fontSize: '1rem',
+                  fontWeight: 500,
                   '&:hover': {
-                    backgroundColor: 'action.hover',
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    transform: 'scale(1.05)',
+                    transition: 'transform 0.2s',
+                  },
+                  '&:active': {
+                    transform: 'scale(0.95)',
                   },
                 }}
-                onClick={() => setMobileOpen(false)}
-              >
-                {item.title}
+              >{item.title}
               </Button>
             ))}
           </Box>
