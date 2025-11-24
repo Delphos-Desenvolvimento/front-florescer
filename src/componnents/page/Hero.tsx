@@ -1,56 +1,6 @@
 import { Box, Typography, Container, Button } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+ 
 
-// Componente de partículas para o fundo
-const ParticlesBackground = () => (
-  <Box
-    sx={{
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      overflow: 'hidden',
-      zIndex: 0,
-      '&:before': {
-        content: '""',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: '100%',
-        background: 'radial-gradient(circle at 30% 50%, rgba(41, 121, 255, 0.1) 0%, transparent 40%)',
-      },
-      '&:after': {
-        content: '""',
-        position: 'absolute',
-        bottom: 0,
-        right: 0,
-        width: '100%',
-        height: '100%',
-        background: 'radial-gradient(circle at 70% 50%, rgba(0, 176, 255, 0.1) 0%, transparent 40%)',
-      },
-    }}
-  >
-    {[...Array(15)].map((_, i) => (
-      <Box
-        key={i}
-        sx={{
-          position: 'absolute',
-          width: '6px',
-          height: '6px',
-          borderRadius: '50%',
-          opacity: Math.random() * 0.5 + 0.1,
-          transform: `scale(${Math.random() * 0.5 + 0.5})`,
-          left: `${Math.random() * 100}%`,
-          top: `${Math.random() * 100}%`,
-          backgroundColor: 'rgba(255, 255, 255, 0.6)',
-          boxShadow: '0 0 10px 2px rgba(255, 255, 255, 0.5)',
-        }}
-      />
-    ))}
-  </Box>
-);
 
 
 function Hero() {
@@ -84,9 +34,6 @@ function Hero() {
       }}
     >
       {/* Fundo com gradiente animado - Removido o componente AnimatedGradient já que o gradiente foi movido para o container principal */}
-      
-      {/* Partículas de fundo */}
-      <ParticlesBackground />
       
       {/* Conteúdo principal */}
       <Container 
@@ -156,14 +103,20 @@ function Hero() {
             variant="contained"
             color="primary"
             size="large"
-            component={RouterLink}
-            to="/contato"
+            component="a"
+            href="https://api.whatsapp.com/send/?phone=%2B558695541237&text&type=phone_number&app_absent=0"
+            target="_blank"
+            rel="noopener noreferrer"
             sx={{ 
               borderRadius: '50px', 
               px: 4, 
               py: 1.5,
               textTransform: 'none',
               fontSize: '1.1rem',
+              '&:hover': {
+                transform: 'translateY(-2px)',
+                boxShadow: '0 4px 12px rgba(41, 121, 255, 0.2)',
+              },
             }}
           >
             Fale com um especialista

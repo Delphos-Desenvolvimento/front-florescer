@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
-import { ChevronDown, Phone } from 'lucide-react';
+import { Phone } from 'lucide-react';
 
 // Componente simplificado sem efeito de scroll
 
@@ -119,14 +119,6 @@ const menuItems = [
             },
         ],
     },
-    {
-        title: 'Tecnologia',
-        path: '/tecnologia',
-        submenu: [
-            { title: 'Submenu Tech 1', path: '/tecnologia/1' },
-            { title: 'Submenu Tech 2', path: '/tecnologia/2' },
-        ],
-    },
 ];
 
 // Menu móvel removido - não está sendo utilizado
@@ -221,7 +213,6 @@ function Header() {
                             }
                             handleMenuOpen(e);
                           }}
-                          endIcon={<ChevronDown size={16} style={{ marginLeft: 4 }} />}
                           className={location.pathname.startsWith(item.path.replace('/#', '/')) ? 'active' : ''}
                         >
                           {item.title}

@@ -9,6 +9,8 @@ import theme from './theme';
 import Home from './componnents/home';
 import AdminLogin from './componnents/adminpage/login';
 import AdminHome from './componnents/adminpage/adminhome';
+import AllNewsPage from './componnents/page/AllNewsPage';
+import NewsDetailPage from './componnents/page/NewsDetailPage';
 
 // Componente de rota protegida
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -29,6 +31,10 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
+          
+          {/* Páginas de notícias */}
+          <Route path="/noticias" element={<AllNewsPage />} />
+          <Route path="/noticia/:id" element={<NewsDetailPage />} />
           
           {/* Redirect /login to /admin/login for backward compatibility */}
           <Route path="/login" element={<Navigate to="/admin/login" replace />} />

@@ -262,7 +262,7 @@ function About() {
 
       <Container maxWidth="xl">
         {/* Seção Sobre Nós */}
-        <Box sx={{ mb: { xs: 8, md: 12 } }}>
+        <Box id="sobre" sx={{ mb: { xs: 8, md: 12 }, scrollMarginTop: '80px' }}>
           <div>
             <Box 
               sx={{ 
@@ -397,32 +397,7 @@ function About() {
             ))}
           </Grid>
 
-          <Box sx={{ textAlign: 'center', mt: 8 }}>
-            <Button
-              component={RouterLink}
-              to="/solucoes"
-              variant="contained"
-              color="primary"
-              size="large"
-              endIcon={<ArrowRight />}
-              sx={{
-                px: 4,
-                py: 1.5,
-                borderRadius: 2,
-                fontWeight: 600,
-                textTransform: 'none',
-                fontSize: '1.1rem',
-                boxShadow: '0 4px 20px rgba(41, 121, 255, 0.3)',
-                '&:hover': {
-                  boxShadow: '0 6px 25px rgba(41, 121, 255, 0.4)',
-                  transform: 'translateY(-2px)',
-                },
-                transition: 'all 0.3s ease',
-              }}
-            >
-              Conheça todas as nossas soluções
-            </Button>
-          </Box>
+          {/* Removed 'Conheça todas as nossas soluções' button as requested */}
         </Box>
       </Container>
     </Box>

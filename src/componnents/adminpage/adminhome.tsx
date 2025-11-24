@@ -3,6 +3,9 @@ import type { ChangeEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import NewsService, { type NewsItem as ApiNewsItem } from '../../API/news';
 import type { SelectChangeEvent } from '@mui/material/Select';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } from 'recharts';
+import { Tooltip as RechartsTooltip } from 'recharts';
+import { subDays, startOfWeek, startOfMonth, endOfWeek, endOfMonth, isWithinInterval } from 'date-fns';
 import {
   Box,
   Button,
@@ -37,10 +40,10 @@ import {
   Chip,
   Collapse,
   CircularProgress,
-  Tooltip,
   Snackbar,
   Alert,
-  LinearProgress
+  LinearProgress,
+  Tooltip
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
@@ -55,10 +58,9 @@ import {
   CheckCircle as CheckCircleIcon,
   Pending as PendingIcon,
   People as PeopleIcon,
-  Settings as SettingsIcon,
-  Notifications as NotificationsIcon,
   Edit as EditIcon,
-  CloudUpload as CloudUploadIcon
+  CloudUpload as CloudUploadIcon,
+  Visibility as VisibilityIcon
 } from '@mui/icons-material';
 
 // Dados de exemplo para estatísticas
@@ -71,11 +73,11 @@ const statsData = [
     trend: 'up'
   },
   { 
-    title: 'Documentos Pendentes', 
-    value: '24', 
-    icon: <DescriptionIcon fontSize="large" color="secondary" />,
-    progress: 30,
-    trend: 'down'
+    title: 'Total de Visualizações', 
+    value: '1,024', 
+    icon: <VisibilityIcon fontSize="large" color="secondary" />,
+    progress: 68,
+    trend: 'up'
   },
   { 
     title: 'Notícias Publicadas', 
@@ -135,36 +137,42 @@ export default function AdminHome() {
     navigate('/login');
   };
 
-  const handleEditNews = () => {
-    navigate('/admin/noticias');
-  };
+  
 
   const drawer = (
-    <div>
-      <Box sx={{ p: 2, textAlign: 'center' }}>
-        <Typography variant="h6" color="primary">
-          Painel Administrativo
-        </Typography>
-      </Box>
-      <Divider />
-      <List>
-        <ListItemLink to="/admin" icon={<DashboardIcon />} primary="Dashboard" />
-        <ListItemLink to="/admin/noticias" icon={<ArticleIcon />} primary="Notícias" />
-        <ListItemLink to="/admin/configuracoes" icon={<SettingsIcon />} primary="Configurações" />
-      </List>
-      <Divider />
-      <Box sx={{ p: 2 }}>
-        <Button
-          fullWidth
-          variant="outlined"
-          color="error"
-          startIcon={<LogoutIcon />}
-          onClick={handleLogout}
-        >
-          Sair
-        </Button>
-      </Box>
-    </div>
+    <Box sx={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      height: '100%',
+      justifyContent: 'space-between' 
+    }}>
+      <div>
+        <Box sx={{ p: 2, textAlign: 'center' }}>
+          <Typography variant="h6" color="primary">
+            Painel Administrativo
+          </Typography>
+        </Box>
+        <Divider />
+        <List>
+          <ListItemLink to="/admin" icon={<DashboardIcon />} primary="Dashboard" />
+          <ListItemLink to="/admin/noticias" icon={<ArticleIcon />} primary="Notícias" />
+        </List>
+      </div>
+      <div>
+        <Divider />
+        <Box sx={{ p: 2 }}>
+          <Button
+            fullWidth
+            variant="outlined"
+            color="error"
+            startIcon={<LogoutIcon />}
+            onClick={handleLogout}
+          >
+            Sair
+          </Button>
+        </Box>
+      </div>
+    </Box>
   );
 
   // Estado para gerenciamento de notícias
@@ -208,6 +216,11 @@ export default function AdminHome() {
     severity: 'success' as 'success' | 'error' | 'info' | 'warning'
   });
 
+  // State for statistics
+  const [timeRange, setTimeRange] = useState<'day' | 'week' | 'month'>('week');
+  const [chartData, setChartData] = useState<Array<{name: string, views: number}>>([]);
+  const [isLoadingStats, setIsLoadingStats] = useState(false);
+
   // Estados para notícias ativas e histórico
   const [activeNews, setActiveNews] = useState<NewsItem[]>([]);
   const [newsHistory, setNewsHistory] = useState<NewsItem[]>([]);
@@ -242,10 +255,83 @@ export default function AdminHome() {
     }
   }, []);
 
-  // Carrega as notícias quando o componente é montado
+  // Carregar notícias e estatísticas ao inicializar
   useEffect(() => {
     loadNews();
+    fetchNewsStats();
   }, [loadNews]);
+
+  // Atualizar estatísticas quando o período for alterado
+  useEffect(() => {
+    if (activeNews.length > 0) {
+      processChartData();
+    }
+  }, [timeRange, activeNews]);
+
+  // Buscar estatísticas das notícias
+  const fetchNewsStats = useCallback(async () => {
+    try {
+      setIsLoadingStats(true);
+      // Aqui você pode adicionar uma chamada para buscar estatísticas da API
+      // Por enquanto, usaremos os dados locais
+      processChartData();
+    } catch (error) {
+      console.error('Erro ao carregar estatísticas:', error);
+      setSnackbar({
+        open: true,
+        message: 'Erro ao carregar estatísticas',
+        severity: 'error'
+      });
+    } finally {
+      setIsLoadingStats(false);
+    }
+  }, [activeNews]);
+
+  // Processar dados para o gráfico
+  const processChartData = useCallback(() => {
+    if (activeNews.length === 0) return;
+
+    const now = new Date();
+    let startDate: Date;
+    let endDate = now;
+
+    // Definir o intervalo de datas com base no período selecionado
+    switch (timeRange) {
+      case 'day':
+        startDate = subDays(now, 1);
+        break;
+      case 'week':
+        startDate = startOfWeek(now, { weekStartsOn: 0 });
+        endDate = endOfWeek(now, { weekStartsOn: 0 });
+        break;
+      case 'month':
+        startDate = startOfMonth(now);
+        endDate = endOfMonth(now);
+        break;
+      default:
+        startDate = subDays(now, 1);
+    }
+
+    // Filtrar notícias pelo período selecionado
+    const filteredNews = activeNews.filter(item => {
+      const itemDate = new Date(item.date || now);
+      return isWithinInterval(itemDate, { start: startDate, end: endDate });
+    });
+
+    // Ordenar por visualizações (maior para menor) e limitar a 10 itens
+    const sortedNews = [...filteredNews]
+      .sort((a, b) => (b.views || 0) - (a.views || 0))
+      .slice(0, 10);
+
+    // Formatar dados para o gráfico
+    const formattedData = sortedNews.map(item => ({
+      name: item.title.length > 15 ? `${item.title.substring(0, 15)}...` : item.title,
+      views: item.views || 0,
+      fullTitle: item.title
+    }));
+
+    setChartData(formattedData);
+  }, [activeNews, timeRange]);
 
   // Estados para controle da interface
   const [openNewsDialog, setOpenNewsDialog] = useState(false);
@@ -528,9 +614,6 @@ export default function AdminHome() {
             {location.pathname.includes('noticias') ? 'Notícias' : 'Dashboard'}
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <IconButton color="inherit">
-              <NotificationsIcon />
-            </IconButton>
             <Avatar sx={{ width: 40, height: 40 }}>A</Avatar>
           </Box>
         </Paper>
@@ -926,52 +1009,86 @@ export default function AdminHome() {
                   </Grid>
                 ))}
               </Grid>
-
-              {/* Ações Rápidas */}
-              <Typography variant="h6" sx={{ mb: 3 }}>Ações Rápidas</Typography>
-              <Grid container spacing={3}>
-                <Grid item xs={12} md={6}>
-                  <Card>
-                    <CardContent>
-                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                        <ArticleIcon color="primary" sx={{ mr: 1 }} />
-                        <Typography variant="h6">Gerenciar Notícias</Typography>
-                      </Box>
-                      <Typography variant="body2" color="textSecondary" paragraph>
-                        Adicione, edite ou remova notícias do site.
-                      </Typography>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        startIcon={<EditIcon />}
-                        onClick={handleEditNews}
+              
+              {/* Gráfico de Estatísticas */}
+              <Card sx={{ mb: 4, p: 3 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                  <Typography variant="h6">Visualizações por Notícia</Typography>
+                  <FormControl variant="outlined" size="small" sx={{ minWidth: 120 }}>
+                    <Select
+                      value={timeRange}
+                      onChange={(e) => setTimeRange(e.target.value as 'day' | 'week' | 'month')}
+                      sx={{ height: 36 }}
+                    >
+                      <MenuItem value="day">Últimas 24h</MenuItem>
+                      <MenuItem value="week">Esta Semana</MenuItem>
+                      <MenuItem value="month">Este Mês</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Box>
+                
+                {isLoadingStats ? (
+                  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
+                    <CircularProgress />
+                  </Box>
+                ) : chartData.length > 0 ? (
+                  <Box sx={{ height: 400 }}>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={chartData}
+                        margin={{
+                          top: 5,
+                          right: 30,
+                          left: 20,
+                          bottom: 5,
+                        }}
                       >
-                        Editar Notícias
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Card>
-                    <CardContent>
-                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                        <PeopleIcon color="primary" sx={{ mr: 1 }} />
-                        <Typography variant="h6">Gerenciar Usuários</Typography>
-                      </Box>
-                      <Typography variant="body2" color="textSecondary" paragraph>
-                        Gerencie contas de usuários e permissões.
-                      </Typography>
-                      <Button
-                        variant="outlined"
-                        color="primary"
-                        startIcon={<PeopleIcon />}
-                      >
-                        Gerenciar Usuários
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              </Grid>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis 
+                          dataKey="name" 
+                          tick={{ fontSize: 12 }}
+                          interval={0}
+                          angle={-45}
+                          textAnchor="end"
+                          height={60}
+                        />
+                        <YAxis />
+                        <RechartsTooltip 
+                          formatter={(value) => [value, 'Visualizações']}
+                          labelFormatter={(label, payload) => {
+                            if (payload && payload[0]?.payload?.fullTitle) {
+                              return payload[0].payload.fullTitle;
+                            }
+                            return label;
+                          }}
+                        />
+                        <Legend />
+                        <Bar 
+                          dataKey="views" 
+                          name="Visualizações" 
+                          fill="#1976d2"
+                          radius={[4, 4, 0, 0]}
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </Box>
+                ) : (
+                  <Box sx={{ 
+                    display: 'flex', 
+                    justifyContent: 'center', 
+                    alignItems: 'center', 
+                    height: 300,
+                    border: '1px dashed #ddd',
+                    borderRadius: 1,
+                    p: 3,
+                    textAlign: 'center'
+                  }}>
+                    <Typography color="textSecondary">
+                      Nenhum dado disponível para o período selecionado.
+                    </Typography>
+                  </Box>
+                )}
+              </Card>
             </Box>
           )}
         </Box>

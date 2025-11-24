@@ -1,13 +1,26 @@
 import { useState, useEffect } from 'react';
-import { Box, Container, Typography, Grid, Card, CardContent, CardActionArea, Button, CircularProgress, Alert } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { 
+  Box, 
+  Container, 
+  Typography, 
+  Grid, 
+  Card, 
+  CardContent, 
+  CardActionArea, 
+  Button, 
+  CircularProgress, 
+  Alert
+} from '@mui/material';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import NewsService from '../../API/news';
 import type { NewsItem, NewsImage } from '../../API/news';
 
 // Extendendo a interface para incluir a descrição que é usada no frontend
-interface ExtendedNewsItem extends Omit<NewsItem, 'content'> {
+interface ExtendedNewsItem extends Omit<NewsItem, 'content' | 'id'> {
+  id: number;
   description: string;
+  content?: string;
 }
 
 // Tipagem para as props do componente NewsCard
@@ -20,8 +33,9 @@ const NewsCard = ({
   description, 
   date, 
   category, 
-  images 
-}: NewsCardProps & { images?: NewsImage[] }) => {
+  images,
+  onClick 
+}: NewsCardProps & { images?: NewsImage[], onClick: () => void }) => {
   const base64 = images && images.length > 0 ? images[0].base64 : undefined;
   const src = base64
     ? (base64.startsWith('data:') ? base64 : `data:image/jpeg;base64,${base64}`)
@@ -29,7 +43,7 @@ const NewsCard = ({
   return (
     <Grid item xs={12} sm={6} md={4} lg={4} sx={{ px: { xs: 1, sm: 2 } }}>
       <div style={{ height: '100%' }}>
-        <CardActionArea component={RouterLink} to={`/noticias/${id}`}>
+        <CardActionArea onClick={onClick}>
           <Card sx={{ 
             height: '100%', 
             display: 'flex', 
@@ -120,6 +134,7 @@ const NewsCard = ({
 // Using NoticesService for API calls
 
 function Notices() {
+  const navigate = useNavigate();
   const [news, setNews] = useState<ExtendedNewsItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -161,8 +176,12 @@ function Notices() {
     );
   }
 
+  const handleNewsClick = (item: ExtendedNewsItem) => {
+    navigate(`/noticia/${item.id}`);
+  };
+
   return (
-    <Box sx={{ py: { xs: 4, sm: 6, md: 8 }, backgroundColor: '#f9f9f9' }}>
+    <Box sx={{ py: { xs: 4, sm: 6, md: 8 }, backgroundColor: '#f9f9f9', position: 'relative' }}>
       <Container maxWidth="lg">
         <Typography 
           variant="h3" 
@@ -196,8 +215,13 @@ function Notices() {
         
         <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
           {news.length > 0 ? (
-            news.map((item) => (
-              <NewsCard key={item.id} {...item} images={item.images} />
+            news.slice(0, 6).map((item) => (
+              <NewsCard 
+                key={item.id} 
+                {...item} 
+                images={item.images} 
+                onClick={() => handleNewsClick(item)}
+              />
             ))
           ) : (
             <Box width="100%" textAlign="center" py={4}>
@@ -232,6 +256,7 @@ function Notices() {
           </Button>
         </Box>
       </Container>
+
     </Box>
   );
 }
