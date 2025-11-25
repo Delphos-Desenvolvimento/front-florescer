@@ -12,11 +12,19 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
-    
+
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
-    
+
+    // Add session ID for view tracking
+    let sessionId = sessionStorage.getItem('session_id');
+    if (!sessionId) {
+      sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      sessionStorage.setItem('session_id', sessionId);
+    }
+    config.headers['x-session-id'] = sessionId;
+
     return config;
   },
   (error) => {

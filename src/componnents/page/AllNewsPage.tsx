@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { 
-  Box, 
-  Container, 
-  Typography, 
-  Grid, 
-  Button, 
-  CircularProgress, 
-  Alert, 
+import {
+  Box,
+  Container,
+  Typography,
+  Grid,
+  Button,
+  CircularProgress,
+  Alert,
   useTheme,
   useMediaQuery,
   TextField,
@@ -31,15 +31,15 @@ interface ExtendedNewsItem extends Omit<NewsItem, 'content' | 'id'> {
 }
 
 // Componente de notícia individual
-const NewsCard = ({ 
-  id, 
-  title, 
-  description, 
-  date, 
+const NewsCard = ({
+  id,
+  title,
+  description,
+  date,
   category,
   images,
-  onClick 
-}: { 
+  onClick
+}: {
   id: number;
   title: string;
   description: string;
@@ -52,15 +52,15 @@ const NewsCard = ({
   const src = base64
     ? (base64.startsWith('data:') ? base64 : `data:image/jpeg;base64,${base64}`)
     : undefined;
-    
+
   return (
     <Grid item xs={12} sm={6} md={4} lg={4} sx={{ px: { xs: 1, sm: 2 }, mb: 4 }}>
       <div style={{ height: '100%' }}>
         <div onClick={onClick} style={{ cursor: 'pointer' }}>
-          <Box 
-            sx={{ 
-              height: '100%', 
-              display: 'flex', 
+          <Box
+            sx={{
+              height: '100%',
+              display: 'flex',
               flexDirection: 'column',
               transition: 'transform 0.3s ease, box-shadow 0.3s ease',
               '&:hover': {
@@ -70,7 +70,7 @@ const NewsCard = ({
               backgroundColor: 'background.paper',
               borderRadius: 2,
               overflow: 'hidden',
-              
+
             }}
           >
             <Box
@@ -84,10 +84,10 @@ const NewsCard = ({
               }}
             />
             <Box sx={{ p: 3, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-              <Typography 
-                variant="caption" 
-                color="text.secondary" 
-                display="block" 
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                display="block"
                 mb={1}
                 sx={{
                   fontSize: { xs: '0.7rem', sm: '0.75rem' }
@@ -95,9 +95,9 @@ const NewsCard = ({
               >
                 {date ? format(new Date(date), 'dd/MM/yyyy') : 'Sem data'}
               </Typography>
-              <Typography 
-                variant="h6" 
-                component="h3" 
+              <Typography
+                variant="h6"
+                component="h3"
                 gutterBottom
                 sx={{
                   fontSize: { xs: '1rem', sm: '1.1rem', md: '1.25rem' },
@@ -109,9 +109,9 @@ const NewsCard = ({
               >
                 {title}
               </Typography>
-              <Typography 
-                variant="body2" 
-                color="text.secondary" 
+              <Typography
+                variant="body2"
+                color="text.secondary"
                 sx={{
                   display: '-webkit-box',
                   WebkitLineClamp: 3,
@@ -126,24 +126,24 @@ const NewsCard = ({
               </Typography>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Chip label={category || 'Geral'} size="small" color="primary" variant="outlined" />
-              <Button 
-                variant="text" 
-                color="primary"
-                size="small"
-                sx={{ 
-                  mt: 'auto',
-                  alignSelf: 'flex-start',
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  p: 0,
-                  '&:hover': {
-                    backgroundColor: 'transparent',
-                    textDecoration: 'underline',
-                  }
-                }}
-              >
-                Ler mais
-              </Button>
+                <Button
+                  variant="text"
+                  color="primary"
+                  size="small"
+                  sx={{
+                    mt: 'auto',
+                    alignSelf: 'flex-start',
+                    textTransform: 'none',
+                    fontWeight: 600,
+                    p: 0,
+                    '&:hover': {
+                      backgroundColor: 'transparent',
+                      textDecoration: 'underline',
+                    }
+                  }}
+                >
+                  Ler mais
+                </Button>
               </Box>
             </Box>
           </Box>
@@ -170,7 +170,7 @@ function AllNewsPage() {
     const fetchNews = async () => {
       try {
         setLoading(true);
-        const newsData = await NewsService.getAll();
+        const newsData = await NewsService.getAll({ status: 'publicada' });
         const formattedNews = newsData.map(item => ({
           id: item.id || 0,
           title: item.title,
@@ -235,11 +235,11 @@ function AllNewsPage() {
         >
           Voltar para a página inicial
         </Button>
-        
-        <Typography 
-          variant="h3" 
-          component="h1" 
-          textAlign="center" 
+
+        <Typography
+          variant="h3"
+          component="h1"
+          textAlign="center"
           mb={6}
           sx={{
             fontSize: { xs: '1.8rem', sm: '2.5rem' },
@@ -299,11 +299,11 @@ function AllNewsPage() {
             {error}
           </Alert>
         )}
-        
+
         <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
           {visible.length > 0 ? (
             visible.map((item) => (
-              <NewsCard 
+              <NewsCard
                 key={item.id}
                 id={item.id}
                 title={item.title}

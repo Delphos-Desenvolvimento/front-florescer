@@ -30,9 +30,9 @@ const NewsService = {
   /**
    * Busca todas as notícias
    */
-  async getAll(): Promise<NewsItem[]> {
+  async getAll(params?: { status?: string }): Promise<NewsItem[]> {
     try {
-      const response = await api.get<NewsItem[]>('/news');
+      const response = await api.get<NewsItem[]>('/news', { params });
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar notícias:', error);

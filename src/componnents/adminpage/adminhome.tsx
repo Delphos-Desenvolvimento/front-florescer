@@ -2,10 +2,9 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import type { ChangeEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import NewsService, { type NewsItem as ApiNewsItem } from '../../API/news';
+import StatsService, { type StatsOverview } from '../../API/stats';
 import type { SelectChangeEvent } from '@mui/material/Select';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer } from 'recharts';
-import { Tooltip as RechartsTooltip } from 'recharts';
-import { subDays, startOfWeek, startOfMonth, endOfWeek, endOfMonth, isWithinInterval } from 'date-fns';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts';
 import {
   Box,
   Button,
@@ -42,7 +41,6 @@ import {
   CircularProgress,
   Snackbar,
   Alert,
-  LinearProgress,
   Tooltip
 } from '@mui/material';
 import {
@@ -63,30 +61,7 @@ import {
   Visibility as VisibilityIcon
 } from '@mui/icons-material';
 
-// Dados de exemplo para estatísticas
-const statsData = [
-  { 
-    title: 'Total de Usuários', 
-    value: '1,254', 
-    icon: <PeopleIcon fontSize="large" color="primary" />,
-    progress: 75,
-    trend: 'up'
-  },
-  { 
-    title: 'Total de Visualizações', 
-    value: '1,024', 
-    icon: <VisibilityIcon fontSize="large" color="secondary" />,
-    progress: 68,
-    trend: 'up'
-  },
-  { 
-    title: 'Notícias Publicadas', 
-    value: '156', 
-    icon: <ArticleIcon fontSize="large" color="info" />,
-    progress: 45,
-    trend: 'up'
-  }
-];
+
 
 interface ListItemLinkProps {
   icon?: React.ReactNode;
@@ -137,14 +112,14 @@ export default function AdminHome() {
     navigate('/login');
   };
 
-  
+
 
   const drawer = (
-    <Box sx={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
+    <Box sx={{
+      display: 'flex',
+      flexDirection: 'column',
       height: '100%',
-      justifyContent: 'space-between' 
+      justifyContent: 'space-between'
     }}>
       <div>
         <Box sx={{ p: 2, textAlign: 'center' }}>
@@ -185,7 +160,7 @@ export default function AdminHome() {
     date: string;
     views?: number;
   };
-  
+
   // Função para converter da API para o tipo local
   const toLocalNewsItem = (apiItem: ApiNewsItem): NewsItem => ({
     id: apiItem.id ?? null,
@@ -196,7 +171,7 @@ export default function AdminHome() {
     date: apiItem.date,
     views: apiItem.views
   });
-  
+
   // Função para converter para o tipo da API
   const toApiNewsItem = (item: NewsItem): Omit<ApiNewsItem, 'id'> & { id?: number } => ({
     id: item.id ?? undefined,
@@ -218,8 +193,9 @@ export default function AdminHome() {
 
   // State for statistics
   const [timeRange, setTimeRange] = useState<'day' | 'week' | 'month'>('week');
-  const [chartData, setChartData] = useState<Array<{name: string, views: number}>>([]);
+  const [chartData, setChartData] = useState<Array<{ name: string, views: number }>>([]);
   const [isLoadingStats, setIsLoadingStats] = useState(false);
+  const [overviewStats, setOverviewStats] = useState<StatsOverview | null>(null);
 
   // Estados para notícias ativas e histórico
   const [activeNews, setActiveNews] = useState<NewsItem[]>([]);
@@ -231,16 +207,16 @@ export default function AdminHome() {
     try {
       setIsLoading(true);
       const allNews = await NewsService.getAll();
-      
+
       // Separa notícias ativas (não arquivadas) do histórico (arquivadas)
       const active = allNews
         .filter((news: ApiNewsItem) => news.status !== 'arquivada')
         .map(toLocalNewsItem);
-        
+
       const history = allNews
         .filter((news: ApiNewsItem) => news.status === 'arquivada')
         .map(toLocalNewsItem);
-      
+
       setActiveNews(active);
       setNewsHistory(history);
     } catch (error) {
@@ -263,18 +239,20 @@ export default function AdminHome() {
 
   // Atualizar estatísticas quando o período for alterado
   useEffect(() => {
-    if (activeNews.length > 0) {
-      processChartData();
-    }
-  }, [timeRange, activeNews]);
+    fetchNewsStats();
+  }, [timeRange]);
 
   // Buscar estatísticas das notícias
   const fetchNewsStats = useCallback(async () => {
     try {
       setIsLoadingStats(true);
-      // Aqui você pode adicionar uma chamada para buscar estatísticas da API
-      // Por enquanto, usaremos os dados locais
-      processChartData();
+      const days = timeRange === 'day' ? 1 : timeRange === 'week' ? 7 : 30;
+      const [trend, overview] = await Promise.all([
+        StatsService.getEventsByDay('news_click', days),
+        StatsService.getOverview()
+      ]);
+      setChartData(trend.map((pt) => ({ name: pt.date, views: pt.count })));
+      setOverviewStats(overview);
     } catch (error) {
       console.error('Erro ao carregar estatísticas:', error);
       setSnackbar({
@@ -285,53 +263,9 @@ export default function AdminHome() {
     } finally {
       setIsLoadingStats(false);
     }
-  }, [activeNews]);
+  }, [timeRange]);
 
-  // Processar dados para o gráfico
-  const processChartData = useCallback(() => {
-    if (activeNews.length === 0) return;
 
-    const now = new Date();
-    let startDate: Date;
-    let endDate = now;
-
-    // Definir o intervalo de datas com base no período selecionado
-    switch (timeRange) {
-      case 'day':
-        startDate = subDays(now, 1);
-        break;
-      case 'week':
-        startDate = startOfWeek(now, { weekStartsOn: 0 });
-        endDate = endOfWeek(now, { weekStartsOn: 0 });
-        break;
-      case 'month':
-        startDate = startOfMonth(now);
-        endDate = endOfMonth(now);
-        break;
-      default:
-        startDate = subDays(now, 1);
-    }
-
-    // Filtrar notícias pelo período selecionado
-    const filteredNews = activeNews.filter(item => {
-      const itemDate = new Date(item.date || now);
-      return isWithinInterval(itemDate, { start: startDate, end: endDate });
-    });
-
-    // Ordenar por visualizações (maior para menor) e limitar a 10 itens
-    const sortedNews = [...filteredNews]
-      .sort((a, b) => (b.views || 0) - (a.views || 0))
-      .slice(0, 10);
-
-    // Formatar dados para o gráfico
-    const formattedData = sortedNews.map(item => ({
-      name: item.title.length > 15 ? `${item.title.substring(0, 15)}...` : item.title,
-      views: item.views || 0,
-      fullTitle: item.title
-    }));
-
-    setChartData(formattedData);
-  }, [activeNews, timeRange]);
 
   // Estados para controle da interface
   const [openNewsDialog, setOpenNewsDialog] = useState(false);
@@ -345,7 +279,7 @@ export default function AdminHome() {
     views: 0,
     imagePreview: ''
   });
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -364,15 +298,15 @@ export default function AdminHome() {
         // Atualiza notícia existente
         const { id, ...updateData } = toApiNewsItem(updatedNews);
         const updated = await NewsService.update(
-          id!, 
+          id!,
           updateData,
           selectedImageFile ? [selectedImageFile] : undefined
         );
-        
-        setActiveNews(prevNews => 
+
+        setActiveNews(prevNews =>
           prevNews.map(item => item.id === updated.id ? toLocalNewsItem(updated) : item)
         );
-        
+
         setSnackbar({
           open: true,
           message: 'Notícia atualizada com sucesso!',
@@ -387,9 +321,9 @@ export default function AdminHome() {
           },
           selectedImageFile ? [selectedImageFile] : undefined
         );
-        
+
         setActiveNews(prevNews => [toLocalNewsItem(newNews), ...prevNews]);
-        
+
         setSnackbar({
           open: true,
           message: 'Notícia adicionada com sucesso!',
@@ -412,10 +346,10 @@ export default function AdminHome() {
   const handleArchiveNews = async (id: number) => {
     try {
       const archivedNews = await NewsService.archive(id);
-      
+
       setActiveNews(prevNews => prevNews.filter(news => news.id !== id));
       setNewsHistory(prevHistory => [toLocalNewsItem(archivedNews), ...prevHistory]);
-      
+
       setSnackbar({
         open: true,
         message: 'Notícia arquivada com sucesso!',
@@ -433,13 +367,13 @@ export default function AdminHome() {
 
   const handleDeleteNews = async (id: number | null) => {
     if (!id) return;
-    
+
     if (window.confirm('Tem certeza que deseja remover permanentemente esta notícia?')) {
       try {
         await NewsService.delete(id);
-        
+
         setNewsHistory(prevHistory => prevHistory.filter(news => news.id !== id));
-        
+
         setSnackbar({
           open: true,
           message: 'Notícia removida permanentemente!',
@@ -459,10 +393,10 @@ export default function AdminHome() {
   const handleRestoreNews = async (id: number) => {
     try {
       const restoredNews = await NewsService.restore(id);
-      
+
       setNewsHistory(prevHistory => prevHistory.filter(news => news.id !== id));
       setActiveNews(prevNews => [toLocalNewsItem(restoredNews), ...prevNews]);
-      
+
       setSnackbar({
         open: true,
         message: 'Notícia restaurada com sucesso!',
@@ -484,7 +418,7 @@ export default function AdminHome() {
     if (!currentNews.title.trim()) newErrors.title = 'Título é obrigatório';
     if (!currentNews.content.trim()) newErrors.content = 'Conteúdo é obrigatório';
     if (!currentNews.category) newErrors.category = 'Categoria é obrigatória';
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -587,7 +521,7 @@ export default function AdminHome() {
           {drawer}
         </Drawer>
       </Box>
-      
+
       {/* Conteúdo principal */}
       <Box
         component="main"
@@ -626,9 +560,9 @@ export default function AdminHome() {
                 <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
                   Gerenciamento de Notícias
                 </Typography>
-                <Button 
-                  variant="contained" 
-                  color="primary" 
+                <Button
+                  variant="contained"
+                  color="primary"
                   startIcon={<AddIcon />}
                   onClick={() => handleOpenNewsDialog()}
                   sx={{ borderRadius: 2, textTransform: 'none' }}
@@ -638,42 +572,42 @@ export default function AdminHome() {
               </Box>
 
               <Paper sx={{ mb: 4, borderRadius: 2, overflow: 'hidden' }}>
-                <Tabs 
-                  value={activeTab} 
+                <Tabs
+                  value={activeTab}
                   onChange={handleTabChange}
                   indicatorColor="primary"
                   textColor="primary"
                   variant="fullWidth"
                 >
-                  <Tab 
-                    value="active" 
+                  <Tab
+                    value="active"
                     label={
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <ArticleIcon fontSize="small" />
                         <span>Notícias Ativas</span>
-                        <Chip 
-                          label={activeNews.length} 
-                          size="small" 
-                          color="primary" 
-                          sx={{ minWidth: 24, height: 24, fontSize: '0.75rem' }} 
+                        <Chip
+                          label={activeNews.length}
+                          size="small"
+                          color="primary"
+                          sx={{ minWidth: 24, height: 24, fontSize: '0.75rem' }}
                         />
                       </Box>
-                    } 
+                    }
                   />
-                  <Tab 
-                    value="history" 
+                  <Tab
+                    value="history"
                     label={
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <DescriptionIcon fontSize="small" />
                         <span>Histórico</span>
-                        <Chip 
-                          label={newsHistory.length} 
-                          size="small" 
-                          color="secondary" 
-                          sx={{ minWidth: 24, height: 24, fontSize: '0.75rem' }} 
+                        <Chip
+                          label={newsHistory.length}
+                          size="small"
+                          color="secondary"
+                          sx={{ minWidth: 24, height: 24, fontSize: '0.75rem' }}
                         />
                       </Box>
-                    } 
+                    }
                   />
                 </Tabs>
               </Paper>
@@ -726,9 +660,9 @@ export default function AdminHome() {
                               {news.content}
                             </Typography>
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2, alignItems: 'center' }}>
-                              <Chip 
-                                label={news.status === 'publicada' ? 'Publicada' : 'Rascunho'} 
-                                size="small" 
+                              <Chip
+                                label={news.status === 'publicada' ? 'Publicada' : 'Rascunho'}
+                                size="small"
                                 color={news.status === 'publicada' ? 'success' : 'default'}
                                 icon={news.status === 'publicada' ? <CheckCircleIcon fontSize="small" /> : <PendingIcon fontSize="small" />}
                               />
@@ -759,7 +693,7 @@ export default function AdminHome() {
                     ) : (
                       newsHistory.map((news) => (
                         <div key={news.id}>
-                          <ListItem 
+                          <ListItem
                             secondaryAction={
                               <Box sx={{ display: 'flex', gap: 1 }}>
                                 <Tooltip title="Restaurar">
@@ -803,8 +737,8 @@ export default function AdminHome() {
                 onClose={handleCloseSnackbar}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
               >
-                <Alert 
-                  onClose={handleCloseSnackbar} 
+                <Alert
+                  onClose={handleCloseSnackbar}
                   severity={snackbar.severity}
                   variant="filled"
                   sx={{ width: '100%' }}
@@ -814,10 +748,10 @@ export default function AdminHome() {
               </Snackbar>
 
               {/* Diálogo para adicionar/editar notícia */}
-              <Dialog 
-                open={openNewsDialog} 
-                onClose={handleCloseNewsDialog} 
-                maxWidth="md" 
+              <Dialog
+                open={openNewsDialog}
+                onClose={handleCloseNewsDialog}
+                maxWidth="md"
                 fullWidth
                 PaperProps={{
                   sx: {
@@ -844,7 +778,7 @@ export default function AdminHome() {
                     helperText={errors.title}
                     sx={{ mb: 3 }}
                   />
-                  
+
                   <FormControl fullWidth sx={{ mb: 3 }}>
                     <InputLabel id="category-label">Categoria</InputLabel>
                     <Select
@@ -889,7 +823,7 @@ export default function AdminHome() {
                     <Typography variant="subtitle2" gutterBottom>
                       Imagem de Destaque
                     </Typography>
-                    <Box 
+                    <Box
                       onClick={() => fileInputRef.current?.click()}
                       sx={{
                         border: '2px dashed',
@@ -906,15 +840,15 @@ export default function AdminHome() {
                     >
                       {currentNews.imagePreview ? (
                         <Box>
-                          <img 
-                            src={currentNews.imagePreview} 
-                            alt="Preview" 
-                            style={{ 
-                              maxWidth: '100%', 
+                          <img
+                            src={currentNews.imagePreview}
+                            alt="Preview"
+                            style={{
+                              maxWidth: '100%',
                               maxHeight: '200px',
                               borderRadius: '8px',
                               marginBottom: '16px'
-                            }} 
+                            }}
                           />
                           <Typography>Clique para alterar a imagem</Typography>
                         </Box>
@@ -949,7 +883,7 @@ export default function AdminHome() {
                     onChange={handleInputChange}
                     error={!!errors.content}
                     helperText={errors.content || ' '}
-                    sx={{ 
+                    sx={{
                       mb: 2,
                       '& .MuiOutlinedInput-root': {
                         '&:hover fieldset': {
@@ -960,16 +894,16 @@ export default function AdminHome() {
                   />
                 </DialogContent>
                 <DialogActions sx={{ p: 3, pt: 0 }}>
-                  <Button 
-                    onClick={handleCloseNewsDialog} 
+                  <Button
+                    onClick={handleCloseNewsDialog}
                     color="inherit"
                     sx={{ borderRadius: 2 }}
                   >
                     Cancelar
                   </Button>
-                  <Button 
-                    onClick={handleSaveClick} 
-                    variant="contained" 
+                  <Button
+                    onClick={handleSaveClick}
+                    variant="contained"
                     color="primary"
                     startIcon={currentNews.id ? <EditIcon /> : <AddIcon />}
                     sx={{ borderRadius: 2, textTransform: 'none' }}
@@ -983,33 +917,54 @@ export default function AdminHome() {
             <Box>
               <Typography variant="h6" sx={{ mb: 3 }}>Visão Geral</Typography>
               <Grid container spacing={3} sx={{ mb: 4 }}>
-                {statsData.map((stat, index) => (
-                  <Grid item xs={12} sm={6} md={4} key={index}>
-                    <Card>
-                      <CardContent>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                          <Typography color="textSecondary" variant="body2">
-                            {stat.title}
-                          </Typography>
-                          {stat.icon}
-                        </Box>
-                        <Typography variant="h5" component="div">
-                          {stat.value}
+
+                <Grid item xs={12} sm={6} md={4}>
+                  <Card>
+                    <CardContent>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                        <Typography color="textSecondary" variant="body2">
+                          Total de Usuários
                         </Typography>
-                        <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-                          <Box sx={{ width: '100%', mr: 1 }}>
-                            <LinearProgress variant="determinate" value={stat.progress} />
-                          </Box>
-                          <Typography variant="body2" color={stat.trend === 'up' ? 'success.main' : 'error.main'}>
-                            {stat.trend === 'up' ? '↑' : '↓'} {stat.progress}%
-                          </Typography>
-                        </Box>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
+                        <PeopleIcon fontSize="large" color="primary" />
+                      </Box>
+                      <Typography variant="h5" component="div">
+                        {overviewStats?.adminCount || 0}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                  <Card>
+                    <CardContent>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                        <Typography color="textSecondary" variant="body2">
+                          Total de Visualizações
+                        </Typography>
+                        <VisibilityIcon fontSize="large" color="secondary" />
+                      </Box>
+                      <Typography variant="h5" component="div">
+                        {overviewStats?.totalViews || 0}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+                <Grid item xs={12} sm={6} md={4}>
+                  <Card>
+                    <CardContent>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                        <Typography color="textSecondary" variant="body2">
+                          Total de Notícias
+                        </Typography>
+                        <ArticleIcon fontSize="large" color="info" />
+                      </Box>
+                      <Typography variant="h5" component="div">
+                        {overviewStats?.totalNews || 0}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
               </Grid>
-              
+
               {/* Gráfico de Estatísticas */}
               <Card sx={{ mb: 4, p: 3 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
@@ -1026,7 +981,7 @@ export default function AdminHome() {
                     </Select>
                   </FormControl>
                 </Box>
-                
+
                 {isLoadingStats ? (
                   <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
                     <CircularProgress />
@@ -1044,8 +999,8 @@ export default function AdminHome() {
                         }}
                       >
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis 
-                          dataKey="name" 
+                        <XAxis
+                          dataKey="name"
                           tick={{ fontSize: 12 }}
                           interval={0}
                           angle={-45}
@@ -1053,7 +1008,7 @@ export default function AdminHome() {
                           height={60}
                         />
                         <YAxis />
-                        <RechartsTooltip 
+                        <RechartsTooltip
                           formatter={(value) => [value, 'Visualizações']}
                           labelFormatter={(label, payload) => {
                             if (payload && payload[0]?.payload?.fullTitle) {
@@ -1063,9 +1018,9 @@ export default function AdminHome() {
                           }}
                         />
                         <Legend />
-                        <Bar 
-                          dataKey="views" 
-                          name="Visualizações" 
+                        <Bar
+                          dataKey="views"
+                          name="Visualizações"
                           fill="#1976d2"
                           radius={[4, 4, 0, 0]}
                         />
@@ -1073,10 +1028,10 @@ export default function AdminHome() {
                     </ResponsiveContainer>
                   </Box>
                 ) : (
-                  <Box sx={{ 
-                    display: 'flex', 
-                    justifyContent: 'center', 
-                    alignItems: 'center', 
+                  <Box sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
                     height: 300,
                     border: '1px dashed #ddd',
                     borderRadius: 1,
