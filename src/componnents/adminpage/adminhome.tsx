@@ -159,6 +159,7 @@ export default function AdminHome() {
     status: 'rascunho' | 'publicada' | 'arquivada';
     date: string;
     views?: number;
+    images?: { id?: number; base64: string; altText?: string }[];
   };
 
   // Função para converter da API para o tipo local
@@ -169,7 +170,8 @@ export default function AdminHome() {
     category: apiItem.category,
     status: apiItem.status,
     date: apiItem.date,
-    views: apiItem.views
+    views: apiItem.views,
+    images: apiItem.images
   });
 
   // Função para converter para o tipo da API
@@ -180,7 +182,8 @@ export default function AdminHome() {
     category: item.category,
     status: item.status,
     date: item.date,
-    views: item.views ?? 0
+    views: item.views ?? 0,
+    images: item.images
   });
 
   // Estado para controlar a aba ativa (notícias ativas ou histórico)
@@ -297,6 +300,7 @@ export default function AdminHome() {
       if (updatedNews.id) {
         // Atualiza notícia existente
         const { id, ...updateData } = toApiNewsItem(updatedNews);
+        console.log('[AdminHome] Saving news:', { id, updateData, hasSelectedImage: !!selectedImageFile, selectedImageFile });
         const updated = await NewsService.update(
           id!,
           updateData,
@@ -454,21 +458,81 @@ export default function AdminHome() {
     }
   };
 
+  // Helper to convert base64 to File
+  const base64ToFile = (dataurl: string, filename: string) => {
+    try {
+      let bstr;
+      let mime = 'image/jpeg';
+      if (dataurl.includes(',')) {
+        const arr = dataurl.split(',');
+        const mimeMatch = arr[0].match(/:(.*?);/);
+        if (mimeMatch) mime = mimeMatch[1];
+        bstr = atob(arr[1]);
+      } else {
+        bstr = atob(dataurl);
+      }
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new File([u8arr], filename, { type: mime });
+    } catch (e) {
+      console.error('Error converting base64 to file:', e);
+      return null;
+    }
+  };
+
   const handleOpenNewsDialog = async (newsItem: NewsItem | null = null) => {
     try {
       if (newsItem && newsItem.id) {
         // Se for uma edição e o conteúdo completo não estiver disponível, busca da API
         if (!newsItem.content) {
           const fullNews = await NewsService.getById(newsItem.id);
-          setCurrentNews(toLocalNewsItem(fullNews));
+          const localNews = toLocalNewsItem(fullNews);
+
+          let imgPreview = '';
+          if (localNews.images && localNews.images.length > 0) {
+            const img = localNews.images[0];
+            imgPreview = img.base64.startsWith('data:')
+              ? img.base64
+              : `data:image/jpeg;base64,${img.base64}`;
+
+            const file = base64ToFile(imgPreview, `image-${localNews.id}.jpg`);
+            console.log('[AdminHome] Converted existing image to file:', file);
+            if (file) setSelectedImageFile(file);
+          } else {
+            setSelectedImageFile(null);
+          }
+
+          setCurrentNews({
+            ...localNews,
+            imagePreview: imgPreview
+          });
         } else {
+          let imgPreview = '';
+          if (newsItem.images && newsItem.images.length > 0) {
+            const img = newsItem.images[0];
+            imgPreview = img.base64.startsWith('data:')
+              ? img.base64
+              : `data:image/jpeg;base64,${img.base64}`;
+
+            const file = base64ToFile(imgPreview, `image-${newsItem.id}.jpg`);
+            console.log('[AdminHome] Converted existing image to file (from list):', file);
+            if (file) setSelectedImageFile(file);
+          } else {
+            setSelectedImageFile(null);
+          }
+
           setCurrentNews({
             ...newsItem,
-            content: newsItem.content || ''
+            content: newsItem.content || '',
+            imagePreview: imgPreview
           });
         }
       } else {
         // Nova notícia
+        setSelectedImageFile(null);
         setCurrentNews({
           id: null,
           title: '',
@@ -476,7 +540,8 @@ export default function AdminHome() {
           category: 'Notícia', // Valor padrão
           status: 'rascunho',
           date: new Date().toISOString().split('T')[0],
-          views: 0
+          views: 0,
+          imagePreview: ''
         });
       }
       setOpenNewsDialog(true);

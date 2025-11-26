@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
-import { 
-  Box, 
-  Container, 
-  Typography, 
-  Grid, 
-  Card, 
-  CardContent, 
-  CardActionArea, 
-  Button, 
-  CircularProgress, 
+import {
+  Box,
+  Container,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  CardActionArea,
+  Button,
+  CircularProgress,
   Alert
 } from '@mui/material';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
@@ -24,17 +24,17 @@ interface ExtendedNewsItem extends Omit<NewsItem, 'content' | 'id'> {
 }
 
 // Tipagem para as props do componente NewsCard
-interface NewsCardProps extends ExtendedNewsItem {}
+interface NewsCardProps extends ExtendedNewsItem { }
 
 // Componente de cartão de notícia
-const NewsCard = ({ 
-  id, 
-  title, 
-  description, 
-  date, 
-  category, 
+const NewsCard = ({
+  id,
+  title,
+  description,
+  date,
+  category,
   images,
-  onClick 
+  onClick
 }: NewsCardProps & { images?: NewsImage[], onClick: () => void }) => {
   const base64 = images && images.length > 0 ? images[0].base64 : undefined;
   const src = base64
@@ -44,9 +44,9 @@ const NewsCard = ({
     <Grid item xs={12} sm={6} md={4} lg={4} sx={{ px: { xs: 1, sm: 2 } }}>
       <div style={{ height: '100%' }}>
         <CardActionArea onClick={onClick}>
-          <Card sx={{ 
-            height: '100%', 
-            display: 'flex', 
+          <Card sx={{
+            height: '100%',
+            display: 'flex',
             flexDirection: 'column',
             transition: 'transform 0.3s ease, box-shadow 0.3s ease',
             '&:hover': {
@@ -66,10 +66,10 @@ const NewsCard = ({
               }}
             />
             <CardContent sx={{ flexGrow: 1, p: { xs: 1.5, sm: 2 } }}>
-              <Typography 
-                variant="caption" 
-                color="text.secondary" 
-                display="block" 
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                display="block"
                 mb={1}
                 sx={{
                   fontSize: { xs: '0.7rem', sm: '0.75rem' }
@@ -77,9 +77,9 @@ const NewsCard = ({
               >
                 {date || 'Sem data'}
               </Typography>
-              <Typography 
-                variant="h6" 
-                component="h3" 
+              <Typography
+                variant="h6"
+                component="h3"
                 gutterBottom
                 sx={{
                   fontSize: { xs: '1rem', sm: '1.1rem', md: '1.25rem' },
@@ -89,9 +89,9 @@ const NewsCard = ({
               >
                 {title}
               </Typography>
-              <Typography 
-                variant="body2" 
-                color="text.secondary" 
+              <Typography
+                variant="body2"
+                color="text.secondary"
                 sx={{
                   display: '-webkit-box',
                   WebkitLineClamp: 3,
@@ -105,15 +105,15 @@ const NewsCard = ({
               >
                 {description}
               </Typography>
-              <Box sx={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
+              <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
                 alignItems: 'center',
                 mt: 'auto'
               }}>
-                <Typography 
-                  variant="caption" 
-                  color="primary" 
+                <Typography
+                  variant="caption"
+                  color="primary"
                   fontWeight="bold"
                   sx={{
                     fontSize: { xs: '0.7rem', sm: '0.75rem' }
@@ -143,7 +143,7 @@ function Notices() {
     const fetchNews = async () => {
       try {
         setLoading(true);
-        const newsData = await NewsService.getAll();
+        const newsData = await NewsService.getAll({ status: 'publicada' });
         // Garantir que todos os itens tenham os campos necessários
         const formattedNews = newsData.map(item => ({
           id: item.id || 0,
@@ -183,10 +183,10 @@ function Notices() {
   return (
     <Box sx={{ py: { xs: 4, sm: 6, md: 8 }, backgroundColor: '#f9f9f9', position: 'relative' }}>
       <Container maxWidth="lg">
-        <Typography 
-          variant="h3" 
-          component="h2" 
-          textAlign="center" 
+        <Typography
+          variant="h3"
+          component="h2"
+          textAlign="center"
           mb={6}
           sx={{
             fontSize: { xs: '1.8rem', sm: '2.5rem' },
@@ -212,14 +212,14 @@ function Notices() {
             {error}
           </Alert>
         )}
-        
+
         <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
           {news.length > 0 ? (
             news.slice(0, 6).map((item) => (
-              <NewsCard 
-                key={item.id} 
-                {...item} 
-                images={item.images} 
+              <NewsCard
+                key={item.id}
+                {...item}
+                images={item.images}
                 onClick={() => handleNewsClick(item)}
               />
             ))
@@ -231,11 +231,11 @@ function Notices() {
             </Box>
           )}
         </Grid>
-        
+
         <Box mt={6} textAlign="center">
-          <Button 
-            variant="outlined" 
-            color="primary" 
+          <Button
+            variant="outlined"
+            color="primary"
             endIcon={<ArrowRight size={20} />}
             component={RouterLink}
             to="/noticias"

@@ -16,28 +16,28 @@ interface LoginResponse {
 export const login = async (username: string, password: string): Promise<LoginResponse> => {
   try {
     console.log('Attempting login with:', { username });
-    
+
     const response = await axios.post(`${API_URL}/login`, {
       username,
       password,
     }, {
       validateStatus: (status) => status < 500 // Don't throw for 4xx errors
     });
-    
+
     console.log('Login response:', response.data);
-    
+
     if (response.status === 401) {
       throw new Error('Invalid username or password');
     }
-    
+
     if (!response.data || !response.data.user) {
       throw new Error('Invalid response from server');
     }
-    
+
     // Store user data in localStorage
     localStorage.setItem('user', JSON.stringify(response.data.user));
     console.log('User logged in successfully:', response.data.user);
-    
+
     return response.data;
   } catch (error: any) {
     const errorMessage = error.response?.data?.message || error.message || 'Login failed';
@@ -53,12 +53,12 @@ export const register = async (username: string, password: string, role = 'user'
       password,
       role,
     });
-    
+
     // Auto-login after registration
     if (response.data.user) {
       localStorage.setItem('user', JSON.stringify(response.data.user));
     }
-    
+
     return response.data;
   } catch (error) {
     console.error('Registration error:', error);
@@ -82,4 +82,22 @@ export const isAuthenticated = (): boolean => {
 export const isAdmin = (): boolean => {
   const user = getCurrentUser();
   return user ? user.role === 'admin' : false;
+};
+
+export const verifyToken = async (): Promise<User> => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('No token found');
+  }
+
+  try {
+    const response = await axios.get(`${API_URL}/profile`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error('Invalid token');
+  }
 };
