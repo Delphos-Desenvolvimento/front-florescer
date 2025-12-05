@@ -1,26 +1,26 @@
-import { 
-  Box, 
-  Typography, 
-  Container, 
-  Grid, 
-  Link, 
-  Button, 
-  Divider, 
-  useTheme, 
-  useMediaQuery, 
+import {
+  Box,
+  Typography,
+  Container,
+  Grid,
+  Link,
+  Button,
+  Divider,
+  useTheme,
+  useMediaQuery,
   IconButton
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 // Ícones do Lucide React
-import { 
-  MapPin, 
-  Phone, 
-  Mail, 
-  Clock, 
-  Facebook, 
-  Twitter, 
-  Linkedin, 
-  Instagram, 
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Clock,
+  Facebook,
+  Twitter,
+  Linkedin,
+  Instagram,
   Youtube,
   ArrowUpRight,
   ChevronRight
@@ -48,8 +48,8 @@ const FooterLink = ({ children, href }: { children: React.ReactNode; href: strin
       },
     }}
   >
-    <Box 
-      component="span" 
+    <Box
+      component="span"
       className="arrow-icon"
       sx={{
         display: 'inline-flex',
@@ -91,9 +91,9 @@ const SocialIcon = ({ icon: Icon, url }: { icon: React.ElementType; url: string 
 
 // Componente de item de contato
 const ContactItem = ({ icon, text }: { icon: React.ReactNode; text: string }) => (
-  <Box 
-    sx={{ 
-      display: 'flex', 
+  <Box
+    sx={{
+      display: 'flex',
       alignItems: 'flex-start',
       mb: 2.5,
       '& svg': {
@@ -181,9 +181,10 @@ const Footer = () => {
   return (
     <Box
       component="footer"
+      id="contato"
       sx={{
-        backgroundColor: '#0a1929', // Azul bem escuro
-        color: 'rgba(255, 255, 255, 1)', // Texto branco mais claro
+        backgroundColor: '#0a1929',
+        color: 'rgba(255, 255, 255, 1)',
         pt: { xs: 8, md: 12 },
         pb: { xs: 6, md: 8 },
         position: 'relative',
@@ -200,33 +201,58 @@ const Footer = () => {
       }}
     >
       <Container maxWidth="lg">
-        <Grid container spacing={6}>
+        <Grid container spacing={{ xs: 4, md: 6 }}>
           {/* Logo e descrição */}
-          <Grid item xs={12} md={4}>
-            <Box 
+          <Grid item xs={12} md={3}>
+            <Box
               component="img"
               src="/images/Logo_sem_fundo_Contab[1].png"
               alt="Contab"
               sx={{
-                height: { xs: 40, md: 60 },
+                height: { xs: 70, md: 100 },
                 width: 'auto',
-                maxWidth: '200px',
+                maxWidth: '245px',
                 objectFit: 'contain',
-                mb: 2,
+                mb: 3,
               }}
             />
-            <Typography variant="body2" color="rgba(255, 255, 255, 0.9)" sx={{ mb: 3, lineHeight: 1.7 }}>
-              Soluções contábeis completas para o sucesso do seu negócio. Oferecemos serviços personalizados com excelência e comprometimento.
+            <Typography
+              variant="body2"
+              color="rgba(255, 255, 255, 0.85)"
+              sx={{
+                mb: 3,
+                lineHeight: 1.8,
+                fontSize: { xs: '0.875rem', md: '0.9rem' }
+              }}
+            >
+              Soluções contábeis completas para o sucesso do seu negócio. Excelência e comprometimento em cada serviço.
             </Typography>
-            
-            {/* Redes Sociais */}
-            <Box sx={{ display: 'flex', gap: 2, mb: 4 }}>
-              {socialLinks.map((social, index) => (
-                <SocialIcon key={index} icon={social.icon} url={social.url} />
-              ))}
-            </Box>
+          </Grid>
 
-            {/* Informações de Contato */}
+          {/* Informações de Contato */}
+          <Grid item xs={12} md={3}>
+            <Typography
+              variant="h6"
+              sx={{
+                color: '#64b5f6',
+                fontWeight: 700,
+                mb: 3,
+                fontSize: { xs: '1.1rem', md: '1.25rem' },
+                position: 'relative',
+                '&:after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: -8,
+                  left: 0,
+                  width: '40px',
+                  height: '3px',
+                  background: '#64b5f6',
+                  borderRadius: '2px',
+                },
+              }}
+            >
+              Contato
+            </Typography>
             <Box sx={{ mt: 4 }}>
               {contactInfo.map((item, index) => (
                 <ContactItem key={index} icon={item.icon} text={item.text} />
@@ -236,13 +262,14 @@ const Footer = () => {
 
           {/* Links do rodapé */}
           {footerLinks.map((column, colIndex) => (
-            <Grid item xs={12} sm={6} md={2} key={colIndex}>
+            <Grid item xs={6} sm={4} md={2} key={colIndex}>
               <Typography
                 variant="h6"
                 sx={{
                   color: '#64b5f6',
                   fontWeight: 700,
                   mb: 3,
+                  fontSize: { xs: '1rem', md: '1.1rem' },
                   position: 'relative',
                   '&:after': {
                     content: '""',
@@ -258,7 +285,7 @@ const Footer = () => {
               >
                 {column.title}
               </Typography>
-              <Box component="ul" sx={{ listStyle: 'none', p: 0, m: 0 }}>
+              <Box component="ul" sx={{ listStyle: 'none', p: 0, m: 0, mt: 4 }}>
                 {column.links.map((link, linkIndex) => (
                   <Box component="li" key={linkIndex}>
                     <FooterLink href={link.href}>
@@ -269,92 +296,100 @@ const Footer = () => {
               </Box>
             </Grid>
           ))}
-
-          <Divider sx={{ my: 6, borderColor: 'divider' }} />
-
-          {/* Rodapé inferior */}
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: isMobile ? 'column' : 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              gap: 2,
-            }}
-          >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-                {new Date().getFullYear()}
-              </Typography>
-              <Box 
-                component="img"
-                src="/images/Logo_sem_fundo_Contab[1].png"
-                alt="Contab"
-                sx={{
-                  height: 20,
-                  width: 'auto',
-                  maxWidth: '80px',
-                  objectFit: 'contain',
-                  display: 'inline-block',
-                  verticalAlign: 'middle',
-                  mx: 0.5
-                }}
-              />
-              <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-                . Todos os direitos reservados.
-              </Typography>
-            </Box>
-            
-            <Box sx={{ display: 'flex', gap: 3 }}>
-              <Link
-                component={RouterLink}
-                to="/politica-privacidade"
-                sx={{
-                  color: 'rgba(255, 255, 255, 0.7)',
-                  textDecoration: 'none',
-                  fontSize: '0.85rem',
-                  transition: 'color 0.3s ease',
-                  '&:hover': {
-                    color: 'primary.main',
-                  },
-                }}
-              >
-                Política de Privacidade
-              </Link>
-              <Link
-                component={RouterLink}
-                to="/termos-uso"
-                sx={{
-                  color: 'rgba(255, 255, 255, 0.7)',
-                  textDecoration: 'none',
-                  fontSize: '0.85rem',
-                  transition: 'color 0.3s ease',
-                  '&:hover': {
-                    color: 'primary.main',
-                  },
-                }}
-              >
-                Termos de Uso
-              </Link>
-              <Link
-                component={RouterLink}
-                to="/cookies"
-                sx={{
-                  color: 'rgba(255, 255, 255, 0.7)',
-                  textDecoration: 'none',
-                  fontSize: '0.85rem',
-                  transition: 'color 0.3s ease',
-                  '&:hover': {
-                    color: 'primary.main',
-                  },
-                }}
-              >
-                Política de Cookies
-              </Link>
-            </Box>
-          </Box>
         </Grid>
 
+        {/* Divider */}
+        <Divider sx={{ my: { xs: 4, md: 6 }, borderColor: 'rgba(255, 255, 255, 0.1)' }} />
+
+        {/* Rodapé inferior */}
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 3,
+          }}
+        >
+          {/* Copyright */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '0.875rem' }}>
+              © {new Date().getFullYear()}
+            </Typography>
+            <Box
+              component="img"
+              src="/images/Logo_sem_fundo_Contab[1].png"
+              alt="Contab"
+              sx={{
+                height: 18,
+                width: 'auto',
+                maxWidth: '70px',
+                objectFit: 'contain',
+                display: 'inline-block',
+                verticalAlign: 'middle',
+              }}
+            />
+            <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '0.875rem' }}>
+              - Todos os direitos reservados
+            </Typography>
+          </Box>
+
+          {/* Redes Sociais */}
+          <Box sx={{ display: 'flex', gap: 1.5 }}>
+            {socialLinks.map((social, index) => (
+              <SocialIcon key={index} icon={social.icon} url={social.url} />
+            ))}
+          </Box>
+
+          {/* Links legais */}
+          <Box sx={{ display: 'flex', gap: { xs: 2, md: 3 }, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <Link
+              component={RouterLink}
+              to="/politica-privacidade"
+              sx={{
+                color: 'rgba(255, 255, 255, 0.7)',
+                textDecoration: 'none',
+                fontSize: '0.8rem',
+                transition: 'color 0.3s ease',
+                '&:hover': {
+                  color: '#64b5f6',
+                },
+              }}
+            >
+              Privacidade
+            </Link>
+            <Link
+              component={RouterLink}
+              to="/termos-uso"
+              sx={{
+                color: 'rgba(255, 255, 255, 0.7)',
+                textDecoration: 'none',
+                fontSize: '0.8rem',
+                transition: 'color 0.3s ease',
+                '&:hover': {
+                  color: '#64b5f6',
+                },
+              }}
+            >
+              Termos
+            </Link>
+            <Link
+              component={RouterLink}
+              to="/cookies"
+              sx={{
+                color: 'rgba(255, 255, 255, 0.7)',
+                textDecoration: 'none',
+                fontSize: '0.8rem',
+                transition: 'color 0.3s ease',
+                '&:hover': {
+                  color: '#64b5f6',
+                },
+              }}
+            >
+              Cookies
+            </Link>
+          </Box>
+        </Box>
       </Container>
 
       {/* Botão de voltar ao topo */}

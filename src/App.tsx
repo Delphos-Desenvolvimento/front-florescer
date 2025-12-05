@@ -13,6 +13,9 @@ import AdminLogin from './componnents/adminpage/login';
 import AdminHome from './componnents/adminpage/adminhome';
 import AllNewsPage from './componnents/page/AllNewsPage';
 import NewsDetailPage from './componnents/page/NewsDetailPage';
+import TeamPage from './componnents/page/TeamPage';
+import UsefulLinks from './componnents/page/UsefulLinks';
+import PublicLayout from './componnents/PublicLayout';
 
 // Componente de rota protegida
 // Componente de rota protegida
@@ -57,42 +60,28 @@ function App() {
       <CssBaseline />
       <Router>
         <Routes>
-          <Route path="/" element={<Home />} />
-
-          {/* Páginas de notícias */}
-          <Route path="/noticias" element={<AllNewsPage />} />
-          <Route path="/noticia/:id" element={<NewsDetailPage />} />
-
-          {/* Redirect /login to /admin/login for backward compatibility */}
-          <Route path="/login" element={<Navigate to="/admin/login" replace />} />
-
-          {/* Rotas de administração */}
           <Route path="/admin/login" element={<AdminLogin />} />
-
           <Route
-            path="/admin"
+            path="/admin/*"
             element={
               <ProtectedRoute>
                 <AdminHome />
               </ProtectedRoute>
             }
           />
-
           <Route
-            path="/admin/dashboard"
+            path="/*"
             element={
-              <ProtectedRoute>
-                <AdminHome />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/admin/noticias"
-            element={
-              <ProtectedRoute>
-                <AdminHome />
-              </ProtectedRoute>
+              <PublicLayout>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/noticias" element={<AllNewsPage />} />
+                  <Route path="/noticia/:id" element={<NewsDetailPage />} />
+                  <Route path="/equipe" element={<TeamPage />} />
+                  <Route path="/links-uteis" element={<UsefulLinks />} />
+                  <Route path="/login" element={<Navigate to="/admin/login" replace />} />
+                </Routes>
+              </PublicLayout>
             }
           />
         </Routes>

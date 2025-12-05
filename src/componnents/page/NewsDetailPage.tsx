@@ -1,22 +1,29 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link as RouterLink } from 'react-router-dom';
+import { useParams, Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
   Box,
   Container,
   Typography,
   CircularProgress,
   Alert,
-  Button
+  Button,
+  Grid,
+  TextField,
+  Divider
 } from '@mui/material';
 import { ArrowLeft } from 'lucide-react';
 import NewsService from '../../API/news';
 import type { NewsItem } from '../../API/news';
+import Comentarios from './comentarios';
 
 function NewsDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [news, setNews] = useState<NewsItem | null>(null);
+  const [recentNews, setRecentNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -26,6 +33,14 @@ function NewsDetailPage() {
 
         const newsData = await NewsService.getById(parseInt(id));
         setNews(newsData);
+
+        // Fetch recent news for sidebar
+        const allNews = await NewsService.getAll({ status: 'publicada' });
+        const filtered = allNews
+          .filter(item => item.id !== parseInt(id))
+          .sort((a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime())
+          .slice(0, 2);
+        setRecentNews(filtered);
       } catch (err) {
         console.error('Erro ao buscar notícia:', err);
         setError('Não foi possível carregar a notícia. Por favor, tente novamente mais tarde.');
@@ -70,114 +85,229 @@ function NewsDetailPage() {
     : `https://picsum.photos/1200/600?random=${id}`;
 
   return (
-    <Box sx={{ py: { xs: 4, sm: 6, md: 8 }, backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
+    <Box sx={{ pt: { xs: 12, sm: 14, md: 16 }, pb: { xs: 4, sm: 6, md: 8 }, backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
       <Container maxWidth="lg">
+        <Grid container spacing={4}>
+          {/* Main Content */}
+          <Grid item xs={12} md={9}>
+            <article>
+              <Box sx={{ mb: 4, maxWidth: '800px', mx: 'auto' }}>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  display="block"
+                  mb={2}
+                >
+                  {news.date || 'Sem data'} • {news.category || 'Geral'}
+                </Typography>
+
+                <Typography
+                  variant="h2"
+                  component="h1"
+                  sx={{
+                    fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
+                    fontWeight: 700,
+                    lineHeight: 1.2,
+                    mb: 3,
+                    color: 'text.primary',
+                  }}
+                >
+                  {news.title}
+                </Typography>
+              </Box>
+
+              <Box
+                sx={{
+                  mb: 6,
+                  borderRadius: 2,
+                  overflow: 'hidden',
+                  boxShadow: 3,
+                  position: 'relative',
+                  width: '100%',
+                  maxWidth: '800px',
+                  mx: 'auto',
+                  backgroundColor: '#000',
+                  '&::before': {
+                    content: '""',
+                    display: 'block',
+                    paddingTop: '56.25%',
+                  },
+                  '& img': {
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }
+                }}
+              >
+                <img
+                  src={mainImage}
+                  alt={news.title}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = `https://picsum.photos/600/600?random=${id}`;
+                  }}
+                />
+              </Box>
+
+              <Box
+                sx={{
+                  maxWidth: '800px',
+                  mx: 'auto',
+                  '& p': {
+                    mb: 3,
+                    fontSize: '1.1rem',
+                    lineHeight: 1.8,
+                    color: 'text.primary',
+                  },
+                  '& h2, & h3': {
+                    mt: 6,
+                    mb: 3,
+                    color: 'primary.main',
+                  },
+                  '& img': {
+                    maxWidth: '100%',
+                    height: 'auto',
+                    borderRadius: 2,
+                    my: 4,
+                    display: 'block',
+                    mx: 'auto',
+                  },
+                  '& a': {
+                    color: 'primary.main',
+                    textDecoration: 'none',
+                    '&:hover': {
+                      textDecoration: 'underline',
+                    },
+                  },
+                }}
+                dangerouslySetInnerHTML={{ __html: news.content || '' }}
+              />
+            </article>
+          </Grid>
+
+          {/* Sidebar */}
+          <Grid item xs={12} md={3}>
+            <Box sx={{ position: 'sticky', top: 20 }}>
+              {/* Divider */}
+              <Divider
+                orientation="vertical"
+                sx={{
+                  display: { xs: 'none', md: 'block' },
+                  position: 'absolute',
+                  left: -16,
+                  height: '100%',
+                  borderColor: 'divider'
+                }}
+              />
+
+              {/* Search Box */}
+              <Box sx={{ mb: 3, backgroundColor: 'background.paper', p: 2, borderRadius: 2, boxShadow: 1 }}>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <TextField
+                    fullWidth
+                    size="small"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Buscar..."
+                    sx={{
+                      '& .MuiInputBase-input': {
+                        fontSize: '0.875rem',
+                        padding: '8px 12px'
+                      }
+                    }}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter' && searchQuery.trim()) {
+                        navigate(`/noticias?search=${encodeURIComponent(searchQuery)}`);
+                      }
+                    }}
+                  />
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    sx={{
+                      fontSize: '0.75rem',
+                      minWidth: 'auto',
+                      px: 2,
+                      whiteSpace: 'nowrap'
+                    }}
+                    onClick={() => {
+                      if (searchQuery.trim()) {
+                        navigate(`/noticias?search=${encodeURIComponent(searchQuery)}`);
+                      }
+                    }}
+                  >
+                    Pesquisar
+                  </Button>
+                </Box>
+              </Box>
+
+              {/* Recent News */}
+              <Box sx={{ backgroundColor: 'background.paper', p: 2, borderRadius: 2, boxShadow: 1 }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    mb: 2,
+                    fontWeight: 700,
+                    fontSize: '0.95rem',
+                    color: 'text.primary'
+                  }}
+                >
+                  Notícias recentes
+                </Typography>
+                {recentNews.map((item) => (
+                  <Box
+                    key={item.id}
+                    sx={{
+                      mb: 1.5,
+                      pb: 1.5,
+                      borderBottom: '1px solid',
+                      borderColor: 'divider',
+                      '&:last-child': {
+                        borderBottom: 'none',
+                        mb: 0,
+                        pb: 0
+                      }
+                    }}
+                  >
+                    <Typography
+                      component={RouterLink}
+                      to={`/noticia/${item.id}`}
+                      sx={{
+                        color: 'text.secondary',
+                        textDecoration: 'none',
+                        fontSize: '0.8rem',
+                        lineHeight: 1.5,
+                        display: 'block',
+                        '&:hover': {
+                          color: 'primary.main',
+                          textDecoration: 'underline'
+                        }
+                      }}
+                    >
+                      {item.title}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+          </Grid>
+        </Grid>
+      </Container>
+      <Container maxWidth="lg" sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
         <Button
           component={RouterLink}
           to="/noticias"
+          variant="outlined"
           startIcon={<ArrowLeft size={20} />}
-          sx={{ mb: 3, textTransform: 'none' }}
+          sx={{ textTransform: 'none' }}
         >
           Voltar para notícias
         </Button>
-
-        <article>
-          <Box sx={{ mb: 4 }}>
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              display="block"
-              mb={2}
-            >
-              {news.date || 'Sem data'} • {news.category || 'Geral'}
-            </Typography>
-
-            <Typography
-              variant="h2"
-              component="h1"
-              sx={{
-                fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
-                fontWeight: 700,
-                lineHeight: 1.2,
-                mb: 3,
-                color: 'text.primary',
-              }}
-            >
-              {news.title}
-            </Typography>
-          </Box>
-
-          <Box
-            sx={{
-              mb: 6,
-              borderRadius: 2,
-              overflow: 'hidden',
-              boxShadow: 3,
-              position: 'relative',
-              width: '100%',
-              maxWidth: '600px',
-              mx: 'auto',
-              backgroundColor: '#000',
-              '&::before': {
-                content: '""',
-                display: 'block',
-                paddingTop: '100%',
-              },
-              '& img': {
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-              }
-            }}
-          >
-            <img
-              src={mainImage}
-              alt={news.title}
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = `https://picsum.photos/600/600?random=${id}`;
-              }}
-            />
-          </Box>
-
-          <Box
-            sx={{
-              maxWidth: '800px',
-              mx: 'auto',
-              '& p': {
-                mb: 3,
-                fontSize: '1.1rem',
-                lineHeight: 1.8,
-                color: 'text.primary',
-              },
-              '& h2, & h3': {
-                mt: 6,
-                mb: 3,
-                color: 'primary.main',
-              },
-              '& img': {
-                maxWidth: '100%',
-                height: 'auto',
-                borderRadius: 2,
-                my: 4,
-                display: 'block',
-                mx: 'auto',
-              },
-              '& a': {
-                color: 'primary.main',
-                textDecoration: 'none',
-                '&:hover': {
-                  textDecoration: 'underline',
-                },
-              },
-            }}
-            dangerouslySetInnerHTML={{ __html: news.content || '' }}
-          />
-        </article>
       </Container>
+      <Comentarios newsId={parseInt(id || '0')} />
     </Box>
   );
 }

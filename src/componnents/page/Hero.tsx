@@ -1,5 +1,5 @@
 import { Box, Typography, Container, Button } from '@mui/material';
- 
+
 
 
 
@@ -10,8 +10,8 @@ function Hero() {
       sx={{
         position: 'relative',
         color: 'common.white',
-        height: '100vh',
-        minHeight: '100vh',
+        height: '110vh',
+        minHeight: '110vh',
         margin: 0,
         padding: 0,
         display: 'flex',
@@ -34,10 +34,10 @@ function Hero() {
       }}
     >
       {/* Fundo com gradiente animado - Removido o componente AnimatedGradient já que o gradiente foi movido para o container principal */}
-      
+
       {/* Conteúdo principal */}
-      <Container 
-        maxWidth="lg" 
+      <Container
+        maxWidth="lg"
         sx={{
           position: 'relative',
           zIndex: 2,
@@ -66,7 +66,7 @@ function Hero() {
               src="/images/Logo_sem_fundo_Contab[1].png"
               alt="Contab Logo"
               sx={{
-                width: { xs: '280px', md: '450px' },
+                width: { xs: '320px', md: '500px' },
                 height: 'auto',
                 maxWidth: '100%',
                 display: 'block',
@@ -104,12 +104,12 @@ function Hero() {
             color="primary"
             size="large"
             component="a"
-            href="https://api.whatsapp.com/send/?phone=%2B558695541237&text&type=phone_number&app_absent=0"
+            href="https://api.whatsapp.com/send/?phone=%2B558699457780&text&type=phone_number&app_absent=0"
             target="_blank"
             rel="noopener noreferrer"
-            sx={{ 
-              borderRadius: '50px', 
-              px: 4, 
+            sx={{
+              borderRadius: '50px',
+              px: 4,
               py: 1.5,
               textTransform: 'none',
               fontSize: '1.1rem',

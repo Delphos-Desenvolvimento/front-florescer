@@ -1,0 +1,275 @@
+/* Accessibility Widget Styles */
+
+/* Apply line height and letter spacing */
+* {
+  line-height: var(--accessibility-line-height, 1.5) !important;
+  letter-spacing: var(--accessibility-letter-spacing, 0) !important;
+}
+
+/* High Contrast Mode */
+.high-contrast {
+  filter: contrast(1.5);
+}
+
+.high-contrast * {
+  border-color: #000 !important;
+}
+
+.high-contrast a {
+  color: #0000ff !important;
+  text-decoration: underline !important;
+}
+
+/* Dark Mode - Comprehensive Implementation */
+.dark-mode {
+  --dark-bg-primary: #121212;
+  --dark-bg-secondary: #1e1e1e;
+  --dark-bg-tertiary: #2a2a2a;
+  --dark-text-primary: #e0e0e0;
+  --dark-text-secondary: #b0b0b0;
+  --dark-border: #333;
+  --dark-link: #90caf9;
+}
+
+/* Base dark mode styles */
+.dark-mode,
+.dark-mode body {
+  background-color: var(--dark-bg-primary) !important;
+  color: var(--dark-text-primary) !important;
+}
+
+/* All container elements */
+.dark-mode main,
+.dark-mode div,
+.dark-mode section,
+.dark-mode article,
+.dark-mode aside,
+.dark-mode nav,
+.dark-mode header,
+.dark-mode footer,
+.dark-mode form {
+  background-color: var(--dark-bg-primary) !important;
+  color: var(--dark-text-primary) !important;
+}
+
+/* Typography */
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode h3,
+.dark-mode h4,
+.dark-mode h5,
+.dark-mode h6 {
+  color: var(--dark-text-primary) !important;
+}
+
+.dark-mode p,
+.dark-mode span,
+.dark-mode li,
+.dark-mode label,
+.dark-mode td,
+.dark-mode th {
+  color: var(--dark-text-primary) !important;
+}
+
+/* Links */
+.dark-mode a {
+  color: var(--dark-link) !important;
+}
+
+.dark-mode a:hover {
+  color: #bbdefb !important;
+}
+
+/* MUI Components */
+.dark-mode .MuiPaper-root,
+.dark-mode .MuiCard-root,
+.dark-mode .MuiDialog-paper {
+  background-color: var(--dark-bg-secondary) !important;
+  color: var(--dark-text-primary) !important;
+  border: 1px solid var(--dark-border) !important;
+}
+
+.dark-mode .MuiAppBar-root {
+  background-color: var(--dark-bg-secondary) !important;
+  border-bottom: 1px solid var(--dark-border) !important;
+}
+
+.dark-mode .MuiDrawer-paper {
+  background-color: var(--dark-bg-secondary) !important;
+  color: var(--dark-text-primary) !important;
+}
+
+.dark-mode .MuiTypography-root {
+  color: var(--dark-text-primary) !important;
+}
+
+.dark-mode .MuiDivider-root {
+  border-color: var(--dark-border) !important;
+}
+
+/* Buttons */
+.dark-mode button,
+.dark-mode .MuiButton-root,
+.dark-mode .MuiIconButton-root {
+  background-color: var(--dark-bg-tertiary) !important;
+  color: var(--dark-text-primary) !important;
+  border-color: var(--dark-border) !important;
+}
+
+.dark-mode button:hover,
+.dark-mode .MuiButton-root:hover {
+  background-color: #3a3a3a !important;
+}
+
+.dark-mode .MuiButton-contained {
+  background-color: #1976d2 !important;
+  color: #ffffff !important;
+}
+
+.dark-mode .MuiButton-contained:hover {
+  background-color: #1565c0 !important;
+}
+
+/* Inputs and Forms */
+.dark-mode input,
+.dark-mode textarea,
+.dark-mode select,
+.dark-mode .MuiTextField-root,
+.dark-mode .MuiOutlinedInput-root,
+.dark-mode .MuiInputBase-root {
+  background-color: var(--dark-bg-tertiary) !important;
+  color: var(--dark-text-primary) !important;
+  border-color: var(--dark-border) !important;
+}
+
+.dark-mode .MuiOutlinedInput-notchedOutline {
+  border-color: var(--dark-border) !important;
+}
+
+.dark-mode input::placeholder,
+.dark-mode textarea::placeholder {
+  color: var(--dark-text-secondary) !important;
+}
+
+/* Tables */
+.dark-mode table {
+  background-color: var(--dark-bg-secondary) !important;
+  border-color: var(--dark-border) !important;
+}
+
+.dark-mode th,
+.dark-mode td {
+  border-color: var(--dark-border) !important;
+}
+
+/* Images and Media */
+.dark-mode img {
+  opacity: 0.85;
+  filter: brightness(0.85);
+}
+
+.dark-mode video {
+  opacity: 0.9;
+}
+
+/* Preserve logos and icons */
+.dark-mode img[alt*="logo"],
+.dark-mode img[alt*="Logo"],
+.dark-mode svg {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* Lists */
+.dark-mode ul,
+.dark-mode ol {
+  color: var(--dark-text-primary) !important;
+}
+
+/* Chips and Badges */
+.dark-mode .MuiChip-root {
+  background-color: var(--dark-bg-tertiary) !important;
+  color: var(--dark-text-primary) !important;
+  border-color: var(--dark-border) !important;
+}
+
+/* Tooltips */
+.dark-mode .MuiTooltip-tooltip {
+  background-color: var(--dark-bg-tertiary) !important;
+  color: var(--dark-text-primary) !important;
+}
+
+/* Invert Colors */
+.invert-colors {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+.invert-colors img,
+.invert-colors video {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Large Cursor */
+.large-cursor,
+.large-cursor * {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><path d="M2 2 L2 28 L10 20 L14 28 L18 26 L14 18 L22 18 Z" fill="black" stroke="white" stroke-width="1"/></svg>') 0 0, auto !important;
+}
+
+.large-cursor a,
+.large-cursor button,
+.large-cursor [role="button"] {
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><path d="M10 2 L10 10 L2 10 L2 14 L10 14 L10 22 L14 22 L14 14 L22 14 L22 10 L14 10 L14 2 Z" fill="black" stroke="white" stroke-width="1"/></svg>') 8 8, pointer !important;
+}
+
+/* Highlight Links - More visible and better styled */
+.highlight-links a {
+  background-color: #ffeb3b !important;
+  color: #000000 !important;
+  padding: 3px 6px !important;
+  border-radius: 3px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  border: 2px solid #ffc107 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  transition: all 0.2s ease !important;
+}
+
+.highlight-links a:hover {
+  background-color: #ffc107 !important;
+  transform: scale(1.05) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Highlight links in dark mode */
+.dark-mode.highlight-links a {
+  background-color: #ffd54f !important;
+  color: #000000 !important;
+  border-color: #ffb300 !important;
+}
+
+/* Dyslexia Font */
+.dyslexia-font,
+.dyslexia-font * {
+  font-family: 'OpenDyslexic', 'Comic Sans MS', 'Arial', sans-serif !important;
+}
+
+/* Focus visible for keyboard navigation */
+*:focus-visible {
+  outline: 3px solid #0066cc !important;
+  outline-offset: 2px !important;
+}
+
+.dark-mode *:focus-visible {
+  outline-color: #90caf9 !important;
+}
+
+/* Ensure text remains readable */
+.high-contrast *,
+.invert-colors * {
+  text-shadow: none !important;
+}
+
+/* Ensure images don't break in high contrast */
+.high-contrast img {
+  filter: none !important;
+}

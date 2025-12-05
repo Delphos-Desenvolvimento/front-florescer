@@ -46,35 +46,41 @@ const theme = createTheme({
     divider: 'rgba(0, 0, 0, 0.08)',
   },
   typography: {
-    fontFamily: '"Poppins", "Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
     h1: {
+      fontFamily: '"Outfit", sans-serif',
       fontSize: '3.5rem',
       fontWeight: 800,
       color: '#1a237e',
       lineHeight: 1.2,
     },
     h2: {
+      fontFamily: '"Outfit", sans-serif',
       fontSize: '2.8rem',
       fontWeight: 700,
       color: '#1a237e',
       lineHeight: 1.3,
     },
     h3: {
+      fontFamily: '"Outfit", sans-serif',
       fontSize: '2.2rem',
       fontWeight: 600,
       color: '#1a237e',
     },
     h4: {
+      fontFamily: '"Outfit", sans-serif',
       fontSize: '1.8rem',
       fontWeight: 600,
       color: '#1a237e',
     },
     h5: {
+      fontFamily: '"Outfit", sans-serif',
       fontSize: '1.5rem',
       fontWeight: 600,
       color: '#1a237e',
     },
     h6: {
+      fontFamily: '"Outfit", sans-serif',
       fontSize: '1.25rem',
       fontWeight: 600,
       color: '#1a237e',
@@ -178,9 +184,9 @@ const theme = createTheme({
   },
 });
 
-// Adiciona a fonte Poppins ao cabeçalho do documento
+// Adiciona as fontes Inter e Outfit ao cabeçalho do documento
 const link = document.createElement('link');
-link.href = 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap';
+link.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap';
 link.rel = 'stylesheet';
 document.head.appendChild(link);
 

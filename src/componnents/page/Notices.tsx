@@ -26,6 +26,13 @@ interface ExtendedNewsItem extends Omit<NewsItem, 'content' | 'id'> {
 // Tipagem para as props do componente NewsCard
 interface NewsCardProps extends ExtendedNewsItem { }
 
+// Função para remover tags HTML e retornar texto limpo
+const stripHtml = (html: string): string => {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
+};
+
 // Componente de cartão de notícia
 const NewsCard = ({
   id,
@@ -41,11 +48,12 @@ const NewsCard = ({
     ? (base64.startsWith('data:') ? base64 : `data:image/jpeg;base64,${base64}`)
     : undefined;
   return (
-    <Grid item xs={12} sm={6} md={4} lg={4} sx={{ px: { xs: 1, sm: 2 } }}>
+    <Grid item xs={12} sm={6} md={4} lg={4}>
       <div style={{ height: '100%' }}>
-        <CardActionArea onClick={onClick}>
+        <CardActionArea onClick={onClick} sx={{ height: '100%' }}>
           <Card sx={{
             height: '100%',
+            minHeight: { xs: 420, sm: 450, md: 480 },
             display: 'flex',
             flexDirection: 'column',
             transition: 'transform 0.3s ease, box-shadow 0.3s ease',
@@ -58,6 +66,7 @@ const NewsCard = ({
               sx={{
                 width: '100%',
                 height: { xs: 180, sm: 200, md: 220 },
+                flexShrink: 0,
                 backgroundImage: `url(${src || `https://picsum.photos/300/200?random=${id}`})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center 30%',
@@ -65,7 +74,7 @@ const NewsCard = ({
                 overflow: 'hidden',
               }}
             />
-            <CardContent sx={{ flexGrow: 1, p: { xs: 1.5, sm: 2 } }}>
+            <CardContent sx={{ flexGrow: 1, p: { xs: 1.5, sm: 2 }, display: 'flex', flexDirection: 'column' }}>
               <Typography
                 variant="caption"
                 color="text.secondary"
@@ -84,7 +93,14 @@ const NewsCard = ({
                 sx={{
                   fontSize: { xs: '1rem', sm: '1.1rem', md: '1.25rem' },
                   lineHeight: 1.3,
-                  mb: { xs: 1, sm: 1.5 }
+                  mb: { xs: 1, sm: 1.5 },
+                  fontWeight: 600,
+                  height: { xs: '2.6em', sm: '2.6em' },
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
                 }}
               >
                 {title}
@@ -100,10 +116,11 @@ const NewsCard = ({
                   textOverflow: 'ellipsis',
                   mb: 2,
                   fontSize: { xs: '0.8rem', sm: '0.875rem' },
-                  minHeight: { xs: '4.5em', sm: '5em' }
+                  height: { xs: '4.5em', sm: '4.5em' },
+                  flexGrow: 0,
                 }}
               >
-                {description}
+                {stripHtml(description)}
               </Typography>
               <Box sx={{
                 display: 'flex',
@@ -213,9 +230,9 @@ function Notices() {
           </Alert>
         )}
 
-        <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
+        <Grid container spacing={{ xs: 2, sm: 3, md: 4 }} sx={{ mb: 4 }}>
           {news.length > 0 ? (
-            news.slice(0, 6).map((item) => (
+            news.slice(0, 3).map((item) => (
               <NewsCard
                 key={item.id}
                 {...item}
@@ -224,11 +241,13 @@ function Notices() {
               />
             ))
           ) : (
-            <Box width="100%" textAlign="center" py={4}>
-              <Typography variant="body1" color="text.secondary">
-                Nenhuma notícia encontrada.
-              </Typography>
-            </Box>
+            <Grid item xs={12}>
+              <Box width="100%" textAlign="center" py={4}>
+                <Typography variant="body1" color="text.secondary">
+                  Nenhuma notícia encontrada.
+                </Typography>
+              </Box>
+            </Grid>
           )}
         </Grid>
 

@@ -30,6 +30,13 @@ interface ExtendedNewsItem extends Omit<NewsItem, 'content' | 'id'> {
   content?: string;
 }
 
+// Função para remover tags HTML e retornar texto limpo
+const stripHtml = (html: string): string => {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
+};
+
 // Componente de notícia individual
 const NewsCard = ({
   id,
@@ -56,10 +63,11 @@ const NewsCard = ({
   return (
     <Grid item xs={12} sm={6} md={4} lg={4} sx={{ px: { xs: 1, sm: 2 }, mb: 4 }}>
       <div style={{ height: '100%' }}>
-        <div onClick={onClick} style={{ cursor: 'pointer' }}>
+        <div onClick={onClick} style={{ cursor: 'pointer', height: '100%' }}>
           <Box
             sx={{
               height: '100%',
+              minHeight: { xs: 420, sm: 450, md: 480 },
               display: 'flex',
               flexDirection: 'column',
               transition: 'transform 0.3s ease, box-shadow 0.3s ease',
@@ -76,7 +84,8 @@ const NewsCard = ({
             <Box
               sx={{
                 width: '100%',
-                height: '250px',
+                height: { xs: 180, sm: 200, md: 220 },
+                flexShrink: 0,
                 backgroundImage: `url(${src || `https://picsum.photos/600/400?random=${id}`})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
@@ -104,7 +113,12 @@ const NewsCard = ({
                   lineHeight: 1.3,
                   mb: { xs: 1, sm: 1.5 },
                   fontWeight: 600,
-                  flexGrow: 1
+                  height: { xs: '2.6em', sm: '2.6em' },
+                  display: '-webkit-box',
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
                 }}
               >
                 {title}
@@ -120,19 +134,19 @@ const NewsCard = ({
                   textOverflow: 'ellipsis',
                   mb: 2,
                   fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                  height: { xs: '4.5em', sm: '4.5em' },
+                  flexGrow: 0,
                 }}
               >
-                {description}
+                {stripHtml(description)}
               </Typography>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 'auto' }}>
                 <Chip label={category || 'Geral'} size="small" color="primary" variant="outlined" />
                 <Button
                   variant="text"
                   color="primary"
                   size="small"
                   sx={{
-                    mt: 'auto',
-                    alignSelf: 'flex-start',
                     textTransform: 'none',
                     fontWeight: 600,
                     p: 0,
@@ -194,7 +208,7 @@ function AllNewsPage() {
     fetchNews();
   }, []);
 
-  const categories = Array.from(new Set(['Todas', ...news.map(n => n.category || 'Geral')]));
+  const categories = Array.from(new Set(['Todas', ...news.map(n => n.category || 'Geral')])).filter(cat => cat !== 'Notícia' && cat !== 'Todas');
 
   const filtered = news.filter(n => {
     const matchesCategory = selectedCategory === 'Todas' || (n.category || 'Geral') === selectedCategory;
@@ -225,7 +239,7 @@ function AllNewsPage() {
   }
 
   return (
-    <Box sx={{ py: { xs: 4, sm: 6, md: 8 }, backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
+    <Box sx={{ pt: { xs: 12, sm: 14, md: 16 }, pb: { xs: 4, sm: 6, md: 8 }, backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
       <Container maxWidth="lg">
         <Button
           component={RouterLink}

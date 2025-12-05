@@ -2,7 +2,12 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import type { ChangeEvent } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import NewsService, { type NewsItem as ApiNewsItem } from '../../API/news';
+import PartnersService, { type Partner } from '../../API/partners';
+import RichTextEditor from '../common/RichTextEditor';
 import StatsService, { type StatsOverview } from '../../API/stats';
+import ContentAdminPage from '../page/admin/ContentAdminPage';
+import TeamAdminPage from '../page/admin/TeamAdminPage';
+import LinksAdminPage from '../page/admin/LinksAdminPage';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts';
 import {
@@ -48,17 +53,20 @@ import {
   Article as ArticleIcon,
   Logout as LogoutIcon,
   Add as AddIcon,
+  Edit as EditIcon,
   DeleteForever as DeleteForeverIcon,
-  Description as DescriptionIcon,
-  Menu as MenuIcon,
   Archive as ArchiveIcon,
-  RestoreFromTrash as RestoreIcon,
+  Restore as RestoreIcon,
+  Description as DescriptionIcon,
   CheckCircle as CheckCircleIcon,
   Pending as PendingIcon,
   People as PeopleIcon,
-  Edit as EditIcon,
   CloudUpload as CloudUploadIcon,
-  Visibility as VisibilityIcon
+  Visibility as VisibilityIcon,
+  Handshake as HandshakeIcon,
+  Link as LinkIcon,
+  Group as GroupIcon,
+  Menu as MenuIcon
 } from '@mui/icons-material';
 
 
@@ -131,6 +139,10 @@ export default function AdminHome() {
         <List>
           <ListItemLink to="/admin" icon={<DashboardIcon />} primary="Dashboard" />
           <ListItemLink to="/admin/noticias" icon={<ArticleIcon />} primary="Notícias" />
+          <ListItemLink to="/admin/parceiros" icon={<HandshakeIcon />} primary="Parceiros" />
+          <ListItemLink to="/admin/links-uteis" icon={<LinkIcon />} primary="Links Úteis" />
+          <ListItemLink to="/admin/conteudo" icon={<DescriptionIcon />} primary="Conteúdo" />
+          <ListItemLink to="/admin/equipe" icon={<GroupIcon />} primary="Nossa Equipe" />
         </List>
       </div>
       <div>
@@ -284,8 +296,191 @@ export default function AdminHome() {
   });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const partnerFileInputRef = useRef<HTMLInputElement>(null);
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Partners state management
+  const [partners, setPartners] = useState<Partner[]>([]);
+  const [isLoadingPartners, setIsLoadingPartners] = useState(false);
+  const [openPartnerDialog, setOpenPartnerDialog] = useState(false);
+  const [currentPartner, setCurrentPartner] = useState<Partial<Partner> & { logoPreview?: string }>({
+    name: '',
+    displayOrder: 0,
+    active: true,
+    logoPreview: ''
+  });
+  const [selectedPartnerLogo, setSelectedPartnerLogo] = useState<File | null>(null);
+  const [partnerErrors, setPartnerErrors] = useState<Record<string, string>>({});
+
+  // Load partners
+  const loadPartners = useCallback(async () => {
+    try {
+      setIsLoadingPartners(true);
+      const allPartners = await PartnersService.getAll(false);
+      setPartners(allPartners);
+    } catch (error) {
+      console.error('Erro ao carregar parceiros:', error);
+      setSnackbar({
+        open: true,
+        message: 'Erro ao carregar parceiros. Tente novamente mais tarde.',
+        severity: 'error'
+      });
+    } finally {
+      setIsLoadingPartners(false);
+    }
+  }, []);
+
+  // Load partners on mount
+  useEffect(() => {
+    if (location.pathname.includes('/admin/parceiros')) {
+      loadPartners();
+    }
+  }, [location.pathname, loadPartners]);
+
+  // Partner handlers
+  const handleOpenPartnerDialog = (partner: Partner | null = null) => {
+    if (partner) {
+      setCurrentPartner({
+        ...partner,
+        logoPreview: partner.logoBase64.startsWith('data:') ? partner.logoBase64 : `data:image/jpeg;base64,${partner.logoBase64}`
+      });
+    } else {
+      setCurrentPartner({
+        name: '',
+        displayOrder: 0,
+        active: true,
+        logoPreview: ''
+      });
+      setSelectedPartnerLogo(null);
+    }
+    setPartnerErrors({});
+    setOpenPartnerDialog(true);
+  };
+
+  const handleClosePartnerDialog = () => {
+    setOpenPartnerDialog(false);
+    setCurrentPartner({
+      name: '',
+      displayOrder: 0,
+      active: true,
+      logoPreview: ''
+    });
+    setSelectedPartnerLogo(null);
+    setPartnerErrors({});
+  };
+
+  const handlePartnerLogoChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedPartnerLogo(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCurrentPartner(prev => ({
+          ...prev,
+          logoPreview: reader.result as string
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handlePartnerInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setCurrentPartner(prev => ({
+      ...prev,
+      [name]: name === 'displayOrder' ? parseInt(value) || 0 : value
+    }));
+    if (partnerErrors[name]) {
+      setPartnerErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
+
+  const validatePartnerForm = () => {
+    const newErrors: Record<string, string> = {};
+    if (!currentPartner.name?.trim()) newErrors.name = 'Nome é obrigatório';
+    if (!currentPartner.id && !selectedPartnerLogo && !currentPartner.logoPreview) {
+      newErrors.logo = 'Logo é obrigatória';
+    }
+    setPartnerErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSavePartner = async () => {
+    if (!validatePartnerForm()) return;
+
+    try {
+      if (currentPartner.id) {
+        // Update existing partner
+        const updated = await PartnersService.update(
+          currentPartner.id,
+          {
+            name: currentPartner.name,
+            displayOrder: currentPartner.displayOrder,
+            active: currentPartner.active
+          },
+          selectedPartnerLogo || undefined
+        );
+        setPartners(prevPartners =>
+          prevPartners.map(p => p.id === updated.id ? updated : p)
+        );
+        setSnackbar({
+          open: true,
+          message: 'Parceiro atualizado com sucesso!',
+          severity: 'success'
+        });
+      } else {
+        // Create new partner
+        const created = await PartnersService.create(
+          {
+            name: currentPartner.name!,
+            displayOrder: currentPartner.displayOrder || 0,
+            active: currentPartner.active ?? true,
+            logoBase64: '' // Will be set by the file
+          },
+          selectedPartnerLogo!
+        );
+        setPartners(prevPartners => [...prevPartners, created]);
+        setSnackbar({
+          open: true,
+          message: 'Parceiro adicionado com sucesso!',
+          severity: 'success'
+        });
+      }
+      handleClosePartnerDialog();
+    } catch (error) {
+      console.error('Erro ao salvar parceiro:', error);
+      setSnackbar({
+        open: true,
+        message: 'Erro ao salvar parceiro. Tente novamente.',
+        severity: 'error'
+      });
+    }
+  };
+
+  const handleDeletePartner = async (id: number) => {
+    if (window.confirm('Tem certeza que deseja remover este parceiro?')) {
+      try {
+        await PartnersService.delete(id);
+        setPartners(prevPartners => prevPartners.filter(p => p.id !== id));
+        setSnackbar({
+          open: true,
+          message: 'Parceiro removido com sucesso!',
+          severity: 'success'
+        });
+      } catch (error) {
+        console.error('Erro ao remover parceiro:', error);
+        setSnackbar({
+          open: true,
+          message: 'Erro ao remover parceiro. Tente novamente.',
+          severity: 'error'
+        });
+      }
+    }
+  };
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
     setActiveTab(newValue);
@@ -610,7 +805,12 @@ export default function AdminHome() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h5" component="h1" sx={{ flexGrow: 1 }}>
-            {location.pathname.includes('noticias') ? 'Notícias' : 'Dashboard'}
+            {location.pathname.includes('noticias') ? 'Notícias' :
+              location.pathname.includes('parceiros') ? 'Parceiros' :
+                location.pathname.includes('conteudo') ? 'Conteúdo' :
+                  location.pathname.includes('equipe') ? 'Nossa Equipe' :
+                    location.pathname.includes('links-uteis') ? 'Links Úteis' :
+                      'Dashboard'}
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Avatar sx={{ width: 40, height: 40 }}>A</Avatar>
@@ -619,7 +819,14 @@ export default function AdminHome() {
 
         {/* Conteúdo */}
         <Box sx={{ p: 3 }}>
-          {location.pathname.includes('/admin/noticias') ? (
+          {location.pathname.includes('/admin/links-uteis') ? (
+            <Box>
+              <Typography variant="h5" sx={{ mb: 3, color: 'primary.main' }}>
+                Gerenciar Links Úteis
+              </Typography>
+              <LinksAdminPage />
+            </Box>
+          ) : location.pathname.includes('/admin/noticias') ? (
             <Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                 <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
@@ -936,27 +1143,26 @@ export default function AdminHome() {
                     </Box>
                   </Box>
 
-                  <TextField
-                    id="content"
-                    name="content"
-                    label="Conteúdo"
-                    multiline
-                    rows={10}
-                    fullWidth
-                    variant="outlined"
-                    value={currentNews.content}
-                    onChange={handleInputChange}
-                    error={!!errors.content}
-                    helperText={errors.content || ' '}
-                    sx={{
-                      mb: 2,
-                      '& .MuiOutlinedInput-root': {
-                        '&:hover fieldset': {
-                          borderColor: 'primary.main',
-                        },
-                      },
-                    }}
-                  />
+                  <Box sx={{ mb: 2 }}>
+                    <Typography variant="subtitle2" gutterBottom sx={{ mb: 1 }}>
+                      Conteúdo *
+                    </Typography>
+                    <RichTextEditor
+                      content={currentNews.content}
+                      onChange={(content) => {
+                        setCurrentNews(prev => ({ ...prev, content }));
+                        if (errors.content) {
+                          setErrors(prev => ({ ...prev, content: '' }));
+                        }
+                      }}
+                      error={!!errors.content}
+                    />
+                    {errors.content && (
+                      <Typography variant="caption" color="error" sx={{ mt: 0.5, display: 'block' }}>
+                        {errors.content}
+                      </Typography>
+                    )}
+                  </Box>
                 </DialogContent>
                 <DialogActions sx={{ p: 3, pt: 0 }}>
                   <Button
@@ -978,6 +1184,242 @@ export default function AdminHome() {
                 </DialogActions>
               </Dialog>
             </Box>
+          ) : location.pathname.includes('/admin/parceiros') ? (
+            <Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+                  Gerenciamento de Parceiros
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<AddIcon />}
+                  onClick={() => handleOpenPartnerDialog()}
+                  sx={{ borderRadius: 2, textTransform: 'none' }}
+                >
+                  Adicionar Parceiro
+                </Button>
+              </Box>
+
+              <Grid container spacing={3}>
+                {isLoadingPartners ? (
+                  <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+                    <CircularProgress />
+                  </Grid>
+                ) : partners.length === 0 ? (
+                  <Grid item xs={12}>
+                    <Paper sx={{ p: 3, textAlign: 'center' }}>
+                      <Typography variant="body1" color="textSecondary">
+                        Nenhum parceiro cadastrado.
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                ) : (
+                  partners.map((partner) => (
+                    <Grid item xs={12} sm={6} md={4} key={partner.id}>
+                      <Card>
+                        <CardContent>
+                          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+                            <img
+                              src={partner.logoBase64.startsWith('data:') ? partner.logoBase64 : `data:image/jpeg;base64,${partner.logoBase64}`}
+                              alt={partner.name}
+                              style={{
+                                maxWidth: '100%',
+                                maxHeight: '120px',
+                                objectFit: 'contain'
+                              }}
+                            />
+                          </Box>
+                          <Typography variant="h6" align="center" gutterBottom>
+                            {partner.name}
+                          </Typography>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
+                            <Chip
+                              label={partner.active ? 'Ativo' : 'Inativo'}
+                              size="small"
+                              color={partner.active ? 'success' : 'default'}
+                            />
+                            <Typography variant="caption" color="text.secondary">
+                              Ordem: {partner.displayOrder}
+                            </Typography>
+                          </Box>
+                          <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+                            <Tooltip title="Editar">
+                              <IconButton onClick={() => handleOpenPartnerDialog(partner)} size="small">
+                                <EditIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Excluir">
+                              <IconButton onClick={() => handleDeletePartner(partner.id)} size="small" color="error">
+                                <DeleteForeverIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                          </Box>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  ))
+                )}
+              </Grid>
+
+              {/* Partner Dialog */}
+              <Dialog
+                open={openPartnerDialog}
+                onClose={handleClosePartnerDialog}
+                maxWidth="sm"
+                fullWidth
+                PaperProps={{
+                  sx: {
+                    borderRadius: 2,
+                  },
+                }}
+              >
+                <DialogTitle sx={{ borderBottom: '1px solid rgba(0, 0, 0, 0.12)', pb: 2 }}>
+                  {currentPartner.id ? 'Editar Parceiro' : 'Adicionar Novo Parceiro'}
+                </DialogTitle>
+                <DialogContent sx={{ pt: 3, '& > :not(style)': { mb: 2 } }}>
+                  <TextField
+                    autoFocus
+                    margin="dense"
+                    id="name"
+                    name="name"
+                    label="Nome do Parceiro"
+                    type="text"
+                    fullWidth
+                    variant="outlined"
+                    value={currentPartner.name || ''}
+                    onChange={handlePartnerInputChange}
+                    error={!!partnerErrors.name}
+                    helperText={partnerErrors.name}
+                    sx={{ mb: 3 }}
+                  />
+
+                  <TextField
+                    margin="dense"
+                    id="displayOrder"
+                    name="displayOrder"
+                    label="Ordem de Exibição"
+                    type="number"
+                    fullWidth
+                    variant="outlined"
+                    value={currentPartner.displayOrder || 0}
+                    onChange={handlePartnerInputChange}
+                    helperText="Números menores aparecem primeiro"
+                    sx={{ mb: 3 }}
+                  />
+
+                  {/* Logo upload */}
+                  <Box sx={{ mb: 3 }}>
+                    <Typography variant="subtitle2" gutterBottom>
+                      Logo do Parceiro {!currentPartner.id && '*'}
+                    </Typography>
+                    <Box
+                      onClick={() => partnerFileInputRef.current?.click()}
+                      sx={{
+                        border: '2px dashed',
+                        borderColor: partnerErrors.logo ? 'error.main' : 'divider',
+                        borderRadius: 2,
+                        p: 3,
+                        textAlign: 'center',
+                        cursor: 'pointer',
+                        '&:hover': {
+                          borderColor: 'primary.main',
+                          backgroundColor: 'action.hover'
+                        }
+                      }}
+                    >
+                      {currentPartner.logoPreview ? (
+                        <Box>
+                          <img
+                            src={currentPartner.logoPreview}
+                            alt="Preview"
+                            style={{
+                              maxWidth: '100%',
+                              maxHeight: '150px',
+                              objectFit: 'contain',
+                              marginBottom: '16px'
+                            }}
+                          />
+                          <Typography>Clique para alterar a logo</Typography>
+                        </Box>
+                      ) : (
+                        <Box>
+                          <CloudUploadIcon sx={{ fontSize: 48, color: 'text.secondary', mb: 1 }} />
+                          <Typography>Clique para fazer upload da logo</Typography>
+                          <Typography variant="caption" color="textSecondary">
+                            Formatos suportados: JPG, PNG, WebP
+                          </Typography>
+                        </Box>
+                      )}
+                      <input
+                        type="file"
+                        ref={partnerFileInputRef}
+                        onChange={handlePartnerLogoChange}
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                      />
+                    </Box>
+                    {partnerErrors.logo && (
+                      <Typography variant="caption" color="error" sx={{ mt: 0.5, display: 'block' }}>
+                        {partnerErrors.logo}
+                      </Typography>
+                    )}
+                  </Box>
+
+                  <FormControl fullWidth>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <Typography variant="subtitle2">Status</Typography>
+                      <Chip
+                        label={currentPartner.active ? 'Ativo' : 'Inativo'}
+                        size="small"
+                        color={currentPartner.active ? 'success' : 'default'}
+                        onClick={() => setCurrentPartner(prev => ({ ...prev, active: !prev.active }))}
+                        sx={{ cursor: 'pointer' }}
+                      />
+                    </Box>
+                  </FormControl>
+                </DialogContent>
+                <DialogActions sx={{ p: 3, pt: 0 }}>
+                  <Button
+                    onClick={handleClosePartnerDialog}
+                    color="inherit"
+                    sx={{ borderRadius: 2 }}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    onClick={handleSavePartner}
+                    variant="contained"
+                    color="primary"
+                    startIcon={currentPartner.id ? <EditIcon /> : <AddIcon />}
+                    sx={{ borderRadius: 2, textTransform: 'none' }}
+                  >
+                    {currentPartner.id ? 'Atualizar' : 'Criar'} Parceiro
+                  </Button>
+                </DialogActions>
+              </Dialog>
+
+              {/* Snackbar */}
+              <Snackbar
+                open={snackbar.open}
+                autoHideDuration={6000}
+                onClose={handleCloseSnackbar}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              >
+                <Alert
+                  onClose={handleCloseSnackbar}
+                  severity={snackbar.severity}
+                  variant="filled"
+                  sx={{ width: '100%' }}
+                >
+                  {snackbar.message}
+                </Alert>
+              </Snackbar>
+            </Box>
+          ) : location.pathname.includes('/admin/conteudo') ? (
+            <ContentAdminPage />
+          ) : location.pathname.includes('/admin/equipe') ? (
+            <TeamAdminPage />
           ) : (
             <Box>
               <Typography variant="h6" sx={{ mb: 3 }}>Visão Geral</Typography>

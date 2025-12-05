@@ -1,19 +1,17 @@
-import Header from './page/Header';
 import Hero from './page/Hero';
 import About from './page/About';
-import Footer from './page/Footer';
 import Notices from './page/Notices'; // Importa o novo componente Notices
+import Partners from './page/Partners';
 
 function Home() {
   return (
     <>
-      <Header />
       <main>
         <Hero />
         <Notices /> {/* Adiciona o componente Notices aqui, acima do About */}
+        <Partners />
         <About />
       </main>
-      <Footer />
     </>
   );
 }
