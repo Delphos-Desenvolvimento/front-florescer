@@ -1,36 +1,5 @@
 import api, { apiPublic } from '.';
 
-function coerceToArray<T>(data: unknown): T[] {
-  if (Array.isArray(data)) return data as T[];
-  if (data && typeof data === 'object') {
-    const maybeItems = (data as { items?: unknown }).items;
-    if (Array.isArray(maybeItems)) return maybeItems as T[];
-  }
-  if (typeof data === 'string') {
-    try {
-      const parsed = JSON.parse(data);
-      return coerceToArray<T>(parsed);
-    } catch {
-      return [];
-    }
-  }
-  return [];
-}
-
-function coerceToObject<T>(data: unknown): T {
-  if (data && typeof data === 'object') return data as T;
-  if (typeof data === 'string') {
-    try {
-      const parsed = JSON.parse(data);
-      if (parsed && typeof parsed === 'object') return parsed as T;
-      throw new Error('invalid');
-    } catch {
-      throw new Error('invalid');
-    }
-  }
-  throw new Error('invalid');
-}
-
 export interface NewsImage {
   id?: number;
   base64: string;
@@ -63,8 +32,8 @@ const NewsService = {
    */
   async getAll(params?: { status?: string }): Promise<NewsItem[]> {
     try {
-      const response = await apiPublic.get<unknown>('/news', { params });
-      return coerceToArray<NewsItem>(response.data);
+      const response = await apiPublic.get<NewsItem[]>('/news', { params });
+      return response.data;
     } catch (error) {
       console.error('Erro ao buscar notícias:', error);
       throw error;
@@ -76,8 +45,8 @@ const NewsService = {
    */
   async getById(id: number): Promise<NewsItem> {
     try {
-      const response = await apiPublic.get<unknown>(`/news/${id}`);
-      return coerceToObject<NewsItem>(response.data);
+      const response = await apiPublic.get<NewsItem>(`/news/${id}`);
+      return response.data;
     } catch (error) {
       console.error(`Erro ao buscar notícia com ID ${id}:`, error);
       throw error;
@@ -161,8 +130,10 @@ const NewsService = {
    */
   async getByCategory(category: string): Promise<NewsItem[]> {
     try {
-      const response = await apiPublic.get<unknown>('/news', { params: { category } });
-      return coerceToArray<NewsItem>(response.data);
+      const response = await apiPublic.get<NewsItem[]>('/news', {
+        params: { category }
+      });
+      return response.data;
     } catch (error) {
       console.error(`Erro ao buscar notícias da categoria ${category}:`, error);
       throw error;

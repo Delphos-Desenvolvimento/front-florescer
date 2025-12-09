@@ -1,11 +1,9 @@
 import axios from 'axios';
 
-const BASE_URL =
-  import.meta.env.VITE_API_URL ||
-  (import.meta.env.DEV ? '/api' : `${window.location.origin}/api`);
+const baseURL = import.meta.env.DEV ? '/api' : `${import.meta.env.VITE_API_URL}`;
 
 const api = axios.create({
-  baseURL: BASE_URL,
+  baseURL: baseURL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -67,5 +65,5 @@ api.interceptors.response.use(
 
 export default api;
 export const apiPublic = axios.create({
-  baseURL: BASE_URL,
+  baseURL: baseURL,
 });

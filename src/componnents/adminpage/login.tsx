@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_URL = import.meta.env.DEV ? '/api' : (import.meta.env.VITE_API_URL || '');
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import type { NavigateFunction } from 'react-router-dom';
 import { 
