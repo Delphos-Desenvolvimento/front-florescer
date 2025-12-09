@@ -5,15 +5,22 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true,
+  withCredentials: false,
 });
 
 // Adiciona um interceptador para incluir o token em todas as requisições
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
-
-    if (token) {
+    const path = (config.url || '').toString();
+    const method = (config.method || 'get').toLowerCase();
+    // Precisely mark only truly public endpoints
+    const publicPrefixes = ['/stats', '/links', '/content'];
+    const isTeamPublic = path === '/team' && method === 'get';
+    const isPartnersPublic = path === '/partners' && method === 'get';
+    const isNewsPublic = path.startsWith('/news') && method === 'get';
+    const isPublic = isTeamPublic || isPartnersPublic || isNewsPublic || publicPrefixes.some((p) => path.startsWith(p));
+    if (token && !isPublic) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
 
@@ -39,15 +46,22 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       // Limpa token e dados do usuário
       localStorage.removeItem('token');
+      localStorage.removeItem('user');
       localStorage.removeItem('userRole');
       localStorage.removeItem('user_id');
       localStorage.removeItem('userName');
       localStorage.removeItem('userEmail');
-      // Redireciona para login (força reload para desmontar contexto)
-      window.location.href = '/session-login?expired=1';
+      // Redireciona para a página de login (rota existente)
+      const loginPath = '/admin/login?expired=1';
+      if (window.location.pathname !== '/admin/login') {
+        window.location.replace(loginPath);
+      }
     }
     return Promise.reject(error);
   }
 );
 
 export default api;
+export const apiPublic = axios.create({
+  baseURL: `${import.meta.env.VITE_API_URL}`,
+});

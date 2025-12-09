@@ -8,6 +8,8 @@ import StatsService, { type StatsOverview } from '../../API/stats';
 import ContentAdminPage from '../page/admin/ContentAdminPage';
 import TeamAdminPage from '../page/admin/TeamAdminPage';
 import LinksAdminPage from '../page/admin/LinksAdminPage';
+import LogsAdminPage from '../page/admin/LogsAdminPage';
+import ProfileAdminPage from '../page/admin/ProfileAdminPage';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts';
 import {
@@ -68,6 +70,7 @@ import {
   Group as GroupIcon,
   Menu as MenuIcon
 } from '@mui/icons-material';
+import { History as HistoryIcon, Person as PersonIcon } from '@mui/icons-material';
 
 
 
@@ -143,6 +146,8 @@ export default function AdminHome() {
           <ListItemLink to="/admin/links-uteis" icon={<LinkIcon />} primary="Links Úteis" />
           <ListItemLink to="/admin/conteudo" icon={<DescriptionIcon />} primary="Conteúdo" />
           <ListItemLink to="/admin/equipe" icon={<GroupIcon />} primary="Nossa Equipe" />
+          <ListItemLink to="/admin/logs" icon={<HistoryIcon />} primary="Logs" />
+          <ListItemLink to="/admin/perfil" icon={<PersonIcon />} primary="Perfil" />
         </List>
       </div>
       <div>
@@ -175,7 +180,7 @@ export default function AdminHome() {
   };
 
   // Função para converter da API para o tipo local
-  const toLocalNewsItem = (apiItem: ApiNewsItem): NewsItem => ({
+  const toLocalNewsItem = useCallback((apiItem: ApiNewsItem): NewsItem => ({
     id: apiItem.id ?? null,
     title: apiItem.title,
     content: apiItem.content,
@@ -184,7 +189,7 @@ export default function AdminHome() {
     date: apiItem.date,
     views: apiItem.views,
     images: apiItem.images
-  });
+  }), []);
 
   // Função para converter para o tipo da API
   const toApiNewsItem = (item: NewsItem): Omit<ApiNewsItem, 'id'> & { id?: number } => ({
@@ -244,18 +249,7 @@ export default function AdminHome() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
-
-  // Carregar notícias e estatísticas ao inicializar
-  useEffect(() => {
-    loadNews();
-    fetchNewsStats();
-  }, [loadNews]);
-
-  // Atualizar estatísticas quando o período for alterado
-  useEffect(() => {
-    fetchNewsStats();
-  }, [timeRange]);
+  }, [toLocalNewsItem]);
 
   // Buscar estatísticas das notícias
   const fetchNewsStats = useCallback(async () => {
@@ -279,6 +273,19 @@ export default function AdminHome() {
       setIsLoadingStats(false);
     }
   }, [timeRange]);
+
+  // Carregar notícias e estatísticas ao inicializar
+  useEffect(() => {
+    loadNews();
+    fetchNewsStats();
+  }, [loadNews, fetchNewsStats]);
+
+  // Atualizar estatísticas quando o período for alterado
+  useEffect(() => {
+    fetchNewsStats();
+  }, [timeRange, fetchNewsStats]);
+
+  
 
 
 
@@ -810,6 +817,8 @@ export default function AdminHome() {
                 location.pathname.includes('conteudo') ? 'Conteúdo' :
                   location.pathname.includes('equipe') ? 'Nossa Equipe' :
                     location.pathname.includes('links-uteis') ? 'Links Úteis' :
+                      location.pathname.includes('logs') ? 'Logs' :
+                      location.pathname.includes('perfil') ? 'Meu Perfil' :
                       'Dashboard'}
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -905,7 +914,13 @@ export default function AdminHome() {
                         <Card>
                           <CardHeader
                             title={news.title}
-                            subheader={`${news.category} • ${news.date}`}
+                            subheader={(
+                              <Typography variant="body2" color="text.secondary">
+                                <span>{news.category}</span>
+                                <Box component="span" sx={{ mx: 1, display: 'inline-block', width: 4, height: 4, borderRadius: '50%', bgcolor: 'text.disabled', position: 'relative', top: -1 }} />
+                                <span>{news.date}</span>
+                              </Typography>
+                            )}
                             action={
                               <Box sx={{ display: 'flex', gap: 1 }}>
                                 <Tooltip title="Editar">
@@ -986,7 +1001,9 @@ export default function AdminHome() {
                               secondary={
                                 <>
                                   <Typography component="span" variant="body2" color="text.primary">
-                                    {news.category} • {news.date}
+                                    <span>{news.category}</span>
+                                    <Box component="span" sx={{ mx: 1, display: 'inline-block', width: 4, height: 4, borderRadius: '50%', bgcolor: 'text.disabled', position: 'relative', top: -1 }} />
+                                    <span>{news.date}</span>
                                   </Typography>
                                   <br />
                                   {news.content.substring(0, 100)}...
@@ -1420,6 +1437,10 @@ export default function AdminHome() {
             <ContentAdminPage />
           ) : location.pathname.includes('/admin/equipe') ? (
             <TeamAdminPage />
+          ) : location.pathname.includes('/admin/logs') ? (
+            <LogsAdminPage />
+          ) : location.pathname.includes('/admin/perfil') ? (
+            <ProfileAdminPage />
           ) : (
             <Box>
               <Typography variant="h6" sx={{ mb: 3 }}>Visão Geral</Typography>

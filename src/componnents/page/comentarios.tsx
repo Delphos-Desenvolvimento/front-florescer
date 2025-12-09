@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import {
   Box,
@@ -81,7 +81,7 @@ const Comentarios = ({ newsId }: { newsId: number }) => {
   const [loading, setLoading] = useState(true);
   const [newComment, setNewComment] = useState({ author: '', email: '', content: '' });
 
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     try {
       setLoading(true);
       const fetchedComments = await CommentService.getAllByNewsId(newsId);
@@ -91,13 +91,13 @@ const Comentarios = ({ newsId }: { newsId: number }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [newsId]);
 
   useEffect(() => {
     if (newsId) {
       fetchComments();
     }
-  }, [newsId]);
+  }, [fetchComments, newsId]);
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

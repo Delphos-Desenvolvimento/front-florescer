@@ -88,7 +88,7 @@ export default function Login() {
       let data;
       try {
         data = await response.json();
-      } catch (e) {
+      } catch {
         const text = await response.text();
         console.error('Failed to parse JSON response:', { status: response.status, statusText: response.statusText, text });
         throw new Error('Resposta inválida do servidor');
@@ -122,20 +122,15 @@ export default function Login() {
       const redirectTo = from || '/admin';
       console.log('Redirecting to:', redirectTo);
       navigate(redirectTo, { replace: true });
-    } catch (err: any) {
-      console.error('Login error details:', {
-        name: err.name,
-        message: err.message,
-        stack: err.stack,
-        response: err.response
-      });
-      
+    } catch (err: unknown) {
       let errorMessage = 'Ocorreu um erro ao fazer login. Verifique suas credenciais.';
-      if (err.message) {
-        errorMessage = err.message;
-      } else if (err.response) {
-        errorMessage = err.response.data?.message || errorMessage;
+      if (err instanceof Error) {
+        errorMessage = err.message || errorMessage;
+      } else if (err && typeof err === 'object' && 'response' in err) {
+        const anyErr = err as { response?: { data?: { message?: string } } };
+        errorMessage = anyErr.response?.data?.message || errorMessage;
       }
+      console.error('Login error:', errorMessage);
       setError(errorMessage);
     } finally {
       setLoading(false);

@@ -1,4 +1,4 @@
-import api from '.';
+
 
 export interface StatsOverview {
   totalNews: number;
@@ -14,19 +14,26 @@ export interface StatsOverview {
 
 const StatsService = {
   async getOverview(): Promise<StatsOverview> {
-    const res = await api.get<StatsOverview>('/stats/overview');
-    return res.data;
+    const base = import.meta.env.DEV ? '/api' : import.meta.env.VITE_API_URL;
+    const url = `${base}/stats/overview`;
+    const res = await fetch(url, { method: 'GET' });
+    if (!res.ok) throw new Error(`Status ${res.status}`);
+    return (await res.json()) as StatsOverview;
   },
   async getEventsByDay(type: string, days = 14): Promise<{ date: string; count: number }[]> {
-    const res = await api.get<{ date: string; count: number }[]>(
-      '/stats/events-by-day',
-      { params: { type, days } }
-    );
-    return res.data;
+    const base = import.meta.env.DEV ? '/api' : import.meta.env.VITE_API_URL;
+    const params = new URLSearchParams({ type, days: String(days) });
+    const url = `${base}/stats/events-by-day?${params.toString()}`;
+    const res = await fetch(url, { method: 'GET' });
+    if (!res.ok) throw new Error(`Status ${res.status}`);
+    return (await res.json()) as Array<{ date: string; count: number }>;
   },
   async getCategories(): Promise<{ category: string; count: number }[]> {
-    const res = await api.get<{ category: string; count: number }[]>('/stats/categories');
-    return res.data;
+    const base = import.meta.env.DEV ? '/api' : import.meta.env.VITE_API_URL;
+    const url = `${base}/stats/categories`;
+    const res = await fetch(url, { method: 'GET' });
+    if (!res.ok) throw new Error(`Status ${res.status}`);
+    return (await res.json()) as Array<{ category: string; count: number }>;
   },
 };
 

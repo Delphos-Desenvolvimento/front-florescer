@@ -17,6 +17,7 @@ import {
   Select,
   MenuItem
 } from '@mui/material';
+import type { SelectChangeEvent } from '@mui/material/Select';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
@@ -299,7 +300,7 @@ function AllNewsPage() {
               labelId="sort-label"
               label="Ordenar por"
               value={sort}
-              onChange={(e) => { setSort(e.target.value as any); setPage(1); }}
+              onChange={(e: SelectChangeEvent) => { setSort(e.target.value as 'recent' | 'oldest' | 'views'); setPage(1); }}
             >
               <MenuItem value="recent">Mais recentes</MenuItem>
               <MenuItem value="oldest">Mais antigos</MenuItem>

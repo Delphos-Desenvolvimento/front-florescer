@@ -1,11 +1,11 @@
-import { useEditor, EditorContent } from '@tiptap/react';
+import { useEditor, EditorContent, type Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import { Color } from '@tiptap/extension-color';
 import { TextStyle } from '@tiptap/extension-text-style';
-import { Link } from '@tiptap/extension-link';
-import { Image } from '@tiptap/extension-image';
+import Link from '@tiptap/extension-link';
+import Image from '@tiptap/extension-image';
 import { FontFamily } from '@tiptap/extension-font-family';
 import Heading from '@tiptap/extension-heading';
 import { Box, IconButton, Divider, Tooltip, ButtonGroup, Select, MenuItem, FormControl } from '@mui/material';
@@ -31,7 +31,7 @@ interface RichTextEditorProps {
     error?: boolean;
 }
 
-const MenuBar = ({ editor }: { editor: any }) => {
+const MenuBar = ({ editor }: { editor: Editor | null }) => {
     if (!editor) {
         return null;
     }
@@ -241,22 +241,26 @@ const MenuBar = ({ editor }: { editor: any }) => {
 
             <ButtonGroup size="small" variant="outlined">
                 <Tooltip title="Desfazer (Ctrl+Z)">
-                    <IconButton
-                        onClick={() => editor.chain().focus().undo().run()}
-                        disabled={!editor.can().undo()}
-                        size="small"
-                    >
-                        <Undo fontSize="small" />
-                    </IconButton>
+                    <span>
+                        <IconButton
+                            onClick={() => editor.chain().focus().undo().run()}
+                            disabled={!editor.can().undo()}
+                            size="small"
+                        >
+                            <Undo fontSize="small" />
+                        </IconButton>
+                    </span>
                 </Tooltip>
                 <Tooltip title="Refazer (Ctrl+Y)">
-                    <IconButton
-                        onClick={() => editor.chain().focus().redo().run()}
-                        disabled={!editor.can().redo()}
-                        size="small"
-                    >
-                        <Redo fontSize="small" />
-                    </IconButton>
+                    <span>
+                        <IconButton
+                            onClick={() => editor.chain().focus().redo().run()}
+                            disabled={!editor.can().redo()}
+                            size="small"
+                        >
+                            <Redo fontSize="small" />
+                        </IconButton>
+                    </span>
                 </Tooltip>
             </ButtonGroup>
         </Box>

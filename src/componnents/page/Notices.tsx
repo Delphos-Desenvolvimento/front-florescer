@@ -24,7 +24,6 @@ interface ExtendedNewsItem extends Omit<NewsItem, 'content' | 'id'> {
 }
 
 // Tipagem para as props do componente NewsCard
-interface NewsCardProps extends ExtendedNewsItem { }
 
 // Função para remover tags HTML e retornar texto limpo
 const stripHtml = (html: string): string => {
@@ -42,7 +41,7 @@ const NewsCard = ({
   category,
   images,
   onClick
-}: NewsCardProps & { images?: NewsImage[], onClick: () => void }) => {
+}: (ExtendedNewsItem & { images?: NewsImage[], onClick: () => void })) => {
   const base64 = images && images.length > 0 ? images[0].base64 : undefined;
   const src = base64
     ? (base64.startsWith('data:') ? base64 : `data:image/jpeg;base64,${base64}`)

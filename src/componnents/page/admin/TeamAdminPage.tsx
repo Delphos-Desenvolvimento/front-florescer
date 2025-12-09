@@ -36,7 +36,7 @@ const TeamAdminPage: React.FC = () => {
             setTitle(data.title);
             setContent(data.content);
             setIsPublished(data.isPublished);
-        } catch (err) {
+        } catch {
             setError('Erro ao carregar dados da página');
         } finally {
             setLoading(false);
@@ -51,7 +51,7 @@ const TeamAdminPage: React.FC = () => {
             setSuccess('Página atualizada com sucesso!');
             loadData();
             setTimeout(() => setSuccess(''), 3000);
-        } catch (err) {
+        } catch {
             setError('Erro ao salvar página');
         } finally {
             setLoading(false);

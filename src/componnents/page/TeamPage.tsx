@@ -14,9 +14,11 @@ function TeamPage() {
                 const data = await getTeamPage();
                 setTeamData(data);
                 setError(null);
-            } catch (err: any) {
+            } catch (err: unknown) {
                 console.error('Erro ao carregar página da equipe:', err);
-                if (err.response?.status === 404 || !err.response) {
+                const hasResponse = typeof err === 'object' && err !== null && 'response' in err;
+                const status = hasResponse ? (err as { response?: { status?: number } }).response?.status : undefined;
+                if (status === 404 || !hasResponse) {
                     setError('Página não encontrada ou ainda não foi publicada.');
                 } else {
                     setError('Não foi possível carregar a página. Tente novamente mais tarde.');

@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 
-const GlobalStyles = () => (
+export const GlobalStyles = () => (
   <style>
     {`
       .MuiAppBar-root {

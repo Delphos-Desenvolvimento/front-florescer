@@ -98,7 +98,9 @@ function NewsDetailPage() {
                   display="block"
                   mb={2}
                 >
-                  {news.date || 'Sem data'} • {news.category || 'Geral'}
+                  <span>{news.date || 'Sem data'}</span>
+                  <Box component="span" sx={{ mx: 1, display: 'inline-block', width: 4, height: 4, borderRadius: '50%', bgcolor: 'text.disabled', position: 'relative', top: -1 }} />
+                  <span>{news.category || 'Geral'}</span>
                 </Typography>
 
                 <Typography

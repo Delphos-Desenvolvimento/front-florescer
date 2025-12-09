@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/auth';
+const API_URL = `${import.meta.env.VITE_API_URL}/auth`;
 
 export interface User {
   id: number;
@@ -9,7 +9,7 @@ export interface User {
 }
 
 interface LoginResponse {
-  message: string;
+  access_token: string;
   user: User;
 }
 
@@ -18,10 +18,10 @@ export const login = async (username: string, password: string): Promise<LoginRe
     console.log('Attempting login with:', { username });
 
     const response = await axios.post(`${API_URL}/login`, {
-      username,
+      email: username,
       password,
     }, {
-      validateStatus: (status) => status < 500 // Don't throw for 4xx errors
+      validateStatus: (status) => status < 500
     });
 
     console.log('Login response:', response.data);
@@ -30,17 +30,26 @@ export const login = async (username: string, password: string): Promise<LoginRe
       throw new Error('Invalid username or password');
     }
 
-    if (!response.data || !response.data.user) {
+    if (!response.data || !response.data.user || !response.data.access_token) {
       throw new Error('Invalid response from server');
     }
 
-    // Store user data in localStorage
+    // Store token and user data in localStorage
+    localStorage.setItem('token', response.data.access_token);
     localStorage.setItem('user', JSON.stringify(response.data.user));
+    localStorage.setItem('userRole', String(response.data.user.role));
+    localStorage.setItem('user_id', String(response.data.user.id));
+    localStorage.setItem('userEmail', String(response.data.user.user));
     console.log('User logged in successfully:', response.data.user);
 
     return response.data;
-  } catch (error: any) {
-    const errorMessage = error.response?.data?.message || error.message || 'Login failed';
+  } catch (error: unknown) {
+    let errorMessage = 'Login failed';
+    if (axios.isAxiosError(error)) {
+      errorMessage = error.response?.data?.message ?? error.message ?? errorMessage;
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
+    }
     console.error('Login error:', errorMessage);
     throw new Error(errorMessage);
   }
@@ -49,20 +58,30 @@ export const login = async (username: string, password: string): Promise<LoginRe
 export const register = async (username: string, password: string, role = 'user'): Promise<LoginResponse> => {
   try {
     const response = await axios.post(`${API_URL}/register`, {
-      username,
+      email: username,
       password,
       role,
     });
 
     // Auto-login after registration
-    if (response.data.user) {
+    if (response.data.user && response.data.access_token) {
+      localStorage.setItem('token', response.data.access_token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
+      localStorage.setItem('userRole', String(response.data.user.role));
+      localStorage.setItem('user_id', String(response.data.user.id));
+      localStorage.setItem('userEmail', String(response.data.user.user));
     }
 
     return response.data;
-  } catch (error) {
-    console.error('Registration error:', error);
-    throw error;
+  } catch (error: unknown) {
+    let errorMessage = 'Registration failed';
+    if (axios.isAxiosError(error)) {
+      errorMessage = error.response?.data?.message ?? error.message ?? errorMessage;
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    console.error('Registration error:', errorMessage);
+    throw new Error(errorMessage);
   }
 };
 
@@ -97,7 +116,23 @@ export const verifyToken = async (): Promise<User> => {
       }
     });
     return response.data;
-  } catch (error) {
+  } catch {
     throw new Error('Invalid token');
+  }
+};
+
+export const isTokenValidLocal = (): boolean => {
+  const token = localStorage.getItem('token');
+  if (!token) return false;
+  const parts = token.split('.');
+  if (parts.length !== 3) return false;
+  try {
+    const payloadStr = atob(parts[1].replace(/-/g, '+').replace(/_/g, '/'));
+    const payload = JSON.parse(payloadStr) as { exp?: number };
+    if (!payload.exp) return true;
+    const now = Math.floor(Date.now() / 1000);
+    return payload.exp > now;
+  } catch {
+    return false;
   }
 };

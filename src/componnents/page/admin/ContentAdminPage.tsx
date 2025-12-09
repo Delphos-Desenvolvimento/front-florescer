@@ -143,7 +143,7 @@ const ContentAdminPage: React.FC = () => {
             });
             setStatistics(stats);
             setSolutions(sols);
-        } catch (err) {
+        } catch {
             setError('Erro ao carregar dados');
         } finally {
             setLoading(false);
@@ -156,7 +156,7 @@ const ContentAdminPage: React.FC = () => {
             setSuccess('Conteúdo atualizado com sucesso!');
             loadData();
             setTimeout(() => setSuccess(''), 3000);
-        } catch (err) {
+        } catch {
             setError('Erro ao atualizar conteúdo');
         }
     };
@@ -188,7 +188,7 @@ const ContentAdminPage: React.FC = () => {
             setStatImagePreview('');
             loadData();
             setTimeout(() => setSuccess(''), 3000);
-        } catch (err) {
+        } catch {
             setError('Erro ao salvar estatística');
         }
     };
@@ -200,7 +200,7 @@ const ContentAdminPage: React.FC = () => {
             setSuccess('Estatística excluída!');
             loadData();
             setTimeout(() => setSuccess(''), 3000);
-        } catch (err) {
+        } catch {
             setError('Erro ao excluir estatística');
         }
     };
@@ -232,7 +232,7 @@ const ContentAdminPage: React.FC = () => {
             setSolImagePreview('');
             loadData();
             setTimeout(() => setSuccess(''), 3000);
-        } catch (err) {
+        } catch {
             setError('Erro ao salvar solução');
         }
     };
@@ -244,7 +244,7 @@ const ContentAdminPage: React.FC = () => {
             setSuccess('Solução excluída!');
             loadData();
             setTimeout(() => setSuccess(''), 3000);
-        } catch (err) {
+        } catch {
             setError('Erro ao excluir solução');
         }
     };

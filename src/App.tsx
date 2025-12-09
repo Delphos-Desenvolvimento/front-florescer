@@ -5,7 +5,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 import { Box, CircularProgress } from '@mui/material';
 import theme from './theme';
-import { verifyToken } from './API/login';
+import { verifyToken, isTokenValidLocal } from './API/login';
 
 // Importações das páginas
 import Home from './componnents/home';
@@ -27,6 +27,12 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
+        const locallyValid = isTokenValidLocal();
+        if (locallyValid) {
+          setIsAuthenticated(true);
+          await verifyToken().catch(() => undefined);
+          return;
+        }
         await verifyToken();
         setIsAuthenticated(true);
       } catch (error) {

@@ -1,4 +1,4 @@
-import api from '.';
+import api, { apiPublic } from '.';
 
 export interface NewsImage {
   id?: number;
@@ -32,7 +32,7 @@ const NewsService = {
    */
   async getAll(params?: { status?: string }): Promise<NewsItem[]> {
     try {
-      const response = await api.get<NewsItem[]>('/news', { params });
+      const response = await apiPublic.get<NewsItem[]>('/news', { params });
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar notícias:', error);
@@ -45,7 +45,7 @@ const NewsService = {
    */
   async getById(id: number): Promise<NewsItem> {
     try {
-      const response = await api.get<NewsItem>(`/news/${id}`);
+      const response = await apiPublic.get<NewsItem>(`/news/${id}`);
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar notícia com ID ${id}:`, error);
@@ -130,7 +130,7 @@ const NewsService = {
    */
   async getByCategory(category: string): Promise<NewsItem[]> {
     try {
-      const response = await api.get<NewsItem[]>('/news', {
+      const response = await apiPublic.get<NewsItem[]>('/news', {
         params: { category }
       });
       return response.data;
