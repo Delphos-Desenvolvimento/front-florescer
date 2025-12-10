@@ -66,9 +66,10 @@ export default function Partners() {
         <Box
             sx={{
                 py: 8,
-                backgroundColor: '#f9f9f9',
-                borderTop: '1px solid #e0e0e0',
-                borderBottom: '1px solid #e0e0e0',
+                backgroundColor: 'background.default',
+                borderTop: '1px solid',
+                borderBottom: '1px solid',
+                borderColor: 'divider',
             }}
         >
             <Container maxWidth="lg">
@@ -98,11 +99,11 @@ export default function Partners() {
                                     top: '50%',
                                     transform: 'translateY(-50%)',
                                     zIndex: 2,
-                                    backgroundColor: 'white',
+                                    backgroundColor: 'background.paper',
                                     boxShadow: 2,
                                     transition: 'all 0.3s ease',
                                     '&:hover': {
-                                        backgroundColor: '#f5f5f5',
+                                        backgroundColor: 'action.hover',
                                         boxShadow: 3,
                                     },
                                 }}
@@ -118,11 +119,11 @@ export default function Partners() {
                                     top: '50%',
                                     transform: 'translateY(-50%)',
                                     zIndex: 2,
-                                    backgroundColor: 'white',
+                                    backgroundColor: 'background.paper',
                                     boxShadow: 2,
                                     transition: 'all 0.3s ease',
                                     '&:hover': {
-                                        backgroundColor: '#f5f5f5',
+                                        backgroundColor: 'action.hover',
                                         boxShadow: 3,
                                     },
                                 }}
@@ -153,7 +154,7 @@ export default function Partners() {
                                     justifyContent: 'center',
                                     alignItems: 'center',
                                     p: 2,
-                                    backgroundColor: 'white',
+                                    backgroundColor: 'background.paper',
                                     borderRadius: 2,
                                     boxShadow: 1,
                                     transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',

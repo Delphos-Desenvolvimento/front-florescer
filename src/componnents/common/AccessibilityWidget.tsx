@@ -63,8 +63,8 @@ export default function AccessibilityWidget() {
     }, []);
 
     // Apply settings to document
-    useEffect(() => {
-        const root = document.documentElement;
+  useEffect(() => {
+    const root = document.documentElement;
 
         // Font size
         root.style.fontSize = `${settings.fontSize}%`;
@@ -82,12 +82,7 @@ export default function AccessibilityWidget() {
             root.classList.remove('high-contrast');
         }
 
-        // Dark mode
-        if (settings.darkMode) {
-            root.classList.add('dark-mode');
-        } else {
-            root.classList.remove('dark-mode');
-        }
+    window.dispatchEvent(new CustomEvent('accessibilitySettingsChanged', { detail: settings }));
 
         // Invert colors
         if (settings.invertColors) {
@@ -117,9 +112,8 @@ export default function AccessibilityWidget() {
             root.classList.remove('dyslexia-font');
         }
 
-        // Save to localStorage
-        localStorage.setItem('accessibilitySettings', JSON.stringify(settings));
-    }, [settings]);
+    localStorage.setItem('accessibilitySettings', JSON.stringify(settings));
+  }, [settings]);
 
     const handleToggle = () => {
         setOpen(!open);

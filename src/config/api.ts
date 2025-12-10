@@ -2,7 +2,9 @@ import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse,
 
 // Create a custom axios instance with default config
 const api: AxiosInstance = axios.create({
-  baseURL: import.meta.env.DEV ? '/api' : (import.meta.env.VITE_API_URL || ''),
+  baseURL: import.meta.env.DEV
+    ? '/api'
+    : `${(import.meta.env.VITE_API_URL || '').replace(/\/$/, '')}/api`,
   timeout: 10000, // 10 seconds
   withCredentials: true, // Important for sending cookies with CORS
   headers: {

@@ -12,6 +12,7 @@ import LogsAdminPage from '../page/admin/LogsAdminPage';
 import ProfileAdminPage from '../page/admin/ProfileAdminPage';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts';
+import { format, parseISO } from 'date-fns';
 import {
   Box,
   Button,
@@ -213,7 +214,7 @@ export default function AdminHome() {
 
   // State for statistics
   const [timeRange, setTimeRange] = useState<'day' | 'week' | 'month'>('week');
-  const [chartData, setChartData] = useState<Array<{ name: string, views: number }>>([]);
+  const [chartData, setChartData] = useState<Array<{ date: string; label: string; views: number }>>([]);
   const [isLoadingStats, setIsLoadingStats] = useState(false);
   const [overviewStats, setOverviewStats] = useState<StatsOverview | null>(null);
 
@@ -257,10 +258,28 @@ export default function AdminHome() {
       setIsLoadingStats(true);
       const days = timeRange === 'day' ? 1 : timeRange === 'week' ? 7 : 30;
       const [trend, overview] = await Promise.all([
-        StatsService.getEventsByDay('news_click', days),
+        StatsService.getEventsByDay('news_view', days),
         StatsService.getOverview()
       ]);
-      setChartData(trend.map((pt) => ({ name: pt.date, views: pt.count })));
+      const mapped = trend.map((pt) => ({
+        date: pt.date,
+        label: (() => {
+          try { return format(parseISO(pt.date), 'dd/MM'); } catch { return pt.date; }
+        })(),
+        views: pt.count,
+      }));
+      const sum = mapped.reduce((a, b) => a + (Number(b.views) || 0), 0);
+      // Fallback: if selected range has no data but there are views overall, load month
+      if (sum === 0 && (overview?.totalViews || 0) > 0 && days < 30) {
+        const monthTrend = await StatsService.getEventsByDay('news_view', 30);
+        setChartData(monthTrend.map((pt) => ({
+          date: pt.date,
+          label: (() => { try { return format(parseISO(pt.date), 'dd/MM'); } catch { return pt.date; } })(),
+          views: pt.count,
+        })));
+      } else {
+        setChartData(mapped);
+      }
       setOverviewStats(overview);
     } catch (error) {
       console.error('Erro ao carregar estatísticas:', error);
@@ -618,6 +637,13 @@ export default function AdminHome() {
     }
   };
 
+  const stripHtml = (html: string): string => {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    const text = tmp.textContent || tmp.innerText || '';
+    return text.replace(/\s+/g, ' ').trim();
+  };
+
   // Função para validar o formulário
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -942,9 +968,10 @@ export default function AdminHome() {
                               WebkitLineClamp: 3,
                               WebkitBoxOrient: 'vertical',
                               overflow: 'hidden',
-                              textOverflow: 'ellipsis'
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'normal'
                             }}>
-                              {news.content}
+                              {stripHtml(news.content)}
                             </Typography>
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2, alignItems: 'center' }}>
                               <Chip
@@ -1006,7 +1033,7 @@ export default function AdminHome() {
                                     <span>{news.date}</span>
                                   </Typography>
                                   <br />
-                                  {news.content.substring(0, 100)}...
+                                  {stripHtml(news.content).slice(0, 140)}...
                                 </>
                               }
                             />
@@ -1526,31 +1553,35 @@ export default function AdminHome() {
                           bottom: 5,
                         }}
                       >
-                        <CartesianGrid strokeDasharray="3 3" />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
                         <XAxis
-                          dataKey="name"
+                          dataKey="label"
                           tick={{ fontSize: 12 }}
-                          interval={0}
-                          angle={-45}
-                          textAnchor="end"
-                          height={60}
+                          interval="preserveStartEnd"
+                          angle={0}
+                          textAnchor="middle"
+                          height={40}
+                          minTickGap={16}
+                          tickMargin={8}
                         />
-                        <YAxis />
+                        <YAxis allowDecimals={false} domain={[0, 'dataMax + 1']} tick={{ fontSize: 12 }} />
                         <RechartsTooltip
                           formatter={(value) => [value, 'Visualizações']}
                           labelFormatter={(label, payload) => {
-                            if (payload && payload[0]?.payload?.fullTitle) {
-                              return payload[0].payload.fullTitle;
+                            const d = payload && payload[0]?.payload?.date;
+                            if (typeof d === 'string') {
+                              try { return format(parseISO(d), 'dd/MM/yyyy'); } catch { return d; }
                             }
-                            return label;
+                            return label as string;
                           }}
                         />
                         <Legend />
                         <Bar
                           dataKey="views"
                           name="Visualizações"
-                          fill="#1976d2"
+                          fill={theme.palette.primary.main}
                           radius={[4, 4, 0, 0]}
+                          maxBarSize={40}
                         />
                       </BarChart>
                     </ResponsiveContainer>

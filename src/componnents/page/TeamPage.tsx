@@ -53,13 +53,13 @@ function TeamPage() {
                 pt: { xs: 12, sm: 14, md: 16 },
                 pb: { xs: 4, sm: 6, md: 8 },
                 minHeight: '100vh',
-                backgroundColor: '#f9f9f9',
+                backgroundColor: 'background.default',
             }}
         >
             <Container maxWidth="lg">
                 <Box
                     sx={{
-                        backgroundColor: 'white',
+                        backgroundColor: 'background.paper',
                         borderRadius: 2,
                         p: { xs: 3, sm: 4, md: 6 },
                         boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
@@ -100,13 +100,13 @@ function TeamPage() {
                                 color: 'text.secondary',
                             },
                             '& code': {
-                                backgroundColor: '#f5f5f5',
+                                backgroundColor: 'background.default',
                                 padding: '2px 6px',
                                 borderRadius: '4px',
                                 fontFamily: 'monospace',
                             },
                             '& pre': {
-                                backgroundColor: '#f5f5f5',
+                                backgroundColor: 'background.default',
                                 padding: 2,
                                 borderRadius: 1,
                                 overflow: 'auto',

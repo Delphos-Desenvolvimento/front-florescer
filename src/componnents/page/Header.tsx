@@ -19,13 +19,10 @@ import { Phone, Link as LinkIcon } from 'lucide-react';
 
 // Estilo personalizado para o AppBar
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
-  backgroundColor: '#FFFFFF !important',
+  backgroundColor: theme.palette.background.paper,
   boxShadow: theme.shadows[2],
-  '&.MuiAppBar-root': {
-    backgroundColor: '#FFFFFF !important',
-  },
+  backdropFilter: 'saturate(180%) blur(8px)',
   '& .MuiToolbar-root': {
-    backgroundColor: '#FFFFFF !important',
     minHeight: '75px',
     padding: theme.spacing(0, 2),
     [theme.breakpoints.up('md')]: {
@@ -38,15 +35,24 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 // Estilo para os itens do menu
 const MenuButton = styled(Button)(({ theme }) => ({
   fontWeight: 600,
-  color: theme.palette.text.primary,
+  color:
+    theme.palette.mode === 'dark'
+      ? alpha(theme.palette.primary.light, 0.9)
+      : theme.palette.text.primary,
   padding: '16px 32px',
-  transition: 'color 0.3s ease',
+  transition: 'color 0.2s ease',
   '&:hover': {
-    color: theme.palette.primary.main,
+    color:
+      theme.palette.mode === 'dark'
+        ? theme.palette.primary.main
+        : theme.palette.primary.main,
     backgroundColor: 'transparent',
   },
   '&.active': {
-    color: theme.palette.primary.main,
+    color:
+      theme.palette.mode === 'dark'
+        ? theme.palette.primary.main
+        : theme.palette.primary.main,
   },
 }));
 
@@ -152,14 +158,10 @@ function Header() {
 
   return (
     <StyledAppBar position="fixed" sx={{
-      backgroundColor: '#FFFFFF !important',
-      '&.MuiAppBar-root': {
-        backgroundColor: '#FFFFFF !important',
-      },
       transform: isVisible ? 'translateY(0)' : 'translateY(-100%)',
       transition: 'transform 0.3s ease-in-out',
       '&:hover': {
-        transform: 'translateY(0) !important',
+        transform: 'translateY(0)'
       },
       zIndex: theme.zIndex.drawer + 1
     }}
@@ -186,24 +188,21 @@ function Header() {
                 fontSize: { xs: '1.1rem', md: '1.3rem' },
                 display: 'flex',
                 alignItems: 'center',
-                '&:hover': {
-                  '& .logo-text': {
-                    background: 'linear-gradient(45deg, #1a237e 0%, #2979ff 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                  },
-                },
               }}
             >
               <Box
                 component="img"
                 src="/images/Logo_sem_fundo_Contab_2[1].png"
                 alt="Logo"
-                sx={{
+                sx={(theme) => ({
                   height: { xs: 50, md: 65 },
                   width: 'auto',
                   objectFit: 'contain',
-                }}
+                  filter:
+                    theme.palette.mode === 'dark'
+                      ? 'drop-shadow(0 2px 8px rgba(255,255,255,0.25)) brightness(1.15) contrast(1.05)'
+                      : 'none',
+                })}
               />
             </Box>
           </Box>

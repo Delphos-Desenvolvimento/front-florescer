@@ -11,6 +11,7 @@ export interface AuditLogItem {
   type: string;
   path?: string | null;
   newsId?: number | null;
+  newsTitle?: string | null;
   userId?: number | null;
   user?: AuditUser | null;
   userAgent?: string | null;
@@ -30,4 +31,3 @@ export async function getAuditLogs(params?: { type?: string; page?: number; limi
   const res = await api.get('/admin/logs', { params });
   return res.data as AuditLogResponse;
 }
-

@@ -114,7 +114,6 @@ const NewsCard = ({
                   lineHeight: 1.3,
                   mb: { xs: 1, sm: 1.5 },
                   fontWeight: 600,
-                  height: { xs: '2.6em', sm: '2.6em' },
                   display: '-webkit-box',
                   WebkitLineClamp: 2,
                   WebkitBoxOrient: 'vertical',
@@ -135,7 +134,7 @@ const NewsCard = ({
                   textOverflow: 'ellipsis',
                   mb: 2,
                   fontSize: { xs: '0.8rem', sm: '0.875rem' },
-                  height: { xs: '4.5em', sm: '4.5em' },
+                  lineHeight: 1.6,
                   flexGrow: 0,
                 }}
               >
@@ -240,7 +239,7 @@ function AllNewsPage() {
   }
 
   return (
-    <Box sx={{ pt: { xs: 12, sm: 14, md: 16 }, pb: { xs: 4, sm: 6, md: 8 }, backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
+    <Box sx={{ pt: { xs: 12, sm: 14, md: 16 }, pb: { xs: 4, sm: 6, md: 8 }, backgroundColor: 'background.default', minHeight: '100vh' }}>
       <Container maxWidth="lg">
         <Button
           component={RouterLink}

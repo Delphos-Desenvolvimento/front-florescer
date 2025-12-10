@@ -155,15 +155,15 @@ const Footer = () => {
   const contactInfo = [
     {
       icon: <MapPin size={18} />,
-      text: 'Av. Paulista, 1000 - São Paulo/SP',
+      text: 'Rua Florindo de Castro n° 475 Parnaiba-PI CEP 64200-430',
     },
     {
       icon: <Phone size={18} />,
-      text: '(11) 9999-9999',
+      text: '+55 86 9945-7780',
     },
     {
       icon: <Mail size={18} />,
-      text: 'contato@contab.com.br',
+      text: 'contabphb.pi@gmail.com',
     },
     {
       icon: <Clock size={18} />,

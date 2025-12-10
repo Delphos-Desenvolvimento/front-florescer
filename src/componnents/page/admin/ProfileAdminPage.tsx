@@ -16,8 +16,8 @@ const ProfileAdminPage: React.FC = () => {
       try {
         const me = await getMe();
         setCurrent(me);
-        setName(me.name || '');
-        setEmail(me.user);
+        setName(me.name || me.user || '');
+        setEmail(me.user || '');
       } catch (e: unknown) {
         const message = e instanceof Error ? e.message : 'Erro ao carregar perfil';
         setError(message);
@@ -46,7 +46,7 @@ const ProfileAdminPage: React.FC = () => {
     <Box>
       <Typography variant="h5" sx={{ mb: 3, color: 'primary.main' }}>Meu Perfil</Typography>
 
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+      {error && !/status code\s*500/i.test(error) && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
       {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
 
       <Paper sx={{ p: 3, maxWidth: 600 }}>

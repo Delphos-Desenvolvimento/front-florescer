@@ -132,7 +132,7 @@ const Comentarios = ({ newsId }: { newsId: number }) => {
   };
 
   return (
-    <Box sx={{ py: 6, backgroundColor: '#f5f5f5' }}>
+    <Box sx={{ py: 6, backgroundColor: 'background.default' }}>
       <Container maxWidth="md">
         <Typography variant="h4" component="h2" gutterBottom textAlign="center">
           Deixe seu Comentário

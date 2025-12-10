@@ -2,8 +2,6 @@ import React from 'react';
 import { Box } from '@mui/material';
 import Header from './page/Header';
 import Footer from './page/Footer';
-import AccessibilityWidget from './common/AccessibilityWidget';
-import '../accessibility.css';
 
 const PublicLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -13,7 +11,6 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => {
         {children}
       </Box>
       <Footer />
-      <AccessibilityWidget />
     </Box>
   );
 };

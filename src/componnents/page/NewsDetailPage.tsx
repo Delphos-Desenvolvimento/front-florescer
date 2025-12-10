@@ -85,7 +85,7 @@ function NewsDetailPage() {
     : `https://picsum.photos/1200/600?random=${id}`;
 
   return (
-    <Box sx={{ pt: { xs: 12, sm: 14, md: 16 }, pb: { xs: 4, sm: 6, md: 8 }, backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
+    <Box sx={{ pt: { xs: 12, sm: 14, md: 16 }, pb: { xs: 4, sm: 6, md: 8 }, backgroundColor: 'background.default', minHeight: '100vh' }}>
       <Container maxWidth="lg">
         <Grid container spacing={4}>
           {/* Main Content */}

@@ -238,6 +238,19 @@ function About() {
     return () => <img src={iconName} alt="" style={{ width: 36, height: 36 }} />;
   };
 
+  const splitIntoParagraphs = (text?: string): string[] => {
+    const raw = (text || '').trim();
+    if (!raw) return [];
+    const byNewline = raw.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean);
+    if (byNewline.length > 1) return byNewline;
+    const sentences = raw.split(/(?<=\.)\s+(?=[A-ZÁÉÍÓÚÃÕÇ])/);
+    const paras: string[] = [];
+    for (let i = 0; i < sentences.length; i += 2) {
+      paras.push(sentences.slice(i, i + 2).join(' '));
+    }
+    return paras.length ? paras : [raw];
+  };
+
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
@@ -283,7 +296,7 @@ function About() {
             <Box
               sx={{
                 textAlign: 'center',
-                maxWidth: 800,
+                maxWidth: { xs: 900, md: 1100 },
                 mx: 'auto',
                 mb: { xs: 6, md: 8 },
               }}
@@ -313,17 +326,26 @@ function About() {
               >
                 {aboutData?.title || 'A Contab é líder em tecnologia para gestão pública'}
               </Typography>
-              <Typography
-                variant="h6"
-                color="text.secondary"
-                sx={{
-                  fontWeight: 400,
-                  fontSize: '1.2rem',
-                  lineHeight: 1.7,
-                }}
-              >
-                {aboutData?.subtitle || 'Somos a evolução da gestão pública, com soluções inovadoras.'}
-              </Typography>
+              <Box sx={{ maxWidth: { xs: 900, md: 1100 }, mx: 'auto' }}>
+                {splitIntoParagraphs(aboutData?.subtitle || 'Somos a evolução da gestão pública, com soluções inovadoras.').map((p, idx) => (
+                  <Typography
+                    key={idx}
+                    variant="h6"
+                    color="text.secondary"
+                    sx={{
+                      fontWeight: 400,
+                      fontSize: { xs: '1.05rem', md: '1.15rem' },
+                      lineHeight: 1.9,
+                      textAlign: 'justify',
+                      letterSpacing: '0.01em',
+                      wordBreak: 'break-word',
+                      mb: 2,
+                    }}
+                  >
+                    {p}
+                  </Typography>
+                ))}
+              </Box>
             </Box>
           </div>
 
@@ -377,7 +399,7 @@ function About() {
             <Box
               sx={{
                 textAlign: 'center',
-                maxWidth: 800,
+                maxWidth: { xs: 900, md: 1100 },
                 mx: 'auto',
                 mb: { xs: 6, md: 8 },
               }}
@@ -407,17 +429,26 @@ function About() {
               >
                 {aboutData?.solutionsTitle || 'Transforme sua gestão com nossas soluções inteligentes'}
               </Typography>
-              <Typography
-                variant="body1"
-                color="text.secondary"
-                sx={{
-                  fontSize: '1.1rem',
-                  maxWidth: 700,
-                  mx: 'auto',
-                }}
-              >
-                {aboutData?.solutionsSubtitle || 'Oferecemos um ecossistema completo de soluções em nuvem para modernizar e otimizar todos os processos da gestão pública.'}
-              </Typography>
+              <Box sx={{ maxWidth: { xs: 900, md: 1100 }, mx: 'auto' }}>
+                {splitIntoParagraphs(aboutData?.solutionsSubtitle || 'Oferecemos um ecossistema completo de soluções em nuvem para modernizar e otimizar todos os processos da gestão pública.').map((p, idx) => (
+                  <Typography
+                    key={idx}
+                    variant="h6"
+                    color="text.secondary"
+                    sx={{
+                      fontWeight: 400,
+                      fontSize: { xs: '1.05rem', md: '1.15rem' },
+                      lineHeight: 1.9,
+                      textAlign: 'justify',
+                      letterSpacing: '0.01em',
+                      wordBreak: 'break-word',
+                      mb: 2,
+                    }}
+                  >
+                    {p}
+                  </Typography>
+                ))}
+              </Box>
             </Box>
           </div>
 

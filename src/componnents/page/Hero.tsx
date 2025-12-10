@@ -79,7 +79,7 @@ function Hero() {
             component="h1"
             sx={{
               fontWeight: 700,
-              color: '#00a4f6',
+              color: (theme) => theme.palette.mode === 'dark' ? theme.palette.primary.light : theme.palette.primary.main,
               fontSize: { xs: '2.8rem', md: '4rem' },
               mb: 0.1,
               lineHeight: 1.1,

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Paper, Table, TableHead, TableRow, TableCell, TableBody, Select, MenuItem, FormControl, InputLabel, Pagination, CircularProgress, Alert } from '@mui/material';
+import { Box, Typography, Paper, Table, TableHead, TableRow, TableCell, TableBody, Select, MenuItem, FormControl, InputLabel, Pagination, CircularProgress, Alert, Tooltip } from '@mui/material';
 import { getAuditLogs, type AuditLogResponse, type AuditLogItem } from '../../../API/audit';
 
 const LogsAdminPage: React.FC = () => {
@@ -9,6 +9,31 @@ const LogsAdminPage: React.FC = () => {
   const [typeFilter, setTypeFilter] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>('');
+
+  const typeLabels: Record<string, string> = {
+    news_create: 'Criação de notícia',
+    news_update: 'Atualização de notícia',
+    news_delete: 'Exclusão de notícia',
+    news_archive: 'Arquivamento de notícia',
+    news_restore: 'Restauração de notícia',
+    partner_create: 'Criação de parceiro',
+    partner_update: 'Atualização de parceiro',
+    partner_delete: 'Exclusão de parceiro',
+    links_create: 'Criação de link',
+    links_update: 'Atualização de link',
+    links_delete: 'Exclusão de link',
+    links_reorder: 'Reordenação de links',
+    about_update: 'Atualização de Sobre',
+    statistics_create: 'Criação de estatística',
+    statistics_update: 'Atualização de estatística',
+    statistics_delete: 'Exclusão de estatística',
+    solutions_create: 'Criação de solução',
+    solutions_update: 'Atualização de solução',
+    solutions_delete: 'Exclusão de solução',
+    solutions_reorder: 'Reordenação de soluções',
+    team_update: 'Atualização de equipe',
+    admin_update_me: 'Atualização de perfil',
+  };
 
   const loadLogs = async (p = 1, t = '') => {
     try {
@@ -44,28 +69,28 @@ const LogsAdminPage: React.FC = () => {
             onChange={(e) => { setTypeFilter(e.target.value); setPage(1); }}
           >
             <MenuItem value="">Todos</MenuItem>
-            <MenuItem value="news_create">News Create</MenuItem>
-            <MenuItem value="news_update">News Update</MenuItem>
-            <MenuItem value="news_delete">News Delete</MenuItem>
-            <MenuItem value="news_archive">News Archive</MenuItem>
-            <MenuItem value="news_restore">News Restore</MenuItem>
-            <MenuItem value="partner_create">Partner Create</MenuItem>
-            <MenuItem value="partner_update">Partner Update</MenuItem>
-            <MenuItem value="partner_delete">Partner Delete</MenuItem>
-            <MenuItem value="links_create">Links Create</MenuItem>
-            <MenuItem value="links_update">Links Update</MenuItem>
-            <MenuItem value="links_delete">Links Delete</MenuItem>
-            <MenuItem value="links_reorder">Links Reorder</MenuItem>
-            <MenuItem value="about_update">About Update</MenuItem>
-            <MenuItem value="statistics_create">Statistics Create</MenuItem>
-            <MenuItem value="statistics_update">Statistics Update</MenuItem>
-            <MenuItem value="statistics_delete">Statistics Delete</MenuItem>
-            <MenuItem value="solutions_create">Solutions Create</MenuItem>
-            <MenuItem value="solutions_update">Solutions Update</MenuItem>
-            <MenuItem value="solutions_delete">Solutions Delete</MenuItem>
-            <MenuItem value="solutions_reorder">Solutions Reorder</MenuItem>
-            <MenuItem value="team_update">Team Update</MenuItem>
-            <MenuItem value="admin_update_me">Profile Update</MenuItem>
+            <MenuItem value="news_create">Criação de notícia</MenuItem>
+            <MenuItem value="news_update">Atualização de notícia</MenuItem>
+            <MenuItem value="news_delete">Exclusão de notícia</MenuItem>
+            <MenuItem value="news_archive">Arquivamento de notícia</MenuItem>
+            <MenuItem value="news_restore">Restauração de notícia</MenuItem>
+            <MenuItem value="partner_create">Criação de parceiro</MenuItem>
+            <MenuItem value="partner_update">Atualização de parceiro</MenuItem>
+            <MenuItem value="partner_delete">Exclusão de parceiro</MenuItem>
+            <MenuItem value="links_create">Criação de link</MenuItem>
+            <MenuItem value="links_update">Atualização de link</MenuItem>
+            <MenuItem value="links_delete">Exclusão de link</MenuItem>
+            <MenuItem value="links_reorder">Reordenação de links</MenuItem>
+            <MenuItem value="about_update">Atualização de Sobre</MenuItem>
+            <MenuItem value="statistics_create">Criação de estatística</MenuItem>
+            <MenuItem value="statistics_update">Atualização de estatística</MenuItem>
+            <MenuItem value="statistics_delete">Exclusão de estatística</MenuItem>
+            <MenuItem value="solutions_create">Criação de solução</MenuItem>
+            <MenuItem value="solutions_update">Atualização de solução</MenuItem>
+            <MenuItem value="solutions_delete">Exclusão de solução</MenuItem>
+            <MenuItem value="solutions_reorder">Reordenação de soluções</MenuItem>
+            <MenuItem value="team_update">Atualização de equipe</MenuItem>
+            <MenuItem value="admin_update_me">Atualização de perfil</MenuItem>
           </Select>
         </FormControl>
       </Box>
@@ -84,20 +109,24 @@ const LogsAdminPage: React.FC = () => {
                 <TableCell>Data</TableCell>
                 <TableCell>Tipo</TableCell>
                 <TableCell>Usuário</TableCell>
-                <TableCell>Path</TableCell>
-                <TableCell>IP</TableCell>
+                <TableCell>Artigo</TableCell>
                 <TableCell>Notícia</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {logs.map((log) => (
                 <TableRow key={log.id}>
-                  <TableCell>{new Date(log.createdAt).toLocaleString()}</TableCell>
-                  <TableCell>{log.type}</TableCell>
+                  <TableCell>{new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(log.createdAt))}</TableCell>
+                  <TableCell>{typeLabels[log.type] ?? log.type}</TableCell>
                   <TableCell>{log.user?.user || '-'}</TableCell>
-                  <TableCell>{log.path || '-'}</TableCell>
-                  <TableCell>{log.ip || '-'}</TableCell>
-                  <TableCell>{log.newsId ?? '-'}</TableCell>
+                  <TableCell>
+                    {log.newsTitle ? (
+                      <Tooltip title={log.newsTitle}><span>{log.newsTitle}</span></Tooltip>
+                    ) : (
+                      log.path || '-'
+                    )}
+                  </TableCell>
+                  <TableCell>{log.newsTitle ?? '-'}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

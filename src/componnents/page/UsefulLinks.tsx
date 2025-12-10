@@ -59,7 +59,7 @@ const UsefulLinks: React.FC = () => {
                 pb: { xs: 8, md: 12 },
                 position: 'relative',
                 overflow: 'hidden',
-                backgroundColor: '#f9f9f9',
+                backgroundColor: 'background.default',
                 minHeight: '100vh',
             }}
         >
@@ -157,7 +157,7 @@ const UsefulLinks: React.FC = () => {
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
-                                                    backgroundColor: '#f5f5f5',
+                                                    backgroundColor: 'background.default',
                                                 }}
                                             >
                                                 <img

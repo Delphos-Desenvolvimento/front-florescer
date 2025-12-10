@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 import { Box, CircularProgress } from '@mui/material';
-import theme from './theme';
+import createAppTheme from './theme';
 import { verifyToken, isTokenValidLocal } from './API/login';
 
 // Importações das páginas
@@ -16,6 +16,7 @@ import NewsDetailPage from './componnents/page/NewsDetailPage';
 import TeamPage from './componnents/page/TeamPage';
 import UsefulLinks from './componnents/page/UsefulLinks';
 import PublicLayout from './componnents/PublicLayout';
+import AccessibilityWidget from './componnents/common/AccessibilityWidget';
 
 // Componente de rota protegida
 // Componente de rota protegida
@@ -61,8 +62,31 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 function App() {
+  const [mode, setMode] = useState<'light' | 'dark'>('light');
+
+  useEffect(() => {
+    const saved = localStorage.getItem('accessibilitySettings');
+    if (saved) {
+      try {
+        const obj = JSON.parse(saved) as { darkMode?: boolean };
+        if (obj && typeof obj.darkMode === 'boolean') {
+          setMode(obj.darkMode ? 'dark' : 'light');
+        }
+      } catch { void 0 }
+    }
+
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail as { darkMode?: boolean } | undefined;
+      if (detail && typeof detail.darkMode === 'boolean') {
+        setMode(detail.darkMode ? 'dark' : 'light');
+      }
+    };
+    window.addEventListener('accessibilitySettingsChanged', handler);
+    return () => window.removeEventListener('accessibilitySettingsChanged', handler);
+  }, []);
+
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={createAppTheme(mode)}>
       <CssBaseline />
       <Router>
         <Routes>
@@ -91,6 +115,7 @@ function App() {
             }
           />
         </Routes>
+        <AccessibilityWidget />
       </Router>
     </ThemeProvider>
   );

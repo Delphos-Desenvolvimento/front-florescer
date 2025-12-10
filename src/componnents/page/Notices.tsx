@@ -197,7 +197,7 @@ function Notices() {
   };
 
   return (
-    <Box sx={{ py: { xs: 4, sm: 6, md: 8 }, backgroundColor: '#f9f9f9', position: 'relative' }}>
+    <Box sx={{ py: { xs: 4, sm: 6, md: 8 }, backgroundColor: 'background.default', position: 'relative' }}>
       <Container maxWidth="lg">
         <Typography
           variant="h3"
