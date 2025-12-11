@@ -163,9 +163,10 @@ const Footer = () => {
     if (location.pathname === '/') {
       const el = document.getElementById('sobre');
       if (el) {
+        const target = (el.querySelector('h1') as HTMLElement) || el;
         const headerEl = document.querySelector('header');
         const headerH = headerEl ? (headerEl as HTMLElement).getBoundingClientRect().height : 80;
-        const y = el.getBoundingClientRect().top + window.scrollY - headerH;
+        const y = target.getBoundingClientRect().top + window.scrollY - headerH;
         window.scrollTo({ top: y, behavior: 'smooth' });
         return;
       }
@@ -177,9 +178,10 @@ const Footer = () => {
     if (location.pathname === '/') {
       const el = document.getElementById('solucoes');
       if (el) {
+        const target = (el.querySelector('h2') as HTMLElement) || el;
         const headerEl = document.querySelector('header');
         const headerH = headerEl ? (headerEl as HTMLElement).getBoundingClientRect().height : 80;
-        const y = el.getBoundingClientRect().top + window.scrollY - headerH;
+        const y = target.getBoundingClientRect().top + window.scrollY - headerH;
         window.scrollTo({ top: y, behavior: 'smooth' });
         return;
       }

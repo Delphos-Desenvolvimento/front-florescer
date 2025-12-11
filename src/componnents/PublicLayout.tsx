@@ -12,7 +12,14 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => {
     if (!hash) return;
     let attempts = 0;
     const tryScroll = () => {
-      const el = document.getElementById(hash);
+      const sec = document.getElementById(hash);
+      const el =
+        sec &&
+        (hash === 'sobre'
+          ? (sec.querySelector('h1') as HTMLElement) || sec
+          : hash === 'solucoes'
+          ? (sec.querySelector('h2') as HTMLElement) || sec
+          : sec);
       if (el) {
         const headerEl = document.querySelector('header');
         const headerH = headerEl ? (headerEl as HTMLElement).getBoundingClientRect().height : 80;

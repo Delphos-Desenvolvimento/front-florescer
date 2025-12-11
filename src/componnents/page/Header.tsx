@@ -106,9 +106,15 @@ function Header() {
     }
     const element = document.getElementById(sectionId);
     if (element && location.pathname === '/') {
+      const target =
+        sectionId === 'sobre'
+          ? (element.querySelector('h1') as HTMLElement) || element
+          : sectionId === 'solucoes'
+          ? (element.querySelector('h2') as HTMLElement) || element
+          : element;
       const headerEl = document.querySelector('header');
       const headerH = headerEl ? (headerEl as HTMLElement).getBoundingClientRect().height : 80;
-      const y = element.getBoundingClientRect().top + window.scrollY - headerH;
+      const y = target.getBoundingClientRect().top + window.scrollY - headerH;
       window.scrollTo({ top: y, behavior: 'smooth' });
     } else {
       navigate('/#' + sectionId);
