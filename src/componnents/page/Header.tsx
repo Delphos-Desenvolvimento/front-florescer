@@ -106,7 +106,10 @@ function Header() {
     }
     const element = document.getElementById(sectionId);
     if (element && location.pathname === '/') {
-      element.scrollIntoView({ behavior: 'smooth' });
+      const headerEl = document.querySelector('header');
+      const headerH = headerEl ? (headerEl as HTMLElement).getBoundingClientRect().height : 80;
+      const y = element.getBoundingClientRect().top + window.scrollY - headerH;
+      window.scrollTo({ top: y, behavior: 'smooth' });
     } else {
       navigate('/#' + sectionId);
     }
