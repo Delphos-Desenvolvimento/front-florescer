@@ -154,32 +154,12 @@ const SolutionCard = ({ title, description, icon: Icon }: SolutionCardProps) => 
             <Typography
               color="text.secondary"
               sx={{
-                mb: 3,
+                mb: 0,
                 flexGrow: 1,
               }}
             >
               {description}
             </Typography>
-            <Button
-              component={RouterLink}
-              to={`/solucoes/${title.toLowerCase().replace(/\s+/g, '-')}`}
-              endIcon={<ArrowRight size={18} />}
-              sx={{
-                alignSelf: 'flex-start',
-                color: '#64b5f6',
-                fontWeight: 600,
-                p: 0,
-                '&:hover': {
-                  color: '#42a5f5',
-                  backgroundColor: 'transparent',
-                  '& .MuiButton-endIcon': {
-                    transform: 'translateX(4px)',
-                  },
-                },
-              }}
-            >
-              Saiba mais
-            </Button>
           </CardContent>
         </Card>
       </div>
@@ -280,7 +260,7 @@ function About() {
   return (
     <Box
       sx={{
-        pt: { xs: 6, md: 8 },
+        pt: { xs: 0, md: 0 },
         pb: { xs: 8, md: 12 },
         position: 'relative',
         overflow: 'hidden',
@@ -301,7 +281,7 @@ function About() {
 
       <Container maxWidth="xl">
         {/* Seção Sobre Nós */}
-        <Box id="sobre" sx={{ mb: { xs: 8, md: 12 }, scrollMarginTop: '80px' }}>
+        <Box id="sobre" sx={{ mb: { xs: 8, md: 12 }, scrollMarginTop: '88px' }}>
           <div>
             <Box
               sx={{

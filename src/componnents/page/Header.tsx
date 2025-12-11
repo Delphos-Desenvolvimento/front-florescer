@@ -90,7 +90,14 @@ function Header() {
   const scrollToSection = (e: React.MouseEvent, sectionId: string) => {
     e.preventDefault();
     if (sectionId === '') {
-      navigate('/');
+      if (location.pathname === '/' && !location.hash) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        navigate('/');
+        setTimeout(() => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 0);
+      }
       return;
     }
     if (sectionId === 'noticias') {

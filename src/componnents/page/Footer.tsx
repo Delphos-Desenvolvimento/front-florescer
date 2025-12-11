@@ -18,12 +18,9 @@ import {
   Mail,
   Clock,
   Facebook,
-  Twitter,
   Linkedin,
   Instagram,
-  Youtube,
-  ArrowUpRight,
-  ChevronRight
+  ArrowUpRight
 } from 'lucide-react';
 
 // Componente de link personalizado
@@ -31,36 +28,18 @@ const FooterLink = ({ children, href }: { children: React.ReactNode; href: strin
   <Link
     component={RouterLink}
     to={href}
+    variant="body2"
     sx={{
       color: 'rgba(255, 255, 255, 0.9)',
-      display: 'flex',
-      alignItems: 'center',
+      display: 'block',
       mb: 1.5,
       textDecoration: 'none',
-      transition: 'all 0.3s ease',
+      transition: 'all 0.2s ease',
       '&:hover': {
         color: '#64b5f6',
-        transform: 'translateX(4px)',
-        '& .arrow-icon': {
-          opacity: 1,
-          transform: 'translateX(4px)',
-        },
       },
     }}
   >
-    <Box
-      component="span"
-      className="arrow-icon"
-      sx={{
-        display: 'inline-flex',
-        opacity: 0,
-        transform: 'translateX(-4px)',
-        transition: 'all 0.3s ease',
-        mr: 0.5,
-      }}
-    >
-      <ChevronRight size={16} />
-    </Box>
     {children}
   </Link>
 );
@@ -118,7 +97,7 @@ const Footer = () => {
     {
       title: 'Empresa',
       links: [
-        { label: 'Sobre Nós', href: '/sobre' },
+        { label: 'Sobre Nós', href: '/#sobre' },
         { label: 'Nossa Equipe', href: '/equipe' },
         { label: 'Depoimentos', href: '/depoimentos' },
         { label: 'Trabalhe Conosco', href: '/trabalhe-conosco' },
@@ -148,8 +127,6 @@ const Footer = () => {
     { icon: Facebook, url: 'https://facebook.com' },
     { icon: Instagram, url: 'https://instagram.com' },
     { icon: Linkedin, url: 'https://linkedin.com' },
-    { icon: Twitter, url: 'https://twitter.com' },
-    { icon: Youtube, url: 'https://youtube.com' },
   ];
 
   const contactInfo = [
@@ -288,9 +265,19 @@ const Footer = () => {
               <Box component="ul" sx={{ listStyle: 'none', p: 0, m: 0, mt: 4 }}>
                 {column.links.map((link, linkIndex) => (
                   <Box component="li" key={linkIndex}>
-                    <FooterLink href={link.href}>
-                      {link.label}
-                    </FooterLink>
+                    {link.href === '/equipe' || link.href.startsWith('/#') ? (
+                      <FooterLink href={link.href}>{link.label}</FooterLink>
+                    ) : (
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: 'rgba(255, 255, 255, 0.9)',
+                          mb: 1.5,
+                        }}
+                      >
+                        {link.label}
+                      </Typography>
+                    )}
                   </Box>
                 ))}
               </Box>
@@ -335,60 +322,14 @@ const Footer = () => {
           </Box>
 
           {/* Redes Sociais */}
-          <Box sx={{ display: 'flex', gap: 1.5 }}>
+          <Box sx={{ display: 'flex', gap: 1.5, ml: 'auto', justifyContent: 'flex-end' }}>
             {socialLinks.map((social, index) => (
               <SocialIcon key={index} icon={social.icon} url={social.url} />
             ))}
           </Box>
 
-          {/* Links legais */}
-          <Box sx={{ display: 'flex', gap: { xs: 2, md: 3 }, flexWrap: 'wrap', justifyContent: 'center' }}>
-            <Link
-              component={RouterLink}
-              to="/politica-privacidade"
-              sx={{
-                color: 'rgba(255, 255, 255, 0.7)',
-                textDecoration: 'none',
-                fontSize: '0.8rem',
-                transition: 'color 0.3s ease',
-                '&:hover': {
-                  color: '#64b5f6',
-                },
-              }}
-            >
-              Privacidade
-            </Link>
-            <Link
-              component={RouterLink}
-              to="/termos-uso"
-              sx={{
-                color: 'rgba(255, 255, 255, 0.7)',
-                textDecoration: 'none',
-                fontSize: '0.8rem',
-                transition: 'color 0.3s ease',
-                '&:hover': {
-                  color: '#64b5f6',
-                },
-              }}
-            >
-              Termos
-            </Link>
-            <Link
-              component={RouterLink}
-              to="/cookies"
-              sx={{
-                color: 'rgba(255, 255, 255, 0.7)',
-                textDecoration: 'none',
-                fontSize: '0.8rem',
-                transition: 'color 0.3s ease',
-                '&:hover': {
-                  color: '#64b5f6',
-                },
-              }}
-            >
-              Cookies
-            </Link>
-          </Box>
+          {/* Links legais removidos */}
+          <Box />
         </Box>
       </Container>
 
