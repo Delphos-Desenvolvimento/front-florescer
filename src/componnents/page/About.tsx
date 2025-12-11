@@ -206,6 +206,12 @@ function About() {
     const el = document.getElementById(hash);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
+      setTimeout(() => {
+        const headerEl = document.querySelector('header');
+        const headerH = headerEl ? (headerEl as HTMLElement).getBoundingClientRect().height : 80;
+        const offset = headerH + 10;
+        window.scrollBy({ top: -offset, behavior: 'smooth' });
+      }, 0);
     }
   }, [location.hash, loading]);
 
@@ -281,7 +287,7 @@ function About() {
 
       <Container maxWidth="xl">
         {/* Seção Sobre Nós */}
-        <Box id="sobre" sx={{ mb: { xs: 8, md: 12 }, scrollMarginTop: '98px' }}>
+        <Box id="sobre" sx={{ mb: { xs: 8, md: 12 }, scrollMarginTop: '0px' }}>
           <div>
             <Box
               sx={{
