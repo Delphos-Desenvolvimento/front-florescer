@@ -213,7 +213,7 @@ export default function AdminHome() {
   });
 
   // State for statistics
-  const [timeRange, setTimeRange] = useState<'day' | 'week' | 'month'>('week');
+  const [timeRange, setTimeRange] = useState<'day' | 'week' | 'month' | 'year'>('week');
   const [chartData, setChartData] = useState<Array<{ date: string; label: string; views: number }>>([]);
   const [isLoadingStats, setIsLoadingStats] = useState(false);
   const [overviewStats, setOverviewStats] = useState<StatsOverview | null>(null);
@@ -256,7 +256,7 @@ export default function AdminHome() {
   const fetchNewsStats = useCallback(async () => {
     try {
       setIsLoadingStats(true);
-      const days = timeRange === 'day' ? 1 : timeRange === 'week' ? 7 : 30;
+      const days = timeRange === 'day' ? 1 : timeRange === 'week' ? 7 : timeRange === 'month' ? 30 : 365;
       const [trend, overview] = await Promise.all([
         StatsService.getEventsByDay('news_view', days),
         StatsService.getOverview()
@@ -1527,13 +1527,14 @@ export default function AdminHome() {
                   <FormControl variant="outlined" size="small" sx={{ minWidth: 120 }}>
                     <Select
                       value={timeRange}
-                      onChange={(e) => setTimeRange(e.target.value as 'day' | 'week' | 'month')}
+                      onChange={(e) => setTimeRange(e.target.value as 'day' | 'week' | 'month' | 'year')}
                       sx={{ height: 36 }}
-                    >
-                      <MenuItem value="day">Últimas 24h</MenuItem>
-                      <MenuItem value="week">Esta Semana</MenuItem>
-                      <MenuItem value="month">Este Mês</MenuItem>
-                    </Select>
+                      >
+                        <MenuItem value="day">Últimas 24h</MenuItem>
+                        <MenuItem value="week">Esta Semana</MenuItem>
+                        <MenuItem value="month">Este Mês</MenuItem>
+                        <MenuItem value="year">Este Ano</MenuItem>
+                      </Select>
                   </FormControl>
                 </Box>
 

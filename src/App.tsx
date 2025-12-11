@@ -61,6 +61,14 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return children;
 };
 
+const ScrollToTop = () => {
+  const location = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [location.pathname]);
+  return null;
+};
+
 function App() {
   const [mode, setMode] = useState<'light' | 'dark'>('light');
 
@@ -89,6 +97,7 @@ function App() {
     <ThemeProvider theme={createAppTheme(mode)}>
       <CssBaseline />
       <Router>
+        <ScrollToTop />
         <Routes>
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route

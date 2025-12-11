@@ -42,14 +42,20 @@ const MenuButton = styled(Button)(({ theme }) => ({
   backgroundColor: theme.palette.common.white,
   color: theme.palette.primary.main,
   transition: 'all 0.2s ease',
+  boxShadow: 'none',
+  outline: 'none',
+  '&:focus,&:focus-visible': {
+    outline: 'none',
+    boxShadow: 'none',
+  },
   '&:hover': {
     transform: 'translateY(-2px)',
-    boxShadow: '0 4px 12px rgba(41, 121, 255, 0.2)',
+    boxShadow: 'none',
     backgroundColor: theme.palette.common.white,
   },
   '&.active': {
     color: theme.palette.primary.main,
-    boxShadow: '0 4px 12px rgba(41, 121, 255, 0.24)',
+    boxShadow: 'none',
   },
 }));
 
@@ -280,7 +286,7 @@ function Header() {
               <Box component={RouterLink} to="/links-uteis" sx={{ textDecoration: 'none' }}>
                 <MenuButton
                   startIcon={<LinkIcon size={14} />}
-                  sx={{ ml: 1 }}
+                  sx={{ ml: 1, boxShadow: 'none', '&:hover': { boxShadow: 'none' } }}
                 >
                   Links Úteis
                 </MenuButton>
@@ -288,7 +294,7 @@ function Header() {
               <MenuButton
                 onClick={(e) => scrollToSection(e, 'contato')}
                 startIcon={<Phone size={14} />}
-                sx={{ ml: 1 }}
+                sx={{ ml: 1, boxShadow: 'none', '&:hover': { boxShadow: 'none' } }}
               >
                 Contato
               </MenuButton>
