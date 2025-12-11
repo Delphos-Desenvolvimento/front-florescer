@@ -10,7 +10,7 @@ import {
   useMediaQuery,
   IconButton
 } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 // Ícones do Lucide React
 import {
   MapPin,
@@ -24,10 +24,11 @@ import {
 } from 'lucide-react';
 
 // Componente de link personalizado
-const FooterLink = ({ children, href }: { children: React.ReactNode; href: string }) => (
+const FooterLink = ({ children, href, onClick }: { children: React.ReactNode; href: string; onClick?: (e: React.MouseEvent) => void }) => (
   <Link
     component={RouterLink}
     to={href}
+    onClick={onClick}
     variant="body2"
     sx={{
       color: 'rgba(255, 255, 255, 0.9)',
@@ -93,6 +94,8 @@ const ContactItem = ({ icon, text }: { icon: React.ReactNode; text: string }) =>
 const Footer = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
+  const navigate = useNavigate();
+  const location = useLocation();
   const footerLinks = [
     {
       title: 'Empresa',
@@ -153,6 +156,21 @@ const Footer = () => {
       top: 0,
       behavior: 'smooth',
     });
+  };
+
+  const scrollToSobre = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (location.pathname === '/') {
+      const el = document.getElementById('sobre');
+      if (el) {
+        const headerEl = document.querySelector('header');
+        const headerH = headerEl ? (headerEl as HTMLElement).getBoundingClientRect().height : 80;
+        const y = el.getBoundingClientRect().top + window.scrollY - headerH;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+        return;
+      }
+    }
+    navigate('/#sobre');
   };
 
   return (
@@ -265,8 +283,10 @@ const Footer = () => {
               <Box component="ul" sx={{ listStyle: 'none', p: 0, m: 0, mt: 4 }}>
                 {column.links.map((link, linkIndex) => (
                   <Box component="li" key={linkIndex}>
-                    {link.href === '/equipe' || link.href.startsWith('/#') ? (
+                    {link.href === '/equipe' ? (
                       <FooterLink href={link.href}>{link.label}</FooterLink>
+                    ) : link.href === '/#sobre' ? (
+                      <FooterLink href={link.href} onClick={scrollToSobre}>{link.label}</FooterLink>
                     ) : (
                       <Typography
                         variant="body2"
