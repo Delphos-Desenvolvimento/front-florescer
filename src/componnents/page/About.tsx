@@ -281,7 +281,7 @@ function About() {
 
       <Container maxWidth="xl">
         {/* Seção Sobre Nós */}
-        <Box id="sobre" sx={{ mb: { xs: 8, md: 12 }, scrollMarginTop: '88px' }}>
+        <Box id="sobre" sx={{ mb: { xs: 8, md: 12 }, scrollMarginTop: '78px' }}>
           <div>
             <Box
               sx={{
