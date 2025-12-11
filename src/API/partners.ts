@@ -4,6 +4,7 @@ export interface Partner {
     id: number;
     name: string;
     logoBase64: string;
+    description?: string;
     displayOrder: number;
     active: boolean;
     createdAt: string;
@@ -13,6 +14,7 @@ export interface Partner {
 export interface CreatePartnerData {
     name: string;
     logoBase64: string;
+    description?: string;
     displayOrder?: number;
     active?: boolean;
 }
@@ -20,6 +22,7 @@ export interface CreatePartnerData {
 export interface UpdatePartnerData {
     name?: string;
     logoBase64?: string;
+    description?: string;
     displayOrder?: number;
     active?: boolean;
 }

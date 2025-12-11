@@ -12,7 +12,7 @@ import {
   styled
 } from '@mui/material';
 import { useState, useEffect } from 'react';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import { Phone, Link as LinkIcon } from 'lucide-react';
 
 // Componente simplificado sem efeito de scroll
@@ -32,82 +32,28 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   },
 }));
 
-// Estilo para os itens do menu
+// Estilo unificado: botões brancos com texto azul
 const MenuButton = styled(Button)(({ theme }) => ({
+  borderRadius: 12,
+  textTransform: 'none',
   fontWeight: 600,
-  color:
-    theme.palette.mode === 'dark'
-      ? alpha(theme.palette.primary.light, 0.9)
-      : theme.palette.text.primary,
-  padding: '16px 32px',
-  transition: 'color 0.2s ease',
+  fontSize: '0.95rem',
+  padding: '10px 20px',
+  backgroundColor: theme.palette.common.white,
+  color: theme.palette.primary.main,
+  transition: 'all 0.2s ease',
   '&:hover': {
-    color:
-      theme.palette.mode === 'dark'
-        ? theme.palette.primary.main
-        : theme.palette.primary.main,
-    backgroundColor: 'transparent',
+    transform: 'translateY(-2px)',
+    boxShadow: '0 4px 12px rgba(41, 121, 255, 0.2)',
+    backgroundColor: theme.palette.common.white,
   },
   '&.active': {
-    color:
-      theme.palette.mode === 'dark'
-        ? theme.palette.primary.main
-        : theme.palette.primary.main,
+    color: theme.palette.primary.main,
+    boxShadow: '0 4px 12px rgba(41, 121, 255, 0.24)',
   },
 }));
 
-// Função para rolagem suave
-const scrollToSection = (e: React.MouseEvent, sectionId: string) => {
-  e.preventDefault();
-  const element = document.getElementById(sectionId);
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth' });
-  } else {
-    // Se o elemento não for encontrado, navega para a rota
-    window.location.href = `/${sectionId}`;
-  }
-};
-
-// Itens do menu principal
-const menuItems = [
-  {
-    title: 'Home',
-    path: '/',
-    onClick: (e: React.MouseEvent) => scrollToSection(e, '')
-  },
-  {
-    title: 'Notícias',
-    path: '/noticias',
-    onClick: (e: React.MouseEvent) => scrollToSection(e, 'noticias')
-  },
-  {
-    title: 'Sobre',
-    path: '/#sobre',
-    onClick: (e: React.MouseEvent) => scrollToSection(e, 'sobre')
-  },
-  {
-    title: 'Soluções',
-    path: '/#solucoes',
-    onClick: (e: React.MouseEvent) => scrollToSection(e, 'solucoes'),
-    submenu: [
-      {
-        title: 'Prefeitura e Gestão',
-        path: '/solucoes/prefeitura',
-        onClick: (event: React.MouseEvent) => scrollToSection(event, 'solucoes')
-      },
-      {
-        title: 'Saúde',
-        path: '/solucoes/saude',
-        onClick: (event: React.MouseEvent) => scrollToSection(event, 'solucoes')
-      },
-      {
-        title: 'Educação',
-        path: '/solucoes/educacao',
-        onClick: (event: React.MouseEvent) => scrollToSection(event, 'solucoes')
-      },
-    ],
-  },
-];
+// Menu móvel removido - não está sendo utilizado
 
 // Menu móvel removido - não está sendo utilizado
 
@@ -117,31 +63,10 @@ function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const location = useLocation();
-  const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const navigate = useNavigate();
+  
 
-  // Detectar direção do scroll para esconder/mostrar header
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-
-      // Mostrar header quando estiver no topo
-      if (currentScrollY < 10) {
-        setIsVisible(true);
-      }
-      // Esconder quando rolar para baixo, mostrar quando rolar para cima
-      else if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        setIsVisible(false);
-      } else if (currentScrollY < lastScrollY) {
-        setIsVisible(true);
-      }
-
-      setLastScrollY(currentScrollY);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+  
 
   // Fechar menu mobile ao mudar de rota
   useEffect(() => {
@@ -156,13 +81,63 @@ function Header() {
     setAnchorEl(null);
   };
 
+  const scrollToSection = (e: React.MouseEvent, sectionId: string) => {
+    e.preventDefault();
+    if (sectionId === '') {
+      navigate('/');
+      return;
+    }
+    if (sectionId === 'noticias') {
+      navigate('/noticias');
+      return;
+    }
+    const element = document.getElementById(sectionId);
+    if (element && location.pathname === '/') {
+      element.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate('/#' + sectionId);
+    }
+  };
+
+  const menuItems = [
+    {
+      title: 'Home',
+      path: '/',
+      onClick: (e: React.MouseEvent) => scrollToSection(e, '')
+    },
+    {
+      title: 'Notícias',
+      path: '/noticias',
+      onClick: (e: React.MouseEvent) => scrollToSection(e, 'noticias')
+    },
+    {
+      title: 'Sobre',
+      path: '/#sobre',
+      onClick: (e: React.MouseEvent) => scrollToSection(e, 'sobre')
+    },
+    {
+      title: 'Soluções',
+      path: '/#solucoes',
+      onClick: (e: React.MouseEvent) => scrollToSection(e, 'solucoes'),
+      submenu: [
+        {
+          title: 'Prefeitura e Gestão',
+          path: '/solucoes/prefeitura',
+        },
+        {
+          title: 'Saúde',
+          path: '/solucoes/saude',
+        },
+        {
+          title: 'Educação',
+          path: '/solucoes/educacao',
+        },
+      ],
+    },
+  ];
+
   return (
     <StyledAppBar position="fixed" sx={{
-      transform: isVisible ? 'translateY(0)' : 'translateY(-100%)',
-      transition: 'transform 0.3s ease-in-out',
-      '&:hover': {
-        transform: 'translateY(0)'
-      },
       zIndex: theme.zIndex.drawer + 1
     }}
     >
@@ -302,51 +277,21 @@ function Header() {
 
             {/* Botões de ação */}
             <Box sx={{ display: 'flex', alignItems: 'center', ml: { xs: 1, md: 2 } }}>
-              <Button
-                component={RouterLink}
-                to="/links-uteis"
-                variant="outlined"
-                startIcon={<LinkIcon size={14} />}
-                sx={{
-                  ml: 1,
-                  borderRadius: '12px',
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  fontSize: '0.9rem',
-                  px: 2.5,
-                  py: 1,
-                  borderWidth: '2px',
-                  '&:hover': {
-                    borderWidth: '2px',
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 4px 12px rgba(41, 121, 255, 0.2)',
-                  },
-                }}
-              >
-                Links Úteis
-              </Button>
-              <Button
+              <Box component={RouterLink} to="/links-uteis" sx={{ textDecoration: 'none' }}>
+                <MenuButton
+                  startIcon={<LinkIcon size={14} />}
+                  sx={{ ml: 1 }}
+                >
+                  Links Úteis
+                </MenuButton>
+              </Box>
+              <MenuButton
                 onClick={(e) => scrollToSection(e, 'contato')}
-                variant="outlined"
                 startIcon={<Phone size={14} />}
-                sx={{
-                  ml: 1,
-                  borderRadius: '12px',
-                  textTransform: 'none',
-                  fontWeight: 600,
-                  fontSize: '0.9rem',
-                  px: 2.5,
-                  py: 1,
-                  borderWidth: '2px',
-                  '&:hover': {
-                    borderWidth: '2px',
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 4px 12px rgba(41, 121, 255, 0.2)',
-                  },
-                }}
+                sx={{ ml: 1 }}
               >
                 Contato
-              </Button>
+              </MenuButton>
             </Box>
           </Box>
         </Toolbar>

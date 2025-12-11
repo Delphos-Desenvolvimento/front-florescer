@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
     Box,
     IconButton,
@@ -51,8 +52,10 @@ const defaultSettings: AccessibilitySettings = {
 };
 
 export default function AccessibilityWidget() {
-    const [open, setOpen] = useState(false);
-    const [settings, setSettings] = useState<AccessibilitySettings>(defaultSettings);
+  const [open, setOpen] = useState(false);
+  const [settings, setSettings] = useState<AccessibilitySettings>(defaultSettings);
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
 
     // Load settings from localStorage on mount
     useEffect(() => {
@@ -134,13 +137,13 @@ export default function AccessibilityWidget() {
     return (
         <>
             {/* Floating Accessibility Button */}
-            <Tooltip title="Acessibilidade" placement="left">
+            <Tooltip title="Acessibilidade" placement={isAdminRoute ? 'left' : 'right'}>
                 <IconButton
                     onClick={handleToggle}
                     sx={{
                         position: 'fixed',
                         bottom: 20,
-                        right: 20,
+                        ...(isAdminRoute ? { right: 20 } : { left: 20 }),
                         width: 56,
                         height: 56,
                         backgroundColor: 'primary.main',

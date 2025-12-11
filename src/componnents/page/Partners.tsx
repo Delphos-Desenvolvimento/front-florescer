@@ -138,10 +138,10 @@ export default function Partners() {
                         sx={{
                             display: 'flex',
                             justifyContent: 'center',
-                            alignItems: 'center',
-                            gap: { xs: 2, sm: 3, md: 4 },
+                            alignItems: 'flex-start',
+                            gap: { xs: 3, sm: 4, md: 5 },
                             px: { xs: 2, sm: 4 },
-                            minHeight: '120px',
+                            minHeight: '200px',
                             transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
                         }}
                     >
@@ -149,30 +149,13 @@ export default function Partners() {
                             <Box
                                 key={partner.id}
                                 sx={{
-                                    flex: 1,
+                                    width: { xs: 160, sm: 200, md: 220 },
                                     display: 'flex',
-                                    justifyContent: 'center',
+                                    flexDirection: 'column',
                                     alignItems: 'center',
-                                    p: 2,
-                                    backgroundColor: 'background.paper',
-                                    borderRadius: 2,
-                                    boxShadow: 1,
-                                    transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-                                    animation: 'fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-                                    '@keyframes fadeIn': {
-                                        from: {
-                                            opacity: 0,
-                                            transform: 'translateX(30px)',
-                                        },
-                                        to: {
-                                            opacity: 1,
-                                            transform: 'translateX(0)',
-                                        },
-                                    },
-                                    '&:hover': {
-                                        boxShadow: 3,
-                                        transform: 'translateY(-4px)',
-                                    },
+                                    textAlign: 'center',
+                                    p: 1,
+                                    transition: 'transform 0.3s ease',
                                 }}
                             >
                                 <img
@@ -184,18 +167,18 @@ export default function Partners() {
                                     alt={partner.name}
                                     style={{
                                         maxWidth: '100%',
-                                        maxHeight: '80px',
+                                        height: '110px',
                                         objectFit: 'contain',
-                                        filter: 'grayscale(100%)',
-                                        transition: 'filter 0.4s ease',
-                                    }}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.filter = 'grayscale(0%)';
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.filter = 'grayscale(100%)';
                                     }}
                                 />
+                                <Typography variant="subtitle1" sx={{ mt: 1.5, fontWeight: 600 }}>
+                                    {partner.name}
+                                </Typography>
+                                {partner.description && (
+                                    <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
+                                        {partner.description}
+                                    </Typography>
+                                )}
                             </Box>
                         ))}
                     </Box>

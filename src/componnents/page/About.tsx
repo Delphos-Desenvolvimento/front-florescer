@@ -1,5 +1,5 @@
 import { Container, Typography, Box, Grid, Card, CardContent, Button, CircularProgress, Alert } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { ArrowRight, BarChart2, Users, Shield, Zap, Clock, Award, TrendingUp } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import { getAboutSection, getStatistics, getSolutions, type AboutSection as AboutSectionType, type Statistic, type Solution } from '../../API/content';
@@ -107,9 +107,8 @@ const SolutionCard = ({ title, description, icon: Icon }: SolutionCardProps) => 
               transform: 'translateY(-8px)',
               boxShadow: '0 15px 40px rgba(26, 35, 126, 0.15)',
               '& .solution-icon': {
-                backgroundColor: 'primary.main',
-                color: 'white',
                 transform: 'scale(1.1)',
+                boxShadow: '0 8px 20px rgba(26, 35, 126, 0.15)',
               },
               '& .solution-title': {
                 color: 'primary.main',
@@ -194,6 +193,7 @@ function About() {
   const [solutions, setSolutions] = useState<Solution[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const location = useLocation();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -218,6 +218,16 @@ function About() {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (loading) return;
+    const hash = location.hash.replace('#', '');
+    if (!hash) return;
+    const el = document.getElementById(hash);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [location.hash, loading]);
 
   // Mapeamento de ícones lucide-react
   const iconMap: Record<string, React.ElementType> = {

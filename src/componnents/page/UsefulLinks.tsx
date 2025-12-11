@@ -135,9 +135,12 @@ const UsefulLinks: React.FC = () => {
                                             transform: 'translateY(-8px)',
                                             boxShadow: '0 15px 40px rgba(26, 35, 126, 0.15)',
                                             '& .link-icon': {
-                                                backgroundColor: 'primary.main',
-                                                color: 'white',
-                                                transform: 'scale(1.1)',
+                                                transform: 'scale(1.08)',
+                                                boxShadow: '0 8px 20px rgba(26, 35, 126, 0.12)',
+                                            },
+                                            '& .link-thumb': {
+                                                transform: 'scale(1.04)',
+                                                boxShadow: '0 8px 20px rgba(26, 35, 126, 0.12)',
                                             },
                                             '& .link-title': {
                                                 color: 'primary.main',
@@ -148,16 +151,21 @@ const UsefulLinks: React.FC = () => {
                                     <CardContent sx={{ p: 4, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                                         {link.imageBase64 ? (
                                             <Box
+                                                className="link-thumb"
                                                 sx={{
-                                                    width: 80,
-                                                    height: 80,
+                                                    width: 84,
+                                                    height: 84,
                                                     borderRadius: '16px',
                                                     mb: 3,
                                                     overflow: 'hidden',
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
-                                                    backgroundColor: 'background.default',
+                                                    backgroundColor: '#ffffff',
+                                                    border: '1px solid',
+                                                    borderColor: 'divider',
+                                                    p: 1.5,
+                                                    transition: 'all 0.3s ease',
                                                 }}
                                             >
                                                 <img
@@ -166,7 +174,8 @@ const UsefulLinks: React.FC = () => {
                                                     style={{
                                                         width: '100%',
                                                         height: '100%',
-                                                        objectFit: 'cover',
+                                                        objectFit: 'contain',
+                                                        imageRendering: 'auto',
                                                     }}
                                                 />
                                             </Box>
