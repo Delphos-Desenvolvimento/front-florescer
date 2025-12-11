@@ -172,6 +172,20 @@ const Footer = () => {
     }
     navigate('/#sobre');
   };
+  const scrollToSolucoes = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (location.pathname === '/') {
+      const el = document.getElementById('solucoes');
+      if (el) {
+        const headerEl = document.querySelector('header');
+        const headerH = headerEl ? (headerEl as HTMLElement).getBoundingClientRect().height : 80;
+        const y = el.getBoundingClientRect().top + window.scrollY - headerH;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+        return;
+      }
+    }
+    navigate('/#solucoes');
+  };
 
   return (
     <Box
@@ -287,6 +301,8 @@ const Footer = () => {
                       <FooterLink href={link.href}>{link.label}</FooterLink>
                     ) : link.href === '/#sobre' ? (
                       <FooterLink href={link.href} onClick={scrollToSobre}>{link.label}</FooterLink>
+                    ) : link.href === '/#solucoes' ? (
+                      <FooterLink href={link.href} onClick={scrollToSolucoes}>{link.label}</FooterLink>
                     ) : (
                       <Typography
                         variant="body2"

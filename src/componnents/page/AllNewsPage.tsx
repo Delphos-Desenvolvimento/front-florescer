@@ -208,7 +208,13 @@ function AllNewsPage() {
     fetchNews();
   }, []);
 
-  const categories = Array.from(new Set(['Todas', ...news.map(n => n.category || 'Geral')])).filter(cat => cat !== 'Notícia' && cat !== 'Todas');
+  const categories = Array.from(new Set(['Todas', ...news.map(n => n.category || 'Geral')]))
+    .filter(cat => {
+      const c = (cat || '').toLowerCase();
+      if (c === 'todas' || c === 'notícia' || c === 'noticia') return false;
+      if (c === 'atualização' || c === 'atualizacao') return false;
+      return true;
+    });
 
   const filtered = news.filter(n => {
     const matchesCategory = selectedCategory === 'Todas' || (n.category || 'Geral') === selectedCategory;
