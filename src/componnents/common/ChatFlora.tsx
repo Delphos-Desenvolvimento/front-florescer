@@ -64,7 +64,7 @@ const ChatFlora = () => {
         // Simulação de resposta da Flora
         setTimeout(() => {
             const botResponse: Message = {
-                text: 'Obrigada pela mensagem! Nossos contadores estão analisando sua solicitação e responderão em breve.',
+                text: 'Estamos treinando nossa assistente virtual para tirar todas as suas dúvidas instantaneamente. Funcionalidade chegando em breve.',
                 isBot: true,
                 timestamp: new Date()
             };
