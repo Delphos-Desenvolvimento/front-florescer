@@ -173,7 +173,7 @@ function Header() {
             >
               <Box
                 component="img"
-                src="/images/Logo.png"
+                src="/images/logo.png"
                 alt="Logo"
                 sx={(theme) => ({
                   height: { xs: 35, md: 45 },
@@ -291,7 +291,9 @@ function Header() {
                 Contato
               </MenuButton>
               <MenuButton
-                onClick={() => {}}
+                onClick={() => {
+                  window.location.href = 'https://app.florescer.tec.br';
+                }}
                 startIcon={<LogIn size={14} />}
                 sx={{ ml: 1, boxShadow: 'none', '&:hover': { boxShadow: 'none' } }}
               >
