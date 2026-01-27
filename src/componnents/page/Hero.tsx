@@ -11,7 +11,7 @@ const slides = [
 
 function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
+  const autoPlayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const startAutoPlay = () => {
     if (autoPlayRef.current) clearInterval(autoPlayRef.current);

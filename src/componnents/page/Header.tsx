@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
-import { Phone, Link as LinkIcon } from 'lucide-react';
+import { Phone, LogIn } from 'lucide-react';
 
 // Componente simplificado sem efeito de scroll
 
@@ -62,6 +62,14 @@ const MenuButton = styled(Button)(({ theme }) => ({
 // Menu móvel removido - não está sendo utilizado
 
 // Menu móvel removido - não está sendo utilizado
+
+// Definição da interface para os itens do menu
+interface MenuItemType {
+  title: string;
+  path: string;
+  onClick?: (e: React.MouseEvent) => void;
+  submenu?: MenuItemType[];
+}
 
 // Componente principal do Header
 function Header() {
@@ -121,7 +129,7 @@ function Header() {
     }
   };
 
-  const menuItems = [
+  const menuItems: MenuItemType[] = [
     {
       title: 'Home',
       path: '/',
@@ -281,6 +289,13 @@ function Header() {
                 sx={{ ml: 1, boxShadow: 'none', '&:hover': { boxShadow: 'none' } }}
               >
                 Contato
+              </MenuButton>
+              <MenuButton
+                onClick={() => {}}
+                startIcon={<LogIn size={14} />}
+                sx={{ ml: 1, boxShadow: 'none', '&:hover': { boxShadow: 'none' } }}
+              >
+                Login
               </MenuButton>
             </Box>
           </Box>

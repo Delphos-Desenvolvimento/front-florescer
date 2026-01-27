@@ -11,8 +11,7 @@ import {
     Avatar,
     Fade,
     useTheme,
-    useMediaQuery,
-    Tooltip
+    useMediaQuery
 } from '@mui/material';
 import CloseIconMui from '@mui/icons-material/Close';
 import SendIconMui from '@mui/icons-material/Send';

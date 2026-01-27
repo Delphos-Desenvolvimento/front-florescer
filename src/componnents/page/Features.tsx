@@ -1,4 +1,4 @@
-import { Container, Typography, Box, Grid, Card, CardContent, Icon } from '@mui/material';
+import { Container, Typography, Box, Grid, Card, CardContent } from '@mui/material';
 import SchoolIcon from '@mui/icons-material/School';
 import PsychologyIcon from '@mui/icons-material/Psychology';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';

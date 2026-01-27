@@ -4,10 +4,7 @@ import {
   Container,
   Grid,
   Link,
-  Button,
   Divider,
-  useTheme,
-  useMediaQuery,
   IconButton
 } from '@mui/material';
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
@@ -19,8 +16,7 @@ import {
   Clock,
   Facebook,
   Linkedin,
-  Instagram,
-  ArrowUpRight
+  Instagram
 } from 'lucide-react';
 
 // Componente de link personalizado
@@ -92,8 +88,6 @@ const ContactItem = ({ icon, text }: { icon: React.ReactNode; text: string }) =>
 );
 
 const Footer = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
   const navigate = useNavigate();
   const location = useLocation();
   const footerLinks = [
@@ -142,13 +136,6 @@ const Footer = () => {
       text: 'Seg-Sex: 9h às 18h',
     },
   ];
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  };
 
   const scrollToSobre = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -209,7 +196,7 @@ const Footer = () => {
           <Grid item xs={12} md={3}>
             <Box
               component="img"
-              src="/images/Logo.png"
+              src="/images/Logo%20branca.png"
               alt="Contab"
               sx={{
                 height: { xs: 70, md: 100 },
@@ -334,7 +321,7 @@ const Footer = () => {
             </Typography>
             <Box
               component="img"
-              src="/images/Logo.png"
+              src="/images/Logo%20branca.png"
               alt="Contab"
               sx={{
                 height: 18,
