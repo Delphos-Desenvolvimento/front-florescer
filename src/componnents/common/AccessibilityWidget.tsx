@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+
 import {
     Box,
     IconButton,
@@ -19,10 +19,10 @@ import {
     TextIncrease as TextIncreaseIcon,
     TextDecrease as TextDecreaseIcon,
     Contrast as ContrastIcon,
-  DarkMode as DarkModeIcon,
-  Mouse as MouseIcon,
-  Link as LinkIcon,
-  RestartAlt as ResetIcon,
+    DarkMode as DarkModeIcon,
+    Mouse as MouseIcon,
+    Link as LinkIcon,
+    RestartAlt as ResetIcon,
 } from '@mui/icons-material';
 
 interface AccessibilitySettings {
@@ -52,10 +52,10 @@ const defaultSettings: AccessibilitySettings = {
 };
 
 export default function AccessibilityWidget() {
-  const [open, setOpen] = useState(false);
-  const [settings, setSettings] = useState<AccessibilitySettings>(defaultSettings);
-  const location = useLocation();
-  const isAdminRoute = location.pathname.startsWith('/admin');
+    const [open, setOpen] = useState(false);
+    const [settings, setSettings] = useState<AccessibilitySettings>(defaultSettings);
+
+
 
     // Load settings from localStorage on mount
     useEffect(() => {
@@ -66,8 +66,8 @@ export default function AccessibilityWidget() {
     }, []);
 
     // Apply settings to document
-  useEffect(() => {
-    const root = document.documentElement;
+    useEffect(() => {
+        const root = document.documentElement;
 
         // Font size
         root.style.fontSize = `${settings.fontSize}%`;
@@ -85,7 +85,7 @@ export default function AccessibilityWidget() {
             root.classList.remove('high-contrast');
         }
 
-    window.dispatchEvent(new CustomEvent('accessibilitySettingsChanged', { detail: settings }));
+        window.dispatchEvent(new CustomEvent('accessibilitySettingsChanged', { detail: settings }));
 
         // Invert colors
         if (settings.invertColors) {
@@ -115,8 +115,8 @@ export default function AccessibilityWidget() {
             root.classList.remove('dyslexia-font');
         }
 
-    localStorage.setItem('accessibilitySettings', JSON.stringify(settings));
-  }, [settings]);
+        localStorage.setItem('accessibilitySettings', JSON.stringify(settings));
+    }, [settings]);
 
     const handleToggle = () => {
         setOpen(!open);
@@ -137,15 +137,15 @@ export default function AccessibilityWidget() {
     return (
         <>
             {/* Floating Accessibility Button */}
-            <Tooltip title="Acessibilidade" placement={isAdminRoute ? 'left' : 'right'}>
+            <Tooltip title="Acessibilidade" placement="left">
                 <IconButton
                     onClick={handleToggle}
                     sx={{
                         position: 'fixed',
-                        bottom: 20,
-                        ...(isAdminRoute ? { right: 20 } : { left: 20 }),
-                        width: 56,
-                        height: 56,
+                        top: '28%',
+                        right: 6,
+                        width: 40,
+                        height: 40,
                         backgroundColor: 'primary.main',
                         color: 'white',
                         boxShadow: 3,
@@ -157,7 +157,7 @@ export default function AccessibilityWidget() {
                         transition: 'all 0.3s ease',
                     }}
                 >
-                    <AccessibilityIcon fontSize="large" />
+                    <AccessibilityIcon fontSize="medium" />
                 </IconButton>
             </Tooltip>
 

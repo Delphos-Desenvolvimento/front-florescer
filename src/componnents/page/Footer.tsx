@@ -105,15 +105,7 @@ const Footer = () => {
         { label: 'Depoimentos', href: '/depoimentos' },
         { label: 'Trabalhe Conosco', href: '/trabalhe-conosco' },
       ],
-    },
-    {
-      title: 'Serviços',
-      links: [
-        { label: 'Contabilidade', href: '/servicos/contabilidade' },
-        { label: 'Departamento Pessoal', href: '/servicos/dp' },
-        { label: 'Consultoria', href: '/servicos/consultoria' },
-        { label: 'Todos os Serviços', href: '/servicos' },
-      ],
+   
     },
     {
       title: 'Recursos',
@@ -135,15 +127,15 @@ const Footer = () => {
   const contactInfo = [
     {
       icon: <MapPin size={18} />,
-      text: 'Rua Florindo de Castro n° 475 Parnaiba-PI CEP 64200-430',
+      text: 'Rua - Cidade - CEP',
     },
     {
       icon: <Phone size={18} />,
-      text: '+55 86 9945-7780',
+      text: '+55 86 9999-9999',
     },
     {
       icon: <Mail size={18} />,
-      text: 'contabphb.pi@gmail.com',
+      text: 'florescer@gmail.com',
     },
     {
       icon: <Clock size={18} />,
@@ -217,7 +209,7 @@ const Footer = () => {
           <Grid item xs={12} md={3}>
             <Box
               component="img"
-              src="/images/Logo_sem_fundo_Contab[1].png"
+              src="/images/Logo.png"
               alt="Contab"
               sx={{
                 height: { xs: 70, md: 100 },
@@ -236,7 +228,7 @@ const Footer = () => {
                 fontSize: { xs: '0.875rem', md: '0.9rem' }
               }}
             >
-              Soluções contábeis completas para o sucesso do seu negócio. Excelência e comprometimento em cada serviço.
+              O Projeto Florescer é uma metodologia inteligente desenvolvida para apoiar a gestão escolar e a tomada de decisões pedagógicas por meio da tecnologia.
             </Typography>
           </Grid>
 
@@ -329,21 +321,20 @@ const Footer = () => {
         {/* Rodapé inferior */}
         <Box
           sx={{
-            display: 'flex',
-            flexDirection: isMobile ? 'column' : 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', lg: '1fr auto 1fr' },
             gap: 3,
+            alignItems: 'center',
           }}
         >
           {/* Copyright */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', justifyContent: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', justifyContent: { xs: 'center', lg: 'flex-start' } }}>
             <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '0.875rem' }}>
               © {new Date().getFullYear()}
             </Typography>
             <Box
               component="img"
-              src="/images/Logo_sem_fundo_Contab[1].png"
+              src="/images/Logo.png"
               alt="Contab"
               sx={{
                 height: 18,
@@ -360,39 +351,17 @@ const Footer = () => {
           </Box>
 
           {/* Redes Sociais */}
-          <Box sx={{ display: 'flex', gap: 1.5, ml: 'auto', justifyContent: 'flex-end' }}>
+          <Box sx={{ display: 'flex', gap: 1.5, justifyContent: 'center' }}>
             {socialLinks.map((social, index) => (
               <SocialIcon key={index} icon={social.icon} url={social.url} />
             ))}
           </Box>
 
-          {/* Links legais removidos */}
-          <Box />
+          {/* Links legais removidos / Espaço vazio para equilíbrio */}
+          <Box sx={{ display: { xs: 'none', lg: 'block' } }} />
         </Box>
       </Container>
 
-      {/* Botão de voltar ao topo */}
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={scrollToTop}
-        sx={{
-          position: 'fixed',
-          bottom: 24,
-          right: 24,
-          minWidth: 'auto',
-          width: 48,
-          height: 48,
-          borderRadius: '50%',
-          p: 0,
-          boxShadow: '0 5px 20px rgba(26, 35, 126, 0.3)',
-          '&:hover': {
-            boxShadow: '0 8px 25px rgba(26, 35, 126, 0.4)',
-          },
-        }}
-      >
-        <ArrowUpRight size={20} style={{ transform: 'rotate(-45deg)' }} />
-      </Button>
     </Box>
   );
 };

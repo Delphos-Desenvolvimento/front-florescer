@@ -181,7 +181,7 @@ export const createAppTheme = (mode: 'light' | 'dark') => {
   });
 
   const link = document.createElement('link');
-  link.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap';
+  link.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap';
   link.rel = 'stylesheet';
   document.head.appendChild(link);
 

@@ -23,6 +23,6 @@ export default defineConfig({
     }
   },
   define: {
-    'import.meta.env.VITE_APP_TITLE': JSON.stringify('Contab'),
+    'import.meta.env.VITE_APP_TITLE': JSON.stringify('Florescer'),
   },
 })

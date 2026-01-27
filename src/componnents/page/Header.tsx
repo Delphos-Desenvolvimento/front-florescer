@@ -23,10 +23,10 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   boxShadow: theme.shadows[2],
   backdropFilter: 'saturate(180%) blur(8px)',
   '& .MuiToolbar-root': {
-    minHeight: '75px',
+    minHeight: '50px',
     padding: theme.spacing(0, 2),
     [theme.breakpoints.up('md')]: {
-      minHeight: '85px',
+      minHeight: '60px',
       padding: theme.spacing(0, 3),
     },
   },
@@ -70,9 +70,9 @@ function Header() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const location = useLocation();
   const navigate = useNavigate();
-  
 
-  
+
+
 
   // Fechar menu mobile ao mudar de rota
   useEffect(() => {
@@ -110,8 +110,8 @@ function Header() {
         sectionId === 'sobre'
           ? (element.querySelector('h1') as HTMLElement) || element
           : sectionId === 'solucoes'
-          ? (element.querySelector('h2') as HTMLElement) || element
-          : element;
+            ? (element.querySelector('h2') as HTMLElement) || element
+            : element;
       const headerEl = document.querySelector('header');
       const headerH = headerEl ? (headerEl as HTMLElement).getBoundingClientRect().height : 80;
       const y = target.getBoundingClientRect().top + window.scrollY - headerH;
@@ -128,33 +128,9 @@ function Header() {
       onClick: (e: React.MouseEvent) => scrollToSection(e, '')
     },
     {
-      title: 'Notícias',
-      path: '/noticias',
-      onClick: (e: React.MouseEvent) => scrollToSection(e, 'noticias')
-    },
-    {
       title: 'Sobre',
       path: '/#sobre',
       onClick: (e: React.MouseEvent) => scrollToSection(e, 'sobre')
-    },
-    {
-      title: 'Soluções',
-      path: '/#solucoes',
-      onClick: (e: React.MouseEvent) => scrollToSection(e, 'solucoes'),
-      submenu: [
-        {
-          title: 'Prefeitura e Gestão',
-          path: '/solucoes/prefeitura',
-        },
-        {
-          title: 'Saúde',
-          path: '/solucoes/saude',
-        },
-        {
-          title: 'Educação',
-          path: '/solucoes/educacao',
-        },
-      ],
     },
   ];
 
@@ -189,10 +165,10 @@ function Header() {
             >
               <Box
                 component="img"
-                src="/images/Logo_sem_fundo_Contab_2[1].png"
+                src="/images/Logo.png"
                 alt="Logo"
                 sx={(theme) => ({
-                  height: { xs: 50, md: 65 },
+                  height: { xs: 35, md: 45 },
                   width: 'auto',
                   objectFit: 'contain',
                   filter:
@@ -299,14 +275,6 @@ function Header() {
 
             {/* Botões de ação */}
             <Box sx={{ display: 'flex', alignItems: 'center', ml: { xs: 1, md: 2 } }}>
-              <Box component={RouterLink} to="/links-uteis" sx={{ textDecoration: 'none' }}>
-                <MenuButton
-                  startIcon={<LinkIcon size={14} />}
-                  sx={{ ml: 1, boxShadow: 'none', '&:hover': { boxShadow: 'none' } }}
-                >
-                  Links Úteis
-                </MenuButton>
-              </Box>
               <MenuButton
                 onClick={(e) => scrollToSection(e, 'contato')}
                 startIcon={<Phone size={14} />}

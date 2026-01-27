@@ -117,6 +117,12 @@ select:focus {
   box-shadow: none !important;
 }
 
+/* Ajuste do botão do VLibras */
+[vw].enabled {
+  top: 40% !important;
+  transform: translateY(-50%);
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

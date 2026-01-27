@@ -17,6 +17,8 @@ import TeamPage from './componnents/page/TeamPage';
 import UsefulLinks from './componnents/page/UsefulLinks';
 import PublicLayout from './componnents/PublicLayout';
 import AccessibilityWidget from './componnents/common/AccessibilityWidget';
+import ChatFlora from './componnents/common/ChatFlora';
+
 
 // Componente de rota protegida
 // Componente de rota protegida
@@ -125,6 +127,7 @@ function App() {
           />
         </Routes>
         <AccessibilityWidget />
+        <ChatFlora />
       </Router>
     </ThemeProvider>
   );

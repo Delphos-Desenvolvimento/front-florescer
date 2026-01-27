@@ -1,128 +1,142 @@
-import { Box, Typography, Container, Button } from '@mui/material';
+import { Box, IconButton } from '@mui/material';
+// Hero Component
+import { useState, useEffect, useRef } from 'react';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
-
-
+const slides = [
+  '/images/banner1corr.png',
+  '/images/banner2corr.png'
+];
 
 function Hero() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
+
+  const startAutoPlay = () => {
+    if (autoPlayRef.current) clearInterval(autoPlayRef.current);
+    autoPlayRef.current = setInterval(() => {
+      handleNext();
+    }, 5000);
+  };
+
+  useEffect(() => {
+    startAutoPlay();
+    return () => {
+      if (autoPlayRef.current) clearInterval(autoPlayRef.current);
+    };
+  }, []);
+
+  const handleNext = () => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  };
+
+  const handleManualNext = () => {
+    handleNext();
+    startAutoPlay(); // Reinicia o timer ao interagir
+  };
+
+  const handleManualPrev = () => {
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+    startAutoPlay(); // Reinicia o timer ao interagir
+  };
+
   return (
     <Box
       id="hero-section"
       sx={{
         position: 'relative',
-        color: 'common.white',
-        height: '110vh',
-        minHeight: '110vh',
+        height: '100vh',
+        minHeight: '600px',
         margin: 0,
         padding: 0,
-        display: 'flex',
-        alignItems: 'center',
-        overflow: 'hidden',
-        backgroundImage: 'url(/images/Pagina_Principal_sem_textos[1].png)',
+        backgroundImage: 'url(/images/Fundo.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
-        '&::after': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          zIndex: 1,
-        }
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden'
       }}
     >
-      {/* Fundo com gradiente animado - Removido o componente AnimatedGradient já que o gradiente foi movido para o container principal */}
-
-      {/* Conteúdo principal */}
-      <Container
-        maxWidth="lg"
+      <Box
         sx={{
           position: 'relative',
-          zIndex: 2,
-          textAlign: 'center',
-          px: { xs: 3, md: 6 },
+          width: { xs: '95%', md: '90%' },
+          maxWidth: '1200px',
+          height: { xs: '280px', sm: '420px', md: '560px' }, 
           display: 'flex',
-          flexDirection: 'column',
           justifyContent: 'center',
-          height: '100%',
-          paddingTop: '0',
-          paddingBottom: '40px'
+          alignItems: 'center',
+          overflow: 'visible',
+          mx: 'auto', 
         }}
       >
-        <div style={{ width: '100%' }}>
-          <Box
-            component="div"
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              width: '100%',
-              mb: 4,
-            }}
-          >
-            <Box
-              component="img"
-              src="/images/Logo_sem_fundo_Contab[1].png"
-              alt="Contab Logo"
-              sx={{
-                width: { xs: '320px', md: '500px' },
-                height: 'auto',
-                maxWidth: '100%',
-                display: 'block',
-                margin: '0 auto',
-              }}
-            />
-          </Box>
-          <Typography
-            variant="h1"
-            component="h1"
-            sx={{
-              fontWeight: 700,
-              color: (theme) => theme.palette.mode === 'dark' ? theme.palette.primary.light : theme.palette.primary.main,
-              fontSize: { xs: '2.8rem', md: '4rem' },
-              mb: 0.1,
-              lineHeight: 1.1,
-            }}
-          >
-            Gestão fiscal responsável
-          </Typography>
-          <Typography
-            variant="h5"
-            component="p"
-            sx={{
-              color: 'white',
-              fontSize: { xs: '1.4rem', md: '1.8rem' },
-              mb: 4,
-              mt: 0.1,
-            }}
-          >
-            começa com contabilidade pública de qualidade.
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
-            component="a"
-            href="https://api.whatsapp.com/send/?phone=%2B558699457780&text&type=phone_number&app_absent=0"
-            target="_blank"
-            rel="noopener noreferrer"
-            sx={{
-              borderRadius: '50px',
-              px: 4,
-              py: 1.5,
-              textTransform: 'none',
-              fontSize: '1.1rem',
-              '&:hover': {
-                transform: 'translateY(-2px)',
-                boxShadow: '0 4px 12px rgba(41, 121, 255, 0.2)',
-              },
-            }}
-          >
-            Fale com um especialista
-          </Button>
-        </div>
-      </Container>
+        {/* Botão Anterior */}
+        <IconButton
+          onClick={handleManualPrev}
+          sx={{
+            position: 'absolute',
+            left: { xs: '-10px', md: '-60px' },
+            zIndex: 10,
+            color: 'primary.main',
+            bgcolor: 'rgba(255,255,255,0.8)',
+            '&:hover': { bgcolor: 'rgba(255,255,255,1)' },
+            boxShadow: 3,
+            width: '40px',
+            height: '40px',
+          }}
+        >
+          <ArrowBackIosNewIcon fontSize="small" />
+        </IconButton>
+
+        {/* Botão Próximo */}
+        <IconButton
+          onClick={handleManualNext}
+          sx={{
+            position: 'absolute',
+            right: { xs: '-10px', md: '-60px' },
+            zIndex: 10,
+            color: 'primary.main',
+            bgcolor: 'rgba(255,255,255,0.8)',
+            '&:hover': { bgcolor: 'rgba(255,255,255,1)' },
+            boxShadow: 3,
+            width: '40px',
+            height: '40px',
+          }}
+        >
+          <ArrowForwardIosIcon fontSize="small" />
+        </IconButton>
+
+        <Box sx={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden', borderRadius: '20px' }}>
+          {/* Imagens do Carrossel */}
+          {slides.map((src, index) => {
+            const isActive = index === currentSlide;
+            
+            return (
+              <Box
+                key={src}
+                component="img"
+                src={src}
+                alt={`Banner ${index + 1}`}
+                sx={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  objectPosition: 'center',
+                  zIndex: isActive ? 2 : 1,
+                  opacity: isActive ? 1 : 0,
+                  transition: 'opacity 1s ease-in-out', // Transição suave de Fade
+                }}
+              />
+            );
+          })}
+        </Box>
+      </Box>
     </Box>
   );
 }
