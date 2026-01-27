@@ -5,7 +5,7 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 const slides = [
-  '/images/banner1corr.png',
+  '/images/banner-video-v2.mp4',
   '/images/banner2corr.png'
 ];
 
@@ -110,16 +110,21 @@ function Hero() {
         </IconButton>
 
         <Box sx={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden', borderRadius: '20px' }}>
-          {/* Imagens do Carrossel */}
+          {/* Imagens/Vídeos do Carrossel */}
           {slides.map((src, index) => {
             const isActive = index === currentSlide;
+            const isVideo = src.endsWith('.mp4');
             
             return (
               <Box
                 key={src}
-                component="img"
+                component={isVideo ? 'video' : 'img'}
                 src={src}
-                alt={`Banner ${index + 1}`}
+                alt={isVideo ? undefined : `Banner ${index + 1}`}
+                autoPlay={isVideo}
+                muted={isVideo}
+                loop={isVideo}
+                playsInline={isVideo}
                 sx={{
                   position: 'absolute',
                   top: 0,
