@@ -70,10 +70,10 @@ api.interceptors.response.use(
       localStorage.removeItem('user_id');
       localStorage.removeItem('userName');
       localStorage.removeItem('userEmail');
-      // Redireciona para a página de login (rota existente)
-      const loginPath = '/admin/login?expired=1';
-      if (window.location.pathname !== '/admin/login') {
-        window.location.replace(loginPath);
+      // Redireciona para o app externo
+      const loginUrl = 'https://app.florescer.tec.br';
+      if (window.location.href !== loginUrl) {
+        window.location.replace(loginUrl);
       }
     }
     return Promise.reject(error);

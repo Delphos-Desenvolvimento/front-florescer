@@ -52,16 +52,17 @@ api.interceptors.response.use(
     // Handle common errors (401, 403, 500, etc.)
     if (error.response) {
       switch (error.response.status) {
-        case 401:
-          // Only redirect if not already on the login page
-          if (!window.location.pathname.includes('/admin/login')) {
-            // Clear any existing auth data
-            localStorage.removeItem('token');
-            localStorage.removeItem('authToken');
-            // Use window.location.replace to prevent adding to browser history
-            window.location.replace('/admin/login');
+        case 401: {
+          // Clear any existing auth data
+          localStorage.removeItem('token');
+          localStorage.removeItem('authToken');
+          // Redireciona para o app externo
+          const loginUrl = 'https://app.florescer.tec.br';
+          if (window.location.href !== loginUrl) {
+            window.location.replace(loginUrl);
           }
           break;
+        }
         case 403:
           console.error('Forbidden: You do not have permission to access this resource');
           break;

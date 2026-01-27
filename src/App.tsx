@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 import { Box, CircularProgress } from '@mui/material';
@@ -9,7 +9,6 @@ import { verifyToken, isTokenValidLocal } from './API/login';
 
 // Importações das páginas
 import Home from './componnents/home';
-import AdminLogin from './componnents/adminpage/login';
 import AdminHome from './componnents/adminpage/adminhome';
 import AllNewsPage from './componnents/page/AllNewsPage';
 import NewsDetailPage from './componnents/page/NewsDetailPage';
@@ -23,9 +22,15 @@ import ChatFlora from './componnents/common/ChatFlora';
 // Componente de rota protegida
 // Componente de rota protegida
 // Componente de rota protegida
+const ExternalRedirect = ({ to }: { to: string }) => {
+  useEffect(() => {
+    window.location.replace(to);
+  }, [to]);
+  return null;
+};
+
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  const location = useLocation();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -57,7 +62,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/admin/login" state={{ from: location }} replace />;
+    return <ExternalRedirect to="https://app.florescer.tec.br" />;
   }
 
   return children;
@@ -101,7 +106,6 @@ function App() {
       <Router>
         <ScrollToTop />
         <Routes>
-          <Route path="/admin/login" element={<AdminLogin />} />
           <Route
             path="/admin/*"
             element={
@@ -120,7 +124,7 @@ function App() {
                   <Route path="/noticia/:id" element={<NewsDetailPage />} />
                   <Route path="/equipe" element={<TeamPage />} />
                   <Route path="/links-uteis" element={<UsefulLinks />} />
-                  <Route path="/login" element={<Navigate to="/admin/login" replace />} />
+                  <Route path="/login" element={<ExternalRedirect to="https://app.florescer.tec.br" />} />
                 </Routes>
               </PublicLayout>
             }
