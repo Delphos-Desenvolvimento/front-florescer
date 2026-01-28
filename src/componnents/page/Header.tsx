@@ -9,11 +9,19 @@ import {
   Menu,
   MenuItem,
   alpha,
-  styled
+  styled,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  ListItemIcon,
+  Divider
 } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
-import { Phone, LogIn } from 'lucide-react';
+import { Phone, LogIn, Menu as MenuIcon, X, ChevronRight } from 'lucide-react';
 
 // Componente simplificado sem efeito de scroll
 
@@ -79,13 +87,14 @@ function Header() {
   const location = useLocation();
   const navigate = useNavigate();
 
-
-
-
   // Fechar menu mobile ao mudar de rota
   useEffect(() => {
     setMobileOpen(false);
   }, [location]);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -142,6 +151,62 @@ function Header() {
     },
   ];
 
+  const drawer = (
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `1px solid ${theme.palette.divider}` }}>
+        <Box
+          component="img"
+          src="/images/Logo.png"
+          alt="Logo"
+          sx={{ height: 35, width: 'auto', objectFit: 'contain' }}
+        />
+        <IconButton onClick={handleDrawerToggle}>
+          <X size={24} />
+        </IconButton>
+      </Box>
+      <List sx={{ flexGrow: 1, pt: 2 }}>
+        {menuItems.map((item: MenuItemType) => (
+          <ListItem key={item.title} disablePadding>
+            <ListItemButton
+              onClick={(e) => {
+                if (item.onClick) item.onClick(e);
+                handleDrawerToggle();
+              }}
+              sx={{
+                py: 1.5,
+                color: location.pathname === item.path.replace('/#', '/') ? 'primary.main' : 'text.primary',
+                bgcolor: location.pathname === item.path.replace('/#', '/') ? alpha(theme.palette.primary.main, 0.05) : 'transparent',
+              }}
+            >
+              <ListItemText 
+                primary={item.title} 
+                primaryTypographyProps={{ fontWeight: 600 }}
+              />
+              <ChevronRight size={16} color={theme.palette.text.secondary} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+        <Divider sx={{ my: 2 }} />
+        <ListItem disablePadding>
+          <ListItemButton onClick={(e) => { scrollToSection(e, 'contato'); handleDrawerToggle(); }}>
+            <ListItemIcon sx={{ minWidth: 40 }}>
+              <Phone size={20} color={theme.palette.primary.main} />
+            </ListItemIcon>
+            <ListItemText primary="Contato" primaryTypographyProps={{ fontWeight: 600 }} />
+          </ListItemButton>
+        </ListItem>
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => window.location.href = 'https://app.florescer.tec.br'}>
+            <ListItemIcon sx={{ minWidth: 40 }}>
+              <LogIn size={20} color={theme.palette.primary.main} />
+            </ListItemIcon>
+            <ListItemText primary="Login" primaryTypographyProps={{ fontWeight: 600 }} />
+          </ListItemButton>
+        </ListItem>
+      </List>
+    </Box>
+  );
+
   return (
     <StyledAppBar position="fixed" sx={{
       zIndex: theme.zIndex.drawer + 1
@@ -173,7 +238,7 @@ function Header() {
             >
               <Box
                 component="img"
-                src="/images/logo.png"
+                src="/images/Logo.png"
                 alt="Logo"
                 sx={(theme) => ({
                   height: { xs: 35, md: 45 },
@@ -301,52 +366,32 @@ function Header() {
               </MenuButton>
             </Box>
           </Box>
+          {/* Menu Mobile Button */}
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            sx={{ ml: 1, display: { md: 'none' }, color: 'primary.main' }}
+          >
+            <MenuIcon />
+          </IconButton>
         </Toolbar>
       </Container>
-
-      {/* Menu Mobile */}
-      <Box
+      <Drawer
+        variant="temporary"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{
+          keepMounted: true, // Better open performance on mobile.
+        }}
         sx={{
-          position: 'fixed',
-          top: 70,
-          left: 0,
-          right: 0,
-          backgroundColor: 'background.paper',
-          boxShadow: 3,
-          zIndex: 1100,
-          maxHeight: mobileOpen ? 'calc(100vh - 70px)' : 0,
-          overflow: 'hidden',
-          transition: 'max-height 0.3s ease-in-out',
+          display: { xs: 'block', md: 'none' },
+          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 280 },
         }}
       >
-        <Box sx={{ p: 2 }}>
-          {menuItems.map((item) => (
-            <Button
-              key={item.title}
-              component={RouterLink}
-              to={item.path}
-              onClick={item.onClick}
-              variant="text"
-              color="inherit"
-              sx={{
-                mx: 1,
-                textTransform: 'none',
-                fontSize: '1rem',
-                fontWeight: 500,
-                '&:hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                  transform: 'scale(1.05)',
-                  transition: 'transform 0.2s',
-                },
-                '&:active': {
-                  transform: 'scale(0.95)',
-                },
-              }}
-            >{item.title}
-            </Button>
-          ))}
-        </Box>
-      </Box>
+        {drawer}
+      </Drawer>
     </StyledAppBar>
   );
 }

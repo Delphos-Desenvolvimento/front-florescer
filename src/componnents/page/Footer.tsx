@@ -175,8 +175,8 @@ const Footer = () => {
       sx={{
         backgroundColor: '#0a1929',
         color: 'rgba(255, 255, 255, 1)',
-        pt: { xs: 8, md: 12 },
-        pb: { xs: 6, md: 8 },
+        pt: { xs: 6, md: 12 },
+        pb: { xs: 4, md: 8 },
         position: 'relative',
         overflow: 'hidden',
         '&:before': {
@@ -338,7 +338,7 @@ const Footer = () => {
           </Box>
 
           {/* Redes Sociais */}
-          <Box sx={{ display: 'flex', gap: 1.5, justifyContent: 'center' }}>
+          <Box sx={{ display: 'flex', gap: { xs: 3, md: 1.5 }, justifyContent: 'center' }}>
             {socialLinks.map((social, index) => (
               <SocialIcon key={index} icon={social.icon} url={social.url} />
             ))}

@@ -1,15 +1,25 @@
-import { Box, IconButton } from '@mui/material';
+import { Box, IconButton, useTheme, useMediaQuery } from '@mui/material';
 // Hero Component
 import { useState, useEffect, useRef } from 'react';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 const slides = [
-  '/images/banner-video-v2.mp4',
-  '/images/banner2corr.png'
+  {
+    type: 'video',
+    desktop: '/images/banner-video-v5.mp4',
+    mobile: '/images/banner-video-mobile-v2.mp4'
+  },
+  {
+    type: 'image',
+    desktop: '/images/banner2corr.png',
+    mobile: '/images/banner2-mobile.png'
+  }
 ];
 
 function Hero() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [currentSlide, setCurrentSlide] = useState(0);
   const autoPlayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -46,8 +56,8 @@ function Hero() {
       id="hero-section"
       sx={{
         position: 'relative',
-        height: '100vh',
-        minHeight: '600px',
+        minHeight: '100vh', // Garante altura mínima da tela
+        height: 'auto', // Permite crescer se necessário
         margin: 0,
         padding: 0,
         backgroundImage: 'url(/images/Fundo.png)',
@@ -65,7 +75,8 @@ function Hero() {
           position: 'relative',
           width: { xs: '95%', md: '90%' },
           maxWidth: '1200px',
-          height: { xs: '280px', sm: '420px', md: '560px' }, 
+          aspectRatio: '16/9', // Mantém proporção cinematográfica
+          height: 'auto', // Remove altura fixa para adaptar ao aspect-ratio
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
@@ -78,14 +89,17 @@ function Hero() {
           onClick={handleManualPrev}
           sx={{
             position: 'absolute',
-            left: { xs: '-10px', md: '-60px' },
+            left: { xs: '5px', md: '-60px' },
+            top: '50%', // Centraliza verticalmente
+            transform: 'translateY(-50%)', // Ajuste fino da centralização
             zIndex: 10,
             color: 'primary.main',
             bgcolor: 'rgba(255,255,255,0.8)',
             '&:hover': { bgcolor: 'rgba(255,255,255,1)' },
             boxShadow: 3,
-            width: '40px',
-            height: '40px',
+            width: { xs: '40px', md: '48px' }, // Aumentado para melhor toque
+            height: { xs: '40px', md: '48px' }, // Aumentado para melhor toque
+            transition: 'all 0.3s ease',
           }}
         >
           <ArrowBackIosNewIcon fontSize="small" />
@@ -96,14 +110,17 @@ function Hero() {
           onClick={handleManualNext}
           sx={{
             position: 'absolute',
-            right: { xs: '-10px', md: '-60px' },
+            right: { xs: '5px', md: '-60px' },
+            top: '50%', // Centraliza verticalmente
+            transform: 'translateY(-50%)', // Ajuste fino da centralização
             zIndex: 10,
             color: 'primary.main',
             bgcolor: 'rgba(255,255,255,0.8)',
             '&:hover': { bgcolor: 'rgba(255,255,255,1)' },
             boxShadow: 3,
-            width: '40px',
-            height: '40px',
+            width: { xs: '40px', md: '48px' }, // Aumentado para melhor toque
+            height: { xs: '40px', md: '48px' }, // Aumentado para melhor toque
+            transition: 'all 0.3s ease',
           }}
         >
           <ArrowForwardIosIcon fontSize="small" />
@@ -111,13 +128,15 @@ function Hero() {
 
         <Box sx={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden', borderRadius: '20px' }}>
           {/* Imagens/Vídeos do Carrossel */}
-          {slides.map((src, index) => {
+          {slides.map((slide, index) => {
             const isActive = index === currentSlide;
+            // Escolhe a fonte baseada no dispositivo
+            const src = isMobile ? slide.mobile : slide.desktop;
             const isVideo = src.endsWith('.mp4');
             
             return (
               <Box
-                key={src}
+                key={index}
                 component={isVideo ? 'video' : 'img'}
                 src={src}
                 alt={isVideo ? undefined : `Banner ${index + 1}`}
@@ -131,7 +150,7 @@ function Hero() {
                   left: 0,
                   width: '100%',
                   height: '100%',
-                  objectFit: 'contain',
+                  objectFit: { xs: 'cover', md: 'contain' }, // Cover no mobile para preencher o box mais alto
                   objectPosition: 'center',
                   zIndex: isActive ? 2 : 1,
                   opacity: isActive ? 1 : 0,

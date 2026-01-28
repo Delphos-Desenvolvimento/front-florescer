@@ -10,37 +10,37 @@ const features = [
   {
     title: 'Gestão Escolar Completa',
     description: 'Organização de turmas, controle de frequência e avaliações de forma integrada e simples.',
-    icon: <SchoolIcon sx={{ fontSize: 40 }} />,
+    icon: <SchoolIcon />,
     color: '#1a237e'
   },
   {
     title: 'Inteligência Artificial',
     description: 'Avaliação de leitura com análise avançada de fluência, pronúncia e compreensão textual.',
-    icon: <PsychologyIcon sx={{ fontSize: 40 }} />,
+    icon: <PsychologyIcon />,
     color: '#2979ff'
   },
   {
     title: 'Gamificação',
     description: 'Engajamento dos alunos através de elementos lúdicos que tornam o aprendizado mais divertido.',
-    icon: <EmojiEventsIcon sx={{ fontSize: 40 }} />,
+    icon: <EmojiEventsIcon />,
     color: '#ff6d00'
   },
   {
     title: 'Automação Inteligente',
     description: 'Correção automática de avaliações objetivas, otimizando o tempo precioso dos professores.',
-    icon: <AutoFixHighIcon sx={{ fontSize: 40 }} />,
+    icon: <AutoFixHighIcon />,
     color: '#00c853'
   },
   {
     title: 'Decisões Baseadas em Dados',
     description: 'Relatórios detalhados e dashboards intuitivos para apoio à tomada de decisão pedagógica.',
-    icon: <AssessmentIcon sx={{ fontSize: 40 }} />,
+    icon: <AssessmentIcon />,
     color: '#6200ea'
   },
   {
     title: 'Foco na Educação Brasileira',
     description: 'Metodologia e recursos totalmente adaptados à realidade e necessidades das escolas brasileiras.',
-    icon: <PublicIcon sx={{ fontSize: 40 }} />,
+    icon: <PublicIcon />,
     color: '#c51162'
   }
 ];
@@ -112,12 +112,12 @@ function Features() {
                   }
                 }}
               >
-                <CardContent sx={{ p: 4, textAlign: 'center' }}>
+                <CardContent sx={{ p: { xs: 3, md: 4 }, textAlign: 'center' }}>
                   <Box
                     className="icon-box"
                     sx={{
-                      width: 80,
-                      height: 80,
+                      width: { xs: 64, md: 80 }, // Menor no mobile
+                      height: { xs: 64, md: 80 }, // Menor no mobile
                       borderRadius: '50%',
                       backgroundColor: `${feature.color}15`, // 15 is roughly 8% opacity in hex
                       color: feature.color,
@@ -125,8 +125,11 @@ function Features() {
                       alignItems: 'center',
                       justifyContent: 'center',
                       mx: 'auto',
-                      mb: 3,
-                      transition: 'all 0.3s ease-in-out'
+                      mb: { xs: 2, md: 3 }, // Menos margem no mobile
+                      transition: 'all 0.3s ease-in-out',
+                      '& svg': {
+                        fontSize: { xs: 32, md: 40 } // Ícone ajusta tamanho
+                      }
                     }}
                   >
                     {feature.icon}
@@ -135,7 +138,11 @@ function Features() {
                     gutterBottom
                     variant="h5"
                     component="h3"
-                    sx={{ fontWeight: 700, mb: 2 }}
+                    sx={{ 
+                      fontWeight: 700, 
+                      mb: 2,
+                      fontSize: { xs: '1.25rem', md: '1.5rem' } // Ajuste de fonte do título
+                    }}
                   >
                     {feature.title}
                   </Typography>
