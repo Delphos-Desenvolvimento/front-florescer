@@ -56,11 +56,15 @@ const NewsService = {
   /**
    * Cria uma nova notícia
    */
-  async create(newsData: Omit<NewsItem, 'id' | 'views' | 'images'>, imageFiles?: File[]): Promise<NewsItem> {
+  async create(
+    newsData: Omit<NewsItem, 'id' | 'views' | 'images'>,
+    imageFiles?: File[]
+  ): Promise<NewsItem> {
     try {
-      const imagesBase64 = Array.isArray(imageFiles) && imageFiles.length > 0
-        ? await Promise.all(imageFiles.map(fileToDataUrl))
-        : undefined;
+      const imagesBase64 =
+        Array.isArray(imageFiles) && imageFiles.length > 0
+          ? await Promise.all(imageFiles.map(fileToDataUrl))
+          : undefined;
       const payload = imagesBase64 ? { ...newsData, imagesBase64 } : { ...newsData };
       const response = await api.post<NewsItem>('/news', payload);
       return response.data;
@@ -75,9 +79,10 @@ const NewsService = {
    */
   async update(id: number, newsData: Partial<NewsItem>, imageFiles?: File[]): Promise<NewsItem> {
     try {
-      const imagesBase64 = Array.isArray(imageFiles) && imageFiles.length > 0
-        ? await Promise.all(imageFiles.map(fileToDataUrl))
-        : undefined;
+      const imagesBase64 =
+        Array.isArray(imageFiles) && imageFiles.length > 0
+          ? await Promise.all(imageFiles.map(fileToDataUrl))
+          : undefined;
       const payload = imagesBase64 ? { ...newsData, imagesBase64 } : { ...newsData };
       const response = await api.patch<NewsItem>(`/news/${id}`, payload);
       return response.data;
@@ -131,14 +136,14 @@ const NewsService = {
   async getByCategory(category: string): Promise<NewsItem[]> {
     try {
       const response = await apiPublic.get<NewsItem[]>('/news', {
-        params: { category }
+        params: { category },
       });
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar notícias da categoria ${category}:`, error);
       throw error;
     }
-  }
+  },
 };
 
 export default NewsService;

@@ -9,7 +9,7 @@ import {
   CardActionArea,
   Button,
   CircularProgress,
-  Alert
+  Alert,
 } from '@mui/material';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
@@ -40,27 +40,31 @@ const NewsCard = ({
   date,
   category,
   images,
-  onClick
-}: (ExtendedNewsItem & { images?: NewsImage[], onClick: () => void })) => {
+  onClick,
+}: ExtendedNewsItem & { images?: NewsImage[]; onClick: () => void }) => {
   const base64 = images && images.length > 0 ? images[0].base64 : undefined;
   const src = base64
-    ? (base64.startsWith('data:') ? base64 : `data:image/jpeg;base64,${base64}`)
+    ? base64.startsWith('data:')
+      ? base64
+      : `data:image/jpeg;base64,${base64}`
     : undefined;
   return (
     <Grid item xs={12} sm={6} md={4} lg={4}>
       <div style={{ height: '100%' }}>
         <CardActionArea onClick={onClick} sx={{ height: '100%' }}>
-          <Card sx={{
-            height: '100%',
-            minHeight: { xs: 420, sm: 450, md: 480 },
-            display: 'flex',
-            flexDirection: 'column',
-            transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-            '&:hover': {
-              transform: 'translateY(-5px)',
-              boxShadow: 6
-            }
-          }}>
+          <Card
+            sx={{
+              height: '100%',
+              minHeight: { xs: 420, sm: 450, md: 480 },
+              display: 'flex',
+              flexDirection: 'column',
+              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+              '&:hover': {
+                transform: 'translateY(-5px)',
+                boxShadow: 6,
+              },
+            }}
+          >
             <Box
               sx={{
                 width: '100%',
@@ -73,14 +77,16 @@ const NewsCard = ({
                 overflow: 'hidden',
               }}
             />
-            <CardContent sx={{ flexGrow: 1, p: { xs: 1.5, sm: 2 }, display: 'flex', flexDirection: 'column' }}>
+            <CardContent
+              sx={{ flexGrow: 1, p: { xs: 1.5, sm: 2 }, display: 'flex', flexDirection: 'column' }}
+            >
               <Typography
                 variant="caption"
                 color="text.secondary"
                 display="block"
                 mb={1}
                 sx={{
-                  fontSize: { xs: '0.7rem', sm: '0.75rem' }
+                  fontSize: { xs: '0.7rem', sm: '0.75rem' },
                 }}
               >
                 {date || 'Sem data'}
@@ -121,18 +127,20 @@ const NewsCard = ({
               >
                 {stripHtml(description)}
               </Typography>
-              <Box sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                mt: 'auto'
-              }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  mt: 'auto',
+                }}
+              >
                 <Typography
                   variant="caption"
                   color="primary"
                   fontWeight="bold"
                   sx={{
-                    fontSize: { xs: '0.7rem', sm: '0.75rem' }
+                    fontSize: { xs: '0.7rem', sm: '0.75rem' },
                   }}
                 >
                   {category || 'Geral'}
@@ -161,17 +169,21 @@ function Notices() {
         setLoading(true);
         const newsData = await NewsService.getAll({ status: 'publicada' });
         // Garantir que todos os itens tenham os campos necessários
-        const formattedNews = newsData.map(item => ({
-          id: item.id || 0,
-          title: item.title,
-          description: item.content?.substring(0, 100) + (item.content?.length > 100 ? '...' : '') || '',
-          content: item.content || '',
-          date: item.date || new Date().toISOString().split('T')[0],
-          category: item.category || 'Geral',
-          status: item.status || 'publicada',
-          views: item.views || 0,
-          images: item.images || []
-        } as ExtendedNewsItem));
+        const formattedNews = newsData.map(
+          (item) =>
+            ({
+              id: item.id || 0,
+              title: item.title,
+              description:
+                item.content?.substring(0, 100) + (item.content?.length > 100 ? '...' : '') || '',
+              content: item.content || '',
+              date: item.date || new Date().toISOString().split('T')[0],
+              category: item.category || 'Geral',
+              status: item.status || 'publicada',
+              views: item.views || 0,
+              images: item.images || [],
+            }) as ExtendedNewsItem
+        );
         setNews(formattedNews);
       } catch (err) {
         console.error('Erro ao buscar notícias:', err);
@@ -186,7 +198,9 @@ function Notices() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px' }}>
+      <Box
+        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px' }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -197,7 +211,13 @@ function Notices() {
   };
 
   return (
-    <Box sx={{ py: { xs: 4, sm: 6, md: 8 }, backgroundColor: 'background.default', position: 'relative' }}>
+    <Box
+      sx={{
+        py: { xs: 4, sm: 6, md: 8 },
+        backgroundColor: 'background.default',
+        position: 'relative',
+      }}
+    >
       <Container maxWidth="lg">
         <Typography
           variant="h3"
@@ -216,8 +236,8 @@ function Notices() {
               height: '4px',
               backgroundColor: 'primary.main',
               margin: '16px auto 0',
-              borderRadius: '2px'
-            }
+              borderRadius: '2px',
+            },
           }}
         >
           Últimas Notícias
@@ -231,14 +251,16 @@ function Notices() {
 
         <Grid container spacing={{ xs: 2, sm: 3, md: 4 }} sx={{ mb: 4 }}>
           {news.length > 0 ? (
-            news.slice(0, 3).map((item) => (
-              <NewsCard
-                key={item.id}
-                {...item}
-                images={item.images}
-                onClick={() => handleNewsClick(item)}
-              />
-            ))
+            news
+              .slice(0, 3)
+              .map((item) => (
+                <NewsCard
+                  key={item.id}
+                  {...item}
+                  images={item.images}
+                  onClick={() => handleNewsClick(item)}
+                />
+              ))
           ) : (
             <Grid item xs={12}>
               <Box width="100%" textAlign="center" py={4}>
@@ -267,14 +289,13 @@ function Notices() {
               '&:hover': {
                 backgroundColor: 'primary.main',
                 color: 'white',
-              }
+              },
             }}
           >
             Ver todas as notícias
           </Button>
         </Box>
       </Container>
-
     </Box>
   );
 }

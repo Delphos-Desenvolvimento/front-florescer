@@ -18,8 +18,8 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => {
         (hash === 'sobre'
           ? (sec.querySelector('h1') as HTMLElement) || sec
           : hash === 'solucoes'
-          ? (sec.querySelector('h2') as HTMLElement) || sec
-          : sec);
+            ? (sec.querySelector('h2') as HTMLElement) || sec
+            : sec);
       if (el) {
         const headerEl = document.querySelector('header');
         const headerH = headerEl ? (headerEl as HTMLElement).getBoundingClientRect().height : 80;

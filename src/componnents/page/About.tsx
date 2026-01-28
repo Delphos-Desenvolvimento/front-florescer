@@ -55,11 +55,23 @@ function About() {
               textAlign: { xs: 'left', md: 'justify' }, // Melhor leitura no mobile
             }}
           >
-            O Projeto Florescer é uma solução educacional estratégica voltada ao fortalecimento da gestão pedagógica nas redes de ensino, promovendo decisões baseadas em evidências e foco na aprendizagem dos estudantes. Sua metodologia articula tecnologia educacional, inteligência artificial, formação e práticas pedagógicas integradas.
-            <br /><br />
-            A plataforma permite monitorar o desempenho dos estudantes, organizar turmas, acompanhar frequência e avaliações, além de gerar indicadores que orientam ações de recomposição e intervenção pedagógica. A inteligência artificial aplicada à avaliação da leitura amplia a precisão diagnóstica ao analisar fluência, pronúncia e compreensão textual, enquanto a automatização dos processos avaliativos otimiza o trabalho docente e indica trilhas personalizadas conforme o perfil dos estudantes.
-            <br /><br />
-            Dessa forma, o Projeto Florescer contribui para a equidade das aprendizagens, a melhoria dos indicadores educacionais e a transformação das trajetórias escolares, assegurando bons resultados.
+            O Projeto Florescer é uma solução educacional estratégica voltada ao fortalecimento da
+            gestão pedagógica nas redes de ensino, promovendo decisões baseadas em evidências e foco
+            na aprendizagem dos estudantes. Sua metodologia articula tecnologia educacional,
+            inteligência artificial, formação e práticas pedagógicas integradas.
+            <br />
+            <br />
+            A plataforma permite monitorar o desempenho dos estudantes, organizar turmas, acompanhar
+            frequência e avaliações, além de gerar indicadores que orientam ações de recomposição e
+            intervenção pedagógica. A inteligência artificial aplicada à avaliação da leitura amplia
+            a precisão diagnóstica ao analisar fluência, pronúncia e compreensão textual, enquanto a
+            automatização dos processos avaliativos otimiza o trabalho docente e indica trilhas
+            personalizadas conforme o perfil dos estudantes.
+            <br />
+            <br />
+            Dessa forma, o Projeto Florescer contribui para a equidade das aprendizagens, a melhoria
+            dos indicadores educacionais e a transformação das trajetórias escolares, assegurando
+            bons resultados.
           </Typography>
         </Paper>
       </Container>

@@ -31,7 +31,8 @@ api.interceptors.request.use(
     const isNewsPublic = path.startsWith('/news') && method === 'get';
     const isStatsPublic = path.startsWith('/stats') && method === 'get';
     const isPublicGetExact = method === 'get' && publicGetExact.has(path);
-    const isPublic = isTeamPublic || isPartnersPublic || isNewsPublic || isStatsPublic || isPublicGetExact;
+    const isPublic =
+      isTeamPublic || isPartnersPublic || isNewsPublic || isStatsPublic || isPublicGetExact;
     if (token && !isPublic) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
@@ -56,7 +57,11 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     const cfg = error.config || {};
-    const shouldRetry = !cfg.__isRetry && (error.code === 'ECONNABORTED' || error.message === 'Network Error' || error.name === 'AxiosError');
+    const shouldRetry =
+      !cfg.__isRetry &&
+      (error.code === 'ECONNABORTED' ||
+        error.message === 'Network Error' ||
+        error.name === 'AxiosError');
     if (shouldRetry) {
       cfg.__isRetry = true;
       const delay = 800 + Math.floor(Math.random() * 400);
@@ -101,11 +106,17 @@ apiPublic.interceptors.response.use(
   (response) => response,
   (error) => {
     const cfg = error.config || {};
-    const shouldRetry = !cfg.__isRetry && (error.code === 'ECONNABORTED' || error.message === 'Network Error' || error.name === 'AxiosError');
+    const shouldRetry =
+      !cfg.__isRetry &&
+      (error.code === 'ECONNABORTED' ||
+        error.message === 'Network Error' ||
+        error.name === 'AxiosError');
     if (shouldRetry) {
       cfg.__isRetry = true;
       const delay = 800 + Math.floor(Math.random() * 400);
-      return new Promise((resolve) => setTimeout(resolve, delay)).then(() => apiPublic.request(cfg));
+      return new Promise((resolve) => setTimeout(resolve, delay)).then(() =>
+        apiPublic.request(cfg)
+      );
     }
     return Promise.reject(error);
   }

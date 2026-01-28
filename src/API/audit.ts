@@ -27,7 +27,11 @@ export interface AuditLogResponse {
   totalPages: number;
 }
 
-export async function getAuditLogs(params?: { type?: string; page?: number; limit?: number }): Promise<AuditLogResponse> {
+export async function getAuditLogs(params?: {
+  type?: string;
+  page?: number;
+  limit?: number;
+}): Promise<AuditLogResponse> {
   const res = await api.get('/admin/logs', { params });
   return res.data as AuditLogResponse;
 }

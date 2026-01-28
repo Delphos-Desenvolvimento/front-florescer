@@ -17,13 +17,17 @@ const StatsService = {
     return res.data;
   },
   async getEventsByDay(type: string, days = 14): Promise<{ date: string; count: number }[]> {
-    const res = await apiPublic.get<Array<{ date: string; count: number }>>('/stats/events-by-day', {
-      params: { type, days },
-    });
+    const res = await apiPublic.get<Array<{ date: string; count: number }>>(
+      '/stats/events-by-day',
+      {
+        params: { type, days },
+      }
+    );
     return res.data;
   },
   async getCategories(): Promise<{ category: string; count: number }[]> {
-    const res = await apiPublic.get<Array<{ category: string; count: number }>>('/stats/categories');
+    const res =
+      await apiPublic.get<Array<{ category: string; count: number }>>('/stats/categories');
     return res.data;
   },
 };

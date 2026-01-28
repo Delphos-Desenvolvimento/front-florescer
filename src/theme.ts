@@ -144,7 +144,7 @@ export const createAppTheme = (mode: 'light' | 'dark') => {
             boxShadow: '0 2px 10px rgba(0, 0, 0, 0.08)',
             backgroundColor: isDark ? 'rgba(18, 18, 18, 0.85)' : '#FFFFFF',
             color: isDark ? '#e6e6e6' : '#1a237e',
-            backdropFilter: 'saturate(180%) blur(8px)'
+            backdropFilter: 'saturate(180%) blur(8px)',
           },
         },
       },
@@ -181,7 +181,8 @@ export const createAppTheme = (mode: 'light' | 'dark') => {
   });
 
   const link = document.createElement('link');
-  link.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap';
+  link.href =
+    'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap';
   link.rel = 'stylesheet';
   document.head.appendChild(link);
 

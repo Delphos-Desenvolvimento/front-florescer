@@ -4,15 +4,15 @@ const API_URL = import.meta.env.DEV
   : `${(import.meta.env.VITE_API_URL || '').replace(/\/$/, '')}/api`;
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import type { NavigateFunction } from 'react-router-dom';
-import { 
-  Box, 
-  TextField, 
-  Button, 
-  Typography, 
-  Paper, 
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Paper,
   Alert,
   IconButton,
-  InputAdornment
+  InputAdornment,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
@@ -67,24 +67,24 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setError('');
-    
+
     if (!validateForm()) return;
-    
+
     setLoading(true);
 
     try {
       console.log('Sending login request with:', { email: email.trim() });
-      
+
       const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
+          Accept: 'application/json',
         },
         body: JSON.stringify({
           email: email.trim(),
-          password: password
-        })
+          password: password,
+        }),
       });
 
       let data;
@@ -92,34 +92,38 @@ export default function Login() {
         data = await response.json();
       } catch {
         const text = await response.text();
-        console.error('Failed to parse JSON response:', { status: response.status, statusText: response.statusText, text });
+        console.error('Failed to parse JSON response:', {
+          status: response.status,
+          statusText: response.statusText,
+          text,
+        });
         throw new Error('Resposta inválida do servidor');
       }
-      
+
       console.log('Login response:', {
         status: response.status,
         statusText: response.statusText,
-        data
+        data,
       });
-      
+
       if (!response.ok) {
         throw new Error(data.message || `Erro no login: ${response.status}`);
       }
-      
+
       // Store the JWT token and user data
       if (!data.access_token) {
         throw new Error('Token de autenticação não recebido');
       }
-      
+
       localStorage.setItem('token', data.access_token);
-      
+
       // Store user data if available
       if (data.user) {
         localStorage.setItem('user', JSON.stringify(data.user));
       }
-      
+
       console.log('Login successful, token stored');
-      
+
       // Redirect to admin dashboard after successful login
       const redirectTo = from || '/admin';
       console.log('Redirecting to:', redirectTo);
@@ -152,32 +156,39 @@ export default function Login() {
         backgroundRepeat: 'no-repeat',
       }}
     >
-      <Paper elevation={1} sx={{ 
-        p: 2, 
-        width: '100%', 
-        maxWidth: 360,
-        minHeight: 280,
-        position: 'relative', 
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        borderRadius: '12px',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-      }}>
-        <Box textAlign="center" mb={3} sx={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          <Box 
+      <Paper
+        elevation={1}
+        sx={{
+          p: 2,
+          width: '100%',
+          maxWidth: 360,
+          minHeight: 280,
+          position: 'relative',
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          borderRadius: '12px',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        }}
+      >
+        <Box
+          textAlign="center"
+          mb={3}
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Box
             component="img"
             src="/images/Logo_sem_fundo_Contab_2[1].png"
             alt="Logo"
-            sx={{ 
+            sx={{
               width: '280px',
               maxWidth: '100%',
               height: 'auto',
               mb: 1.5,
-              objectFit: 'contain'
+              objectFit: 'contain',
             }}
           />
           <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.9rem', mt: 1 }}>
@@ -190,13 +201,13 @@ export default function Login() {
             {error}
           </Alert>
         )}
-        
+
         {apiStatus === 'checking' && (
           <Alert severity="info" sx={{ mb: 2 }}>
             Conectando ao servidor...
           </Alert>
         )}
-        
+
         {error && apiStatus !== 'error' && (
           <Alert severity="error" sx={{ mb: 2 }}>
             {error}
@@ -254,31 +265,36 @@ export default function Login() {
                       marginRight: '-4px',
                     }}
                   >
-                    {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                    {showPassword ? (
+                      <VisibilityOff fontSize="small" />
+                    ) : (
+                      <Visibility fontSize="small" />
+                    )}
                   </IconButton>
                 </InputAdornment>
               ),
             }}
           />
-          
+
           <Button
             type="submit"
             fullWidth
             variant="outlined"
-            sx={{ '& .MuiOutlinedInput-root': { borderRadius: '8px' }, mt: 3, mb: 2, fontSize: '1.1rem', padding: '8px 16px', borderRadius: '8px' }}
+            sx={{
+              '& .MuiOutlinedInput-root': { borderRadius: '8px' },
+              mt: 3,
+              mb: 2,
+              fontSize: '1.1rem',
+              padding: '8px 16px',
+              borderRadius: '8px',
+            }}
             disabled={loading}
           >
             {loading ? 'Entrando...' : 'Entrar'}
           </Button>
 
           <Box textAlign="center">
-            <Button 
-              component={Link} 
-              to="/" 
-              color="primary"
-              size="small"
-              disabled={loading}
-            >
+            <Button component={Link} to="/" color="primary" size="small" disabled={loading}>
               ← Voltar para o site
             </Button>
           </Box>

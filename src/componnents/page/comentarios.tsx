@@ -13,12 +13,22 @@ import {
   Avatar,
   ListItemText,
   Divider,
-  CircularProgress
+  CircularProgress,
 } from '@mui/material';
 import CommentService from '../../API/comentario';
-import type { Comment as CommentType, CreateCommentDto, CreateReplyDto } from '../../API/comentario';
+import type {
+  Comment as CommentType,
+  CreateCommentDto,
+  CreateReplyDto,
+} from '../../API/comentario';
 
-const Comment = ({ comment, onReply }: { comment: CommentType, onReply: (id: number, data: CreateReplyDto) => void }) => {
+const Comment = ({
+  comment,
+  onReply,
+}: {
+  comment: CommentType;
+  onReply: (id: number, data: CreateReplyDto) => void;
+}) => {
   const [showReply, setShowReply] = useState(false);
   const [replyContent, setReplyContent] = useState('');
   const [replyAuthor, setReplyAuthor] = useState('');
@@ -47,21 +57,45 @@ const Comment = ({ comment, onReply }: { comment: CommentType, onReply: (id: num
         <ListItemAvatar>
           <Avatar>{comment.author.charAt(0)}</Avatar>
         </ListItemAvatar>
-        <ListItemText
-          primary={comment.author}
-          secondary={comment.content}
-        />
+        <ListItemText primary={comment.author} secondary={comment.content} />
       </ListItem>
       <Box sx={{ pl: 7 }}>
         <Button size="small" onClick={() => setShowReply(!showReply)}>
           Responder
         </Button>
         {showReply && (
-          <Box component="form" onSubmit={handleReplySubmit} sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 1 }}>
-            <TextField size="small" fullWidth label="Seu Nome" value={replyAuthor} onChange={(e) => setReplyAuthor(e.target.value)} required />
-            <TextField size="small" fullWidth label="Seu E-mail" value={replyEmail} onChange={(e) => setReplyEmail(e.target.value)} required />
-            <TextField size="small" fullWidth label="Sua resposta..." value={replyContent} onChange={(e) => setReplyContent(e.target.value)} required />
-            <Button type="submit" variant="contained" size="small" sx={{ alignSelf: 'flex-start' }}>Enviar</Button>
+          <Box
+            component="form"
+            onSubmit={handleReplySubmit}
+            sx={{ mt: 1, display: 'flex', flexDirection: 'column', gap: 1 }}
+          >
+            <TextField
+              size="small"
+              fullWidth
+              label="Seu Nome"
+              value={replyAuthor}
+              onChange={(e) => setReplyAuthor(e.target.value)}
+              required
+            />
+            <TextField
+              size="small"
+              fullWidth
+              label="Seu E-mail"
+              value={replyEmail}
+              onChange={(e) => setReplyEmail(e.target.value)}
+              required
+            />
+            <TextField
+              size="small"
+              fullWidth
+              label="Sua resposta..."
+              value={replyContent}
+              onChange={(e) => setReplyContent(e.target.value)}
+              required
+            />
+            <Button type="submit" variant="contained" size="small" sx={{ alignSelf: 'flex-start' }}>
+              Enviar
+            </Button>
           </Box>
         )}
         {comment.replies && comment.replies.length > 0 && (
@@ -128,7 +162,7 @@ const Comentarios = ({ newsId }: { newsId: number }) => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setNewComment(prev => ({ ...prev, [name]: value }));
+    setNewComment((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -140,16 +174,48 @@ const Comentarios = ({ newsId }: { newsId: number }) => {
         <Typography variant="body2" color="text.secondary" textAlign="center" sx={{ mb: 3 }}>
           O seu endereço de e-mail não será publicado.
         </Typography>
-        <Box component="form" onSubmit={handleCommentSubmit} noValidate autoComplete="off" sx={{ mt: 3 }}>
+        <Box
+          component="form"
+          onSubmit={handleCommentSubmit}
+          noValidate
+          autoComplete="off"
+          sx={{ mt: 3 }}
+        >
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
-              <TextField fullWidth label="Seu Nome" name="author" value={newComment.author} onChange={handleInputChange} variant="outlined" required />
+              <TextField
+                fullWidth
+                label="Seu Nome"
+                name="author"
+                value={newComment.author}
+                onChange={handleInputChange}
+                variant="outlined"
+                required
+              />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <TextField fullWidth label="Seu E-mail" name="email" value={newComment.email} onChange={handleInputChange} variant="outlined" required />
+              <TextField
+                fullWidth
+                label="Seu E-mail"
+                name="email"
+                value={newComment.email}
+                onChange={handleInputChange}
+                variant="outlined"
+                required
+              />
             </Grid>
             <Grid item xs={12}>
-              <TextField fullWidth label="Seu Comentário" name="content" value={newComment.content} onChange={handleInputChange} variant="outlined" multiline rows={4} required />
+              <TextField
+                fullWidth
+                label="Seu Comentário"
+                name="content"
+                value={newComment.content}
+                onChange={handleInputChange}
+                variant="outlined"
+                multiline
+                rows={4}
+                required
+              />
             </Grid>
             <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
               <Button type="submit" variant="contained" color="primary" size="large">
@@ -170,7 +236,7 @@ const Comentarios = ({ newsId }: { newsId: number }) => {
           </Box>
         ) : comments.length > 0 ? (
           <List>
-            {comments.map(comment => (
+            {comments.map((comment) => (
               <Comment key={comment.id} comment={comment} onReply={handleReply} />
             ))}
           </List>

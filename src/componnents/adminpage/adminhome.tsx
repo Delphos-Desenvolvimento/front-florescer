@@ -11,7 +11,16 @@ import LinksAdminPage from '../page/admin/LinksAdminPage';
 import LogsAdminPage from '../page/admin/LogsAdminPage';
 import ProfileAdminPage from '../page/admin/ProfileAdminPage';
 import type { SelectChangeEvent } from '@mui/material/Select';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  Tooltip as RechartsTooltip,
+} from 'recharts';
 import { format, parseISO } from 'date-fns';
 import {
   Box,
@@ -49,7 +58,7 @@ import {
   CircularProgress,
   Snackbar,
   Alert,
-  Tooltip
+  Tooltip,
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
@@ -69,11 +78,9 @@ import {
   Handshake as HandshakeIcon,
   Link as LinkIcon,
   Group as GroupIcon,
-  Menu as MenuIcon
+  Menu as MenuIcon,
 } from '@mui/icons-material';
 import { History as HistoryIcon, Person as PersonIcon } from '@mui/icons-material';
-
-
 
 interface ListItemLinkProps {
   icon?: React.ReactNode;
@@ -100,8 +107,13 @@ const ListItemLink = (props: ListItemLinkProps) => {
         },
       }}
     >
-      {icon ? <ListItemIcon sx={{ color: isActive ? 'primary.main' : 'inherit' }}>{icon}</ListItemIcon> : null}
-      <ListItemText primary={primary} primaryTypographyProps={{ color: isActive ? 'primary' : 'inherit' }} />
+      {icon ? (
+        <ListItemIcon sx={{ color: isActive ? 'primary.main' : 'inherit' }}>{icon}</ListItemIcon>
+      ) : null}
+      <ListItemText
+        primary={primary}
+        primaryTypographyProps={{ color: isActive ? 'primary' : 'inherit' }}
+      />
     </ListItemButton>
   );
 };
@@ -124,15 +136,15 @@ export default function AdminHome() {
     navigate('/login');
   };
 
-
-
   const drawer = (
-    <Box sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100%',
-      justifyContent: 'space-between'
-    }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
+        justifyContent: 'space-between',
+      }}
+    >
       <div>
         <Box sx={{ p: 2, textAlign: 'center' }}>
           <Typography variant="h6" color="primary">
@@ -181,16 +193,19 @@ export default function AdminHome() {
   };
 
   // Função para converter da API para o tipo local
-  const toLocalNewsItem = useCallback((apiItem: ApiNewsItem): NewsItem => ({
-    id: apiItem.id ?? null,
-    title: apiItem.title,
-    content: apiItem.content,
-    category: apiItem.category,
-    status: apiItem.status,
-    date: apiItem.date,
-    views: apiItem.views,
-    images: apiItem.images
-  }), []);
+  const toLocalNewsItem = useCallback(
+    (apiItem: ApiNewsItem): NewsItem => ({
+      id: apiItem.id ?? null,
+      title: apiItem.title,
+      content: apiItem.content,
+      category: apiItem.category,
+      status: apiItem.status,
+      date: apiItem.date,
+      views: apiItem.views,
+      images: apiItem.images,
+    }),
+    []
+  );
 
   // Função para converter para o tipo da API
   const toApiNewsItem = (item: NewsItem): Omit<ApiNewsItem, 'id'> & { id?: number } => ({
@@ -201,7 +216,7 @@ export default function AdminHome() {
     status: item.status,
     date: item.date,
     views: item.views ?? 0,
-    images: item.images
+    images: item.images,
   });
 
   // Estado para controlar a aba ativa (notícias ativas ou histórico)
@@ -209,12 +224,14 @@ export default function AdminHome() {
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: '',
-    severity: 'success' as 'success' | 'error' | 'info' | 'warning'
+    severity: 'success' as 'success' | 'error' | 'info' | 'warning',
   });
 
   // State for statistics
   const [timeRange, setTimeRange] = useState<'day' | 'week' | 'month' | 'year'>('week');
-  const [chartData, setChartData] = useState<Array<{ date: string; label: string; views: number }>>([]);
+  const [chartData, setChartData] = useState<Array<{ date: string; label: string; views: number }>>(
+    []
+  );
   const [isLoadingStats, setIsLoadingStats] = useState(false);
   const [overviewStats, setOverviewStats] = useState<StatsOverview | null>(null);
 
@@ -245,7 +262,7 @@ export default function AdminHome() {
       setSnackbar({
         open: true,
         message: 'Erro ao carregar notícias. Tente novamente mais tarde.',
-        severity: 'error'
+        severity: 'error',
       });
     } finally {
       setIsLoading(false);
@@ -256,15 +273,20 @@ export default function AdminHome() {
   const fetchNewsStats = useCallback(async () => {
     try {
       setIsLoadingStats(true);
-      const days = timeRange === 'day' ? 1 : timeRange === 'week' ? 7 : timeRange === 'month' ? 30 : 365;
+      const days =
+        timeRange === 'day' ? 1 : timeRange === 'week' ? 7 : timeRange === 'month' ? 30 : 365;
       const [trend, overview] = await Promise.all([
         StatsService.getEventsByDay('news_view', days),
-        StatsService.getOverview()
+        StatsService.getOverview(),
       ]);
       const mapped = trend.map((pt) => ({
         date: pt.date,
         label: (() => {
-          try { return format(parseISO(pt.date), 'dd/MM'); } catch { return pt.date; }
+          try {
+            return format(parseISO(pt.date), 'dd/MM');
+          } catch {
+            return pt.date;
+          }
         })(),
         views: pt.count,
       }));
@@ -272,11 +294,19 @@ export default function AdminHome() {
       // Fallback: if selected range has no data but there are views overall, load month
       if (sum === 0 && (overview?.totalViews || 0) > 0 && days < 30) {
         const monthTrend = await StatsService.getEventsByDay('news_view', 30);
-        setChartData(monthTrend.map((pt) => ({
-          date: pt.date,
-          label: (() => { try { return format(parseISO(pt.date), 'dd/MM'); } catch { return pt.date; } })(),
-          views: pt.count,
-        })));
+        setChartData(
+          monthTrend.map((pt) => ({
+            date: pt.date,
+            label: (() => {
+              try {
+                return format(parseISO(pt.date), 'dd/MM');
+              } catch {
+                return pt.date;
+              }
+            })(),
+            views: pt.count,
+          }))
+        );
       } else {
         setChartData(mapped);
       }
@@ -286,7 +316,7 @@ export default function AdminHome() {
       setSnackbar({
         open: true,
         message: 'Erro ao carregar estatísticas',
-        severity: 'error'
+        severity: 'error',
       });
     } finally {
       setIsLoadingStats(false);
@@ -304,10 +334,6 @@ export default function AdminHome() {
     fetchNewsStats();
   }, [timeRange, fetchNewsStats]);
 
-  
-
-
-
   // Estados para controle da interface
   const [openNewsDialog, setOpenNewsDialog] = useState(false);
   const [currentNews, setCurrentNews] = useState<NewsItem & { imagePreview?: string }>({
@@ -318,7 +344,7 @@ export default function AdminHome() {
     status: 'rascunho',
     date: new Date().toISOString().split('T')[0],
     views: 0,
-    imagePreview: ''
+    imagePreview: '',
   });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -330,12 +356,14 @@ export default function AdminHome() {
   const [partners, setPartners] = useState<Partner[]>([]);
   const [isLoadingPartners, setIsLoadingPartners] = useState(false);
   const [openPartnerDialog, setOpenPartnerDialog] = useState(false);
-  const [currentPartner, setCurrentPartner] = useState<Partial<Partner> & { logoPreview?: string }>({
-    name: '',
-    displayOrder: 0,
-    active: true,
-    logoPreview: ''
-  });
+  const [currentPartner, setCurrentPartner] = useState<Partial<Partner> & { logoPreview?: string }>(
+    {
+      name: '',
+      displayOrder: 0,
+      active: true,
+      logoPreview: '',
+    }
+  );
   const [selectedPartnerLogo, setSelectedPartnerLogo] = useState<File | null>(null);
   const [partnerErrors, setPartnerErrors] = useState<Record<string, string>>({});
 
@@ -350,7 +378,7 @@ export default function AdminHome() {
       setSnackbar({
         open: true,
         message: 'Erro ao carregar parceiros. Tente novamente mais tarde.',
-        severity: 'error'
+        severity: 'error',
       });
     } finally {
       setIsLoadingPartners(false);
@@ -369,14 +397,16 @@ export default function AdminHome() {
     if (partner) {
       setCurrentPartner({
         ...partner,
-        logoPreview: partner.logoBase64.startsWith('data:') ? partner.logoBase64 : `data:image/jpeg;base64,${partner.logoBase64}`
+        logoPreview: partner.logoBase64.startsWith('data:')
+          ? partner.logoBase64
+          : `data:image/jpeg;base64,${partner.logoBase64}`,
       });
     } else {
       setCurrentPartner({
         name: '',
         displayOrder: 0,
         active: true,
-        logoPreview: ''
+        logoPreview: '',
       });
       setSelectedPartnerLogo(null);
     }
@@ -390,7 +420,7 @@ export default function AdminHome() {
       name: '',
       displayOrder: 0,
       active: true,
-      logoPreview: ''
+      logoPreview: '',
     });
     setSelectedPartnerLogo(null);
     setPartnerErrors({});
@@ -402,25 +432,27 @@ export default function AdminHome() {
       setSelectedPartnerLogo(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setCurrentPartner(prev => ({
+        setCurrentPartner((prev) => ({
           ...prev,
-          logoPreview: reader.result as string
+          logoPreview: reader.result as string,
         }));
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handlePartnerInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handlePartnerInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setCurrentPartner(prev => ({
+    setCurrentPartner((prev) => ({
       ...prev,
-      [name]: name === 'displayOrder' ? parseInt(value) || 0 : value
+      [name]: name === 'displayOrder' ? parseInt(value) || 0 : value,
     }));
     if (partnerErrors[name]) {
-      setPartnerErrors(prev => ({
+      setPartnerErrors((prev) => ({
         ...prev,
-        [name]: ''
+        [name]: '',
       }));
     }
   };
@@ -446,17 +478,15 @@ export default function AdminHome() {
           {
             name: currentPartner.name,
             displayOrder: currentPartner.displayOrder,
-            active: currentPartner.active
+            active: currentPartner.active,
           },
           selectedPartnerLogo || undefined
         );
-        setPartners(prevPartners =>
-          prevPartners.map(p => p.id === updated.id ? updated : p)
-        );
+        setPartners((prevPartners) => prevPartners.map((p) => (p.id === updated.id ? updated : p)));
         setSnackbar({
           open: true,
           message: 'Parceiro atualizado com sucesso!',
-          severity: 'success'
+          severity: 'success',
         });
       } else {
         // Create new partner
@@ -465,15 +495,15 @@ export default function AdminHome() {
             name: currentPartner.name!,
             displayOrder: currentPartner.displayOrder || 0,
             active: currentPartner.active ?? true,
-            logoBase64: '' // Will be set by the file
+            logoBase64: '', // Will be set by the file
           },
           selectedPartnerLogo!
         );
-        setPartners(prevPartners => [...prevPartners, created]);
+        setPartners((prevPartners) => [...prevPartners, created]);
         setSnackbar({
           open: true,
           message: 'Parceiro adicionado com sucesso!',
-          severity: 'success'
+          severity: 'success',
         });
       }
       handleClosePartnerDialog();
@@ -482,7 +512,7 @@ export default function AdminHome() {
       setSnackbar({
         open: true,
         message: 'Erro ao salvar parceiro. Tente novamente.',
-        severity: 'error'
+        severity: 'error',
       });
     }
   };
@@ -491,18 +521,18 @@ export default function AdminHome() {
     if (window.confirm('Tem certeza que deseja remover este parceiro?')) {
       try {
         await PartnersService.delete(id);
-        setPartners(prevPartners => prevPartners.filter(p => p.id !== id));
+        setPartners((prevPartners) => prevPartners.filter((p) => p.id !== id));
         setSnackbar({
           open: true,
           message: 'Parceiro removido com sucesso!',
-          severity: 'success'
+          severity: 'success',
         });
       } catch (error) {
         console.error('Erro ao remover parceiro:', error);
         setSnackbar({
           open: true,
           message: 'Erro ao remover parceiro. Tente novamente.',
-          severity: 'error'
+          severity: 'error',
         });
       }
     }
@@ -521,49 +551,54 @@ export default function AdminHome() {
       if (updatedNews.id) {
         // Atualiza notícia existente
         const { id, ...updateData } = toApiNewsItem(updatedNews);
-        console.log('[AdminHome] Saving news:', { id, updateData, hasSelectedImage: !!selectedImageFile, selectedImageFile });
+        console.log('[AdminHome] Saving news:', {
+          id,
+          updateData,
+          hasSelectedImage: !!selectedImageFile,
+          selectedImageFile,
+        });
         const updated = await NewsService.update(
           id!,
           updateData,
           selectedImageFile ? [selectedImageFile] : undefined
         );
 
-        setActiveNews(prevNews =>
-          prevNews.map(item => item.id === updated.id ? toLocalNewsItem(updated) : item)
+        setActiveNews((prevNews) =>
+          prevNews.map((item) => (item.id === updated.id ? toLocalNewsItem(updated) : item))
         );
 
         setSnackbar({
           open: true,
           message: 'Notícia atualizada com sucesso!',
-          severity: 'success'
+          severity: 'success',
         });
       } else {
         // Cria nova notícia
         const newNews = await NewsService.create(
           {
             ...toApiNewsItem(updatedNews),
-            date: new Date().toISOString().split('T')[0]
+            date: new Date().toISOString().split('T')[0],
           },
           selectedImageFile ? [selectedImageFile] : undefined
         );
 
-        setActiveNews(prevNews => [toLocalNewsItem(newNews), ...prevNews]);
+        setActiveNews((prevNews) => [toLocalNewsItem(newNews), ...prevNews]);
 
         setSnackbar({
           open: true,
           message: 'Notícia adicionada com sucesso!',
-          severity: 'success'
+          severity: 'success',
         });
       }
       setOpenNewsDialog(false);
       setSelectedImageFile(null);
-      setCurrentNews(prev => ({ ...prev, imagePreview: '' }));
+      setCurrentNews((prev) => ({ ...prev, imagePreview: '' }));
     } catch (error) {
       console.error('Erro ao salvar notícia:', error);
       setSnackbar({
         open: true,
         message: 'Erro ao salvar a notícia. Verifique os dados e tente novamente.',
-        severity: 'error'
+        severity: 'error',
       });
     }
   };
@@ -572,20 +607,20 @@ export default function AdminHome() {
     try {
       const archivedNews = await NewsService.archive(id);
 
-      setActiveNews(prevNews => prevNews.filter(news => news.id !== id));
-      setNewsHistory(prevHistory => [toLocalNewsItem(archivedNews), ...prevHistory]);
+      setActiveNews((prevNews) => prevNews.filter((news) => news.id !== id));
+      setNewsHistory((prevHistory) => [toLocalNewsItem(archivedNews), ...prevHistory]);
 
       setSnackbar({
         open: true,
         message: 'Notícia arquivada com sucesso!',
-        severity: 'success'
+        severity: 'success',
       });
     } catch (error) {
       console.error('Erro ao arquivar notícia:', error);
       setSnackbar({
         open: true,
         message: 'Erro ao arquivar a notícia. Tente novamente.',
-        severity: 'error'
+        severity: 'error',
       });
     }
   };
@@ -597,19 +632,19 @@ export default function AdminHome() {
       try {
         await NewsService.delete(id);
 
-        setNewsHistory(prevHistory => prevHistory.filter(news => news.id !== id));
+        setNewsHistory((prevHistory) => prevHistory.filter((news) => news.id !== id));
 
         setSnackbar({
           open: true,
           message: 'Notícia removida permanentemente!',
-          severity: 'success'
+          severity: 'success',
         });
       } catch (error) {
         console.error('Erro ao remover notícia:', error);
         setSnackbar({
           open: true,
           message: 'Erro ao remover notícia. Tente novamente mais tarde.',
-          severity: 'error'
+          severity: 'error',
         });
       }
     }
@@ -619,20 +654,20 @@ export default function AdminHome() {
     try {
       const restoredNews = await NewsService.restore(id);
 
-      setNewsHistory(prevHistory => prevHistory.filter(news => news.id !== id));
-      setActiveNews(prevNews => [toLocalNewsItem(restoredNews), ...prevNews]);
+      setNewsHistory((prevHistory) => prevHistory.filter((news) => news.id !== id));
+      setActiveNews((prevNews) => [toLocalNewsItem(restoredNews), ...prevNews]);
 
       setSnackbar({
         open: true,
         message: 'Notícia restaurada com sucesso!',
-        severity: 'success'
+        severity: 'success',
       });
     } catch (error) {
       console.error('Erro ao restaurar notícia:', error);
       setSnackbar({
         open: true,
         message: 'Erro ao restaurar a notícia. Tente novamente.',
-        severity: 'error'
+        severity: 'error',
       });
     }
   };
@@ -662,26 +697,28 @@ export default function AdminHome() {
       setSelectedImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setCurrentNews(prev => ({
+        setCurrentNews((prev) => ({
           ...prev,
-          imagePreview: reader.result as string
+          imagePreview: reader.result as string,
         }));
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
+  ) => {
     const { name, value } = e.target as { name: string; value: string };
-    setCurrentNews(prev => ({
+    setCurrentNews((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     // Limpa o erro quando o usuário começa a digitar
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
+        [name]: '',
       }));
     }
   };
@@ -735,7 +772,7 @@ export default function AdminHome() {
 
           setCurrentNews({
             ...localNews,
-            imagePreview: imgPreview
+            imagePreview: imgPreview,
           });
         } else {
           let imgPreview = '';
@@ -755,7 +792,7 @@ export default function AdminHome() {
           setCurrentNews({
             ...newsItem,
             content: newsItem.content || '',
-            imagePreview: imgPreview
+            imagePreview: imgPreview,
           });
         }
       } else {
@@ -769,7 +806,7 @@ export default function AdminHome() {
           status: 'rascunho',
           date: new Date().toISOString().split('T')[0],
           views: 0,
-          imagePreview: ''
+          imagePreview: '',
         });
       }
       setOpenNewsDialog(true);
@@ -778,7 +815,7 @@ export default function AdminHome() {
       setSnackbar({
         open: true,
         message: 'Erro ao carregar a notícia. Tente novamente.',
-        severity: 'error'
+        severity: 'error',
       });
     }
   };
@@ -823,7 +860,7 @@ export default function AdminHome() {
           p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           backgroundColor: '#f5f5f5',
-          minHeight: '100vh'
+          minHeight: '100vh',
         }}
       >
         {/* Header */}
@@ -838,14 +875,21 @@ export default function AdminHome() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h5" component="h1" sx={{ flexGrow: 1 }}>
-            {location.pathname.includes('noticias') ? 'Notícias' :
-              location.pathname.includes('parceiros') ? 'Parceiros' :
-                location.pathname.includes('conteudo') ? 'Conteúdo' :
-                  location.pathname.includes('equipe') ? 'Nossa Equipe' :
-                    location.pathname.includes('links-uteis') ? 'Links Úteis' :
-                      location.pathname.includes('logs') ? 'Logs' :
-                      location.pathname.includes('perfil') ? 'Meu Perfil' :
-                      'Dashboard'}
+            {location.pathname.includes('noticias')
+              ? 'Notícias'
+              : location.pathname.includes('parceiros')
+                ? 'Parceiros'
+                : location.pathname.includes('conteudo')
+                  ? 'Conteúdo'
+                  : location.pathname.includes('equipe')
+                    ? 'Nossa Equipe'
+                    : location.pathname.includes('links-uteis')
+                      ? 'Links Úteis'
+                      : location.pathname.includes('logs')
+                        ? 'Logs'
+                        : location.pathname.includes('perfil')
+                          ? 'Meu Perfil'
+                          : 'Dashboard'}
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Avatar sx={{ width: 40, height: 40 }}>A</Avatar>
@@ -863,7 +907,14 @@ export default function AdminHome() {
             </Box>
           ) : location.pathname.includes('/admin/noticias') ? (
             <Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  mb: 3,
+                }}
+              >
                 <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
                   Gerenciamento de Notícias
                 </Typography>
@@ -940,13 +991,25 @@ export default function AdminHome() {
                         <Card>
                           <CardHeader
                             title={news.title}
-                            subheader={(
+                            subheader={
                               <Typography variant="body2" color="text.secondary">
                                 <span>{news.category}</span>
-                                <Box component="span" sx={{ mx: 1, display: 'inline-block', width: 4, height: 4, borderRadius: '50%', bgcolor: 'text.disabled', position: 'relative', top: -1 }} />
+                                <Box
+                                  component="span"
+                                  sx={{
+                                    mx: 1,
+                                    display: 'inline-block',
+                                    width: 4,
+                                    height: 4,
+                                    borderRadius: '50%',
+                                    bgcolor: 'text.disabled',
+                                    position: 'relative',
+                                    top: -1,
+                                  }}
+                                />
                                 <span>{news.date}</span>
                               </Typography>
-                            )}
+                            }
                             action={
                               <Box sx={{ display: 'flex', gap: 1 }}>
                                 <Tooltip title="Editar">
@@ -963,22 +1026,39 @@ export default function AdminHome() {
                             }
                           />
                           <CardContent>
-                            <Typography variant="body2" color="text.secondary" sx={{
-                              display: '-webkit-box',
-                              WebkitLineClamp: 3,
-                              WebkitBoxOrient: 'vertical',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'normal'
-                            }}>
+                            <Typography
+                              variant="body2"
+                              color="text.secondary"
+                              sx={{
+                                display: '-webkit-box',
+                                WebkitLineClamp: 3,
+                                WebkitBoxOrient: 'vertical',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'normal',
+                              }}
+                            >
                               {stripHtml(news.content)}
                             </Typography>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2, alignItems: 'center' }}>
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                mt: 2,
+                                alignItems: 'center',
+                              }}
+                            >
                               <Chip
                                 label={news.status === 'publicada' ? 'Publicada' : 'Rascunho'}
                                 size="small"
                                 color={news.status === 'publicada' ? 'success' : 'default'}
-                                icon={news.status === 'publicada' ? <CheckCircleIcon fontSize="small" /> : <PendingIcon fontSize="small" />}
+                                icon={
+                                  news.status === 'publicada' ? (
+                                    <CheckCircleIcon fontSize="small" />
+                                  ) : (
+                                    <PendingIcon fontSize="small" />
+                                  )
+                                }
                               />
                               <Typography variant="caption" color="text.secondary">
                                 {news.views} visualizações
@@ -1001,7 +1081,11 @@ export default function AdminHome() {
                         <CircularProgress />
                       </Box>
                     ) : newsHistory.length === 0 ? (
-                      <Typography variant="body1" color="textSecondary" sx={{ p: 2, textAlign: 'center' }}>
+                      <Typography
+                        variant="body1"
+                        color="textSecondary"
+                        sx={{ p: 2, textAlign: 'center' }}
+                      >
                         Nenhuma notícia arquivada.
                       </Typography>
                     ) : (
@@ -1011,12 +1095,19 @@ export default function AdminHome() {
                             secondaryAction={
                               <Box sx={{ display: 'flex', gap: 1 }}>
                                 <Tooltip title="Restaurar">
-                                  <IconButton edge="end" onClick={() => handleRestoreNews(news.id!)}>
+                                  <IconButton
+                                    edge="end"
+                                    onClick={() => handleRestoreNews(news.id!)}
+                                  >
                                     <RestoreIcon fontSize="small" />
                                   </IconButton>
                                 </Tooltip>
                                 <Tooltip title="Excluir permanentemente">
-                                  <IconButton edge="end" onClick={() => handleDeleteNews(news.id)} color="error">
+                                  <IconButton
+                                    edge="end"
+                                    onClick={() => handleDeleteNews(news.id)}
+                                    color="error"
+                                  >
                                     <DeleteForeverIcon fontSize="small" />
                                   </IconButton>
                                 </Tooltip>
@@ -1029,7 +1120,19 @@ export default function AdminHome() {
                                 <>
                                   <Typography component="span" variant="body2" color="text.primary">
                                     <span>{news.category}</span>
-                                    <Box component="span" sx={{ mx: 1, display: 'inline-block', width: 4, height: 4, borderRadius: '50%', bgcolor: 'text.disabled', position: 'relative', top: -1 }} />
+                                    <Box
+                                      component="span"
+                                      sx={{
+                                        mx: 1,
+                                        display: 'inline-block',
+                                        width: 4,
+                                        height: 4,
+                                        borderRadius: '50%',
+                                        bgcolor: 'text.disabled',
+                                        position: 'relative',
+                                        top: -1,
+                                      }}
+                                    />
                                     <span>{news.date}</span>
                                   </Typography>
                                   <br />
@@ -1150,8 +1253,8 @@ export default function AdminHome() {
                         cursor: 'pointer',
                         '&:hover': {
                           borderColor: 'primary.main',
-                          backgroundColor: 'action.hover'
-                        }
+                          backgroundColor: 'action.hover',
+                        },
                       }}
                     >
                       {currentNews.imagePreview ? (
@@ -1163,7 +1266,7 @@ export default function AdminHome() {
                               maxWidth: '100%',
                               maxHeight: '200px',
                               borderRadius: '8px',
-                              marginBottom: '16px'
+                              marginBottom: '16px',
                             }}
                           />
                           <Typography>Clique para alterar a imagem</Typography>
@@ -1194,26 +1297,26 @@ export default function AdminHome() {
                     <RichTextEditor
                       content={currentNews.content}
                       onChange={(content) => {
-                        setCurrentNews(prev => ({ ...prev, content }));
+                        setCurrentNews((prev) => ({ ...prev, content }));
                         if (errors.content) {
-                          setErrors(prev => ({ ...prev, content: '' }));
+                          setErrors((prev) => ({ ...prev, content: '' }));
                         }
                       }}
                       error={!!errors.content}
                     />
                     {errors.content && (
-                      <Typography variant="caption" color="error" sx={{ mt: 0.5, display: 'block' }}>
+                      <Typography
+                        variant="caption"
+                        color="error"
+                        sx={{ mt: 0.5, display: 'block' }}
+                      >
                         {errors.content}
                       </Typography>
                     )}
                   </Box>
                 </DialogContent>
                 <DialogActions sx={{ p: 3, pt: 0 }}>
-                  <Button
-                    onClick={handleCloseNewsDialog}
-                    color="inherit"
-                    sx={{ borderRadius: 2 }}
-                  >
+                  <Button onClick={handleCloseNewsDialog} color="inherit" sx={{ borderRadius: 2 }}>
                     Cancelar
                   </Button>
                   <Button
@@ -1230,7 +1333,14 @@ export default function AdminHome() {
             </Box>
           ) : location.pathname.includes('/admin/parceiros') ? (
             <Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  mb: 3,
+                }}
+              >
                 <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
                   Gerenciamento de Parceiros
                 </Typography>
@@ -1265,19 +1375,30 @@ export default function AdminHome() {
                         <CardContent>
                           <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
                             <img
-                              src={partner.logoBase64.startsWith('data:') ? partner.logoBase64 : `data:image/jpeg;base64,${partner.logoBase64}`}
+                              src={
+                                partner.logoBase64.startsWith('data:')
+                                  ? partner.logoBase64
+                                  : `data:image/jpeg;base64,${partner.logoBase64}`
+                              }
                               alt={partner.name}
                               style={{
                                 maxWidth: '100%',
                                 maxHeight: '120px',
-                                objectFit: 'contain'
+                                objectFit: 'contain',
                               }}
                             />
                           </Box>
                           <Typography variant="h6" align="center" gutterBottom>
                             {partner.name}
                           </Typography>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              mt: 2,
+                            }}
+                          >
                             <Chip
                               label={partner.active ? 'Ativo' : 'Inativo'}
                               size="small"
@@ -1289,12 +1410,19 @@ export default function AdminHome() {
                           </Box>
                           <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
                             <Tooltip title="Editar">
-                              <IconButton onClick={() => handleOpenPartnerDialog(partner)} size="small">
+                              <IconButton
+                                onClick={() => handleOpenPartnerDialog(partner)}
+                                size="small"
+                              >
                                 <EditIcon fontSize="small" />
                               </IconButton>
                             </Tooltip>
                             <Tooltip title="Excluir">
-                              <IconButton onClick={() => handleDeletePartner(partner.id)} size="small" color="error">
+                              <IconButton
+                                onClick={() => handleDeletePartner(partner.id)}
+                                size="small"
+                                color="error"
+                              >
                                 <DeleteForeverIcon fontSize="small" />
                               </IconButton>
                             </Tooltip>
@@ -1368,8 +1496,8 @@ export default function AdminHome() {
                         cursor: 'pointer',
                         '&:hover': {
                           borderColor: 'primary.main',
-                          backgroundColor: 'action.hover'
-                        }
+                          backgroundColor: 'action.hover',
+                        },
                       }}
                     >
                       {currentPartner.logoPreview ? (
@@ -1381,7 +1509,7 @@ export default function AdminHome() {
                               maxWidth: '100%',
                               maxHeight: '150px',
                               objectFit: 'contain',
-                              marginBottom: '16px'
+                              marginBottom: '16px',
                             }}
                           />
                           <Typography>Clique para alterar a logo</Typography>
@@ -1404,20 +1532,32 @@ export default function AdminHome() {
                       />
                     </Box>
                     {partnerErrors.logo && (
-                      <Typography variant="caption" color="error" sx={{ mt: 0.5, display: 'block' }}>
+                      <Typography
+                        variant="caption"
+                        color="error"
+                        sx={{ mt: 0.5, display: 'block' }}
+                      >
                         {partnerErrors.logo}
                       </Typography>
                     )}
                   </Box>
 
                   <FormControl fullWidth>
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}
+                    >
                       <Typography variant="subtitle2">Status</Typography>
                       <Chip
                         label={currentPartner.active ? 'Ativo' : 'Inativo'}
                         size="small"
                         color={currentPartner.active ? 'success' : 'default'}
-                        onClick={() => setCurrentPartner(prev => ({ ...prev, active: !prev.active }))}
+                        onClick={() =>
+                          setCurrentPartner((prev) => ({ ...prev, active: !prev.active }))
+                        }
                         sx={{ cursor: 'pointer' }}
                       />
                     </Box>
@@ -1470,13 +1610,21 @@ export default function AdminHome() {
             <ProfileAdminPage />
           ) : (
             <Box>
-              <Typography variant="h6" sx={{ mb: 3 }}>Visão Geral</Typography>
+              <Typography variant="h6" sx={{ mb: 3 }}>
+                Visão Geral
+              </Typography>
               <Grid container spacing={3} sx={{ mb: 4 }}>
-
                 <Grid item xs={12} sm={6} md={4}>
                   <Card>
                     <CardContent>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          mb: 2,
+                        }}
+                      >
                         <Typography color="textSecondary" variant="body2">
                           Total de Usuários
                         </Typography>
@@ -1491,7 +1639,14 @@ export default function AdminHome() {
                 <Grid item xs={12} sm={6} md={4}>
                   <Card>
                     <CardContent>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          mb: 2,
+                        }}
+                      >
                         <Typography color="textSecondary" variant="body2">
                           Total de Visualizações
                         </Typography>
@@ -1506,7 +1661,14 @@ export default function AdminHome() {
                 <Grid item xs={12} sm={6} md={4}>
                   <Card>
                     <CardContent>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          mb: 2,
+                        }}
+                      >
                         <Typography color="textSecondary" variant="body2">
                           Total de Notícias
                         </Typography>
@@ -1522,24 +1684,40 @@ export default function AdminHome() {
 
               {/* Gráfico de Estatísticas */}
               <Card sx={{ mb: 4, p: 3 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    mb: 3,
+                  }}
+                >
                   <Typography variant="h6">Visualizações por Notícia</Typography>
                   <FormControl variant="outlined" size="small" sx={{ minWidth: 120 }}>
                     <Select
                       value={timeRange}
-                      onChange={(e) => setTimeRange(e.target.value as 'day' | 'week' | 'month' | 'year')}
+                      onChange={(e) =>
+                        setTimeRange(e.target.value as 'day' | 'week' | 'month' | 'year')
+                      }
                       sx={{ height: 36 }}
-                      >
-                        <MenuItem value="day">Últimas 24h</MenuItem>
-                        <MenuItem value="week">Esta Semana</MenuItem>
-                        <MenuItem value="month">Este Mês</MenuItem>
-                        <MenuItem value="year">Este Ano</MenuItem>
-                      </Select>
+                    >
+                      <MenuItem value="day">Últimas 24h</MenuItem>
+                      <MenuItem value="week">Esta Semana</MenuItem>
+                      <MenuItem value="month">Este Mês</MenuItem>
+                      <MenuItem value="year">Este Ano</MenuItem>
+                    </Select>
                   </FormControl>
                 </Box>
 
                 {isLoadingStats ? (
-                  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 300 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      height: 300,
+                    }}
+                  >
                     <CircularProgress />
                   </Box>
                 ) : chartData.length > 0 ? (
@@ -1565,13 +1743,21 @@ export default function AdminHome() {
                           minTickGap={16}
                           tickMargin={8}
                         />
-                        <YAxis allowDecimals={false} domain={[0, 'dataMax + 1']} tick={{ fontSize: 12 }} />
+                        <YAxis
+                          allowDecimals={false}
+                          domain={[0, 'dataMax + 1']}
+                          tick={{ fontSize: 12 }}
+                        />
                         <RechartsTooltip
                           formatter={(value) => [value, 'Visualizações']}
                           labelFormatter={(label, payload) => {
                             const d = payload && payload[0]?.payload?.date;
                             if (typeof d === 'string') {
-                              try { return format(parseISO(d), 'dd/MM/yyyy'); } catch { return d; }
+                              try {
+                                return format(parseISO(d), 'dd/MM/yyyy');
+                              } catch {
+                                return d;
+                              }
                             }
                             return label as string;
                           }}
@@ -1588,16 +1774,18 @@ export default function AdminHome() {
                     </ResponsiveContainer>
                   </Box>
                 ) : (
-                  <Box sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: 300,
-                    border: '1px dashed #ddd',
-                    borderRadius: 1,
-                    p: 3,
-                    textAlign: 'center'
-                  }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      height: 300,
+                      border: '1px dashed #ddd',
+                      borderRadius: 1,
+                      p: 3,
+                      textAlign: 'center',
+                    }}
+                  >
                     <Typography color="textSecondary">
                       Nenhum dado disponível para o período selecionado.
                     </Typography>

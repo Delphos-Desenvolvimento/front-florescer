@@ -1,26 +1,18 @@
-import {
-  Box,
-  Typography,
-  Container,
-  Grid,
-  Link,
-  Divider,
-  IconButton
-} from '@mui/material';
+import { Box, Typography, Container, Grid, Link, Divider, IconButton } from '@mui/material';
 import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
 // Ícones do Lucide React
-import {
-  MapPin,
-  Phone,
-  Mail,
-  Clock,
-  Facebook,
-  Linkedin,
-  Instagram
-} from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, Facebook, Linkedin, Instagram } from 'lucide-react';
 
 // Componente de link personalizado
-const FooterLink = ({ children, href, onClick }: { children: React.ReactNode; href: string; onClick?: (e: React.MouseEvent) => void }) => (
+const FooterLink = ({
+  children,
+  href,
+  onClick,
+}: {
+  children: React.ReactNode;
+  href: string;
+  onClick?: (e: React.MouseEvent) => void;
+}) => (
   <Link
     component={RouterLink}
     to={href}
@@ -58,7 +50,7 @@ const SocialIcon = ({ icon: Icon, url }: { icon: React.ElementType; url: string 
         boxShadow: '0 5px 15px rgba(26, 35, 126, 0.3)',
       },
       transition: 'all 0.3s ease',
-      border: '1px solid rgba(255, 255, 255, 0.1)'
+      border: '1px solid rgba(255, 255, 255, 0.1)',
     }}
   >
     <Icon size={18} />
@@ -99,7 +91,6 @@ const Footer = () => {
         { label: 'Depoimentos', href: '/depoimentos' },
         { label: 'Trabalhe Conosco', href: '/trabalhe-conosco' },
       ],
-   
     },
     {
       title: 'Recursos',
@@ -212,10 +203,11 @@ const Footer = () => {
               sx={{
                 mb: 3,
                 lineHeight: 1.8,
-                fontSize: { xs: '0.875rem', md: '0.9rem' }
+                fontSize: { xs: '0.875rem', md: '0.9rem' },
               }}
             >
-              O Projeto Florescer é uma metodologia inteligente desenvolvida para apoiar a gestão escolar e a tomada de decisões pedagógicas por meio da tecnologia.
+              O Projeto Florescer é uma metodologia inteligente desenvolvida para apoiar a gestão
+              escolar e a tomada de decisões pedagógicas por meio da tecnologia.
             </Typography>
           </Grid>
 
@@ -281,9 +273,13 @@ const Footer = () => {
                     {link.href === '/equipe' ? (
                       <FooterLink href={link.href}>{link.label}</FooterLink>
                     ) : link.href === '/#sobre' ? (
-                      <FooterLink href={link.href} onClick={scrollToSobre}>{link.label}</FooterLink>
+                      <FooterLink href={link.href} onClick={scrollToSobre}>
+                        {link.label}
+                      </FooterLink>
                     ) : link.href === '/#solucoes' ? (
-                      <FooterLink href={link.href} onClick={scrollToSolucoes}>{link.label}</FooterLink>
+                      <FooterLink href={link.href} onClick={scrollToSolucoes}>
+                        {link.label}
+                      </FooterLink>
                     ) : (
                       <Typography
                         variant="body2"
@@ -315,8 +311,19 @@ const Footer = () => {
           }}
         >
           {/* Copyright */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', justifyContent: { xs: 'center', lg: 'flex-start' } }}>
-            <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '0.875rem' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              flexWrap: 'wrap',
+              justifyContent: { xs: 'center', lg: 'flex-start' },
+            }}
+          >
+            <Typography
+              variant="body2"
+              sx={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '0.875rem' }}
+            >
               © {new Date().getFullYear()}
             </Typography>
             <Box
@@ -332,7 +339,10 @@ const Footer = () => {
                 verticalAlign: 'middle',
               }}
             />
-            <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '0.875rem' }}>
+            <Typography
+              variant="body2"
+              sx={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '0.875rem' }}
+            >
               - Todos os direitos reservados
             </Typography>
           </Box>
@@ -348,7 +358,6 @@ const Footer = () => {
           <Box sx={{ display: { xs: 'none', lg: 'block' } }} />
         </Box>
       </Container>
-
     </Box>
   );
 };

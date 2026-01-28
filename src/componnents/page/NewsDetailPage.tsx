@@ -9,7 +9,7 @@ import {
   Button,
   Grid,
   TextField,
-  Divider
+  Divider,
 } from '@mui/material';
 import { ArrowLeft } from 'lucide-react';
 import NewsService from '../../API/news';
@@ -37,7 +37,7 @@ function NewsDetailPage() {
         // Fetch recent news for sidebar
         const allNews = await NewsService.getAll({ status: 'publicada' });
         const filtered = allNews
-          .filter(item => item.id !== parseInt(id))
+          .filter((item) => item.id !== parseInt(id))
           .sort((a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime())
           .slice(0, 2);
         setRecentNews(filtered);
@@ -54,7 +54,9 @@ function NewsDetailPage() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px' }}>
+      <Box
+        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px' }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -78,28 +80,43 @@ function NewsDetailPage() {
     );
   }
 
-  const mainImage = news.images && news.images.length > 0
-    ? news.images[0].base64.startsWith('data:')
-      ? news.images[0].base64
-      : `data:image/jpeg;base64,${news.images[0].base64}`
-    : `https://picsum.photos/1200/600?random=${id}`;
+  const mainImage =
+    news.images && news.images.length > 0
+      ? news.images[0].base64.startsWith('data:')
+        ? news.images[0].base64
+        : `data:image/jpeg;base64,${news.images[0].base64}`
+      : `https://picsum.photos/1200/600?random=${id}`;
 
   return (
-    <Box sx={{ pt: { xs: 12, sm: 14, md: 16 }, pb: { xs: 4, sm: 6, md: 8 }, backgroundColor: 'background.default', minHeight: '100vh' }}>
+    <Box
+      sx={{
+        pt: { xs: 12, sm: 14, md: 16 },
+        pb: { xs: 4, sm: 6, md: 8 },
+        backgroundColor: 'background.default',
+        minHeight: '100vh',
+      }}
+    >
       <Container maxWidth="lg">
         <Grid container spacing={4}>
           {/* Main Content */}
           <Grid item xs={12} md={9}>
             <article>
               <Box sx={{ mb: 4, maxWidth: '800px', mx: 'auto' }}>
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  display="block"
-                  mb={2}
-                >
+                <Typography variant="caption" color="text.secondary" display="block" mb={2}>
                   <span>{news.date || 'Sem data'}</span>
-                  <Box component="span" sx={{ mx: 1, display: 'inline-block', width: 4, height: 4, borderRadius: '50%', bgcolor: 'text.disabled', position: 'relative', top: -1 }} />
+                  <Box
+                    component="span"
+                    sx={{
+                      mx: 1,
+                      display: 'inline-block',
+                      width: 4,
+                      height: 4,
+                      borderRadius: '50%',
+                      bgcolor: 'text.disabled',
+                      position: 'relative',
+                      top: -1,
+                    }}
+                  />
                   <span>{news.category || 'Geral'}</span>
                 </Typography>
 
@@ -141,7 +158,7 @@ function NewsDetailPage() {
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
-                  }
+                  },
                 }}
               >
                 <img
@@ -201,12 +218,20 @@ function NewsDetailPage() {
                   position: 'absolute',
                   left: -16,
                   height: '100%',
-                  borderColor: 'divider'
+                  borderColor: 'divider',
                 }}
               />
 
               {/* Search Box */}
-              <Box sx={{ mb: 3, backgroundColor: 'background.paper', p: 2, borderRadius: 2, boxShadow: 1 }}>
+              <Box
+                sx={{
+                  mb: 3,
+                  backgroundColor: 'background.paper',
+                  p: 2,
+                  borderRadius: 2,
+                  boxShadow: 1,
+                }}
+              >
                 <Box sx={{ display: 'flex', gap: 1 }}>
                   <TextField
                     fullWidth
@@ -217,8 +242,8 @@ function NewsDetailPage() {
                     sx={{
                       '& .MuiInputBase-input': {
                         fontSize: '0.875rem',
-                        padding: '8px 12px'
-                      }
+                        padding: '8px 12px',
+                      },
                     }}
                     onKeyPress={(e) => {
                       if (e.key === 'Enter' && searchQuery.trim()) {
@@ -233,7 +258,7 @@ function NewsDetailPage() {
                       fontSize: '0.75rem',
                       minWidth: 'auto',
                       px: 2,
-                      whiteSpace: 'nowrap'
+                      whiteSpace: 'nowrap',
                     }}
                     onClick={() => {
                       if (searchQuery.trim()) {
@@ -247,14 +272,16 @@ function NewsDetailPage() {
               </Box>
 
               {/* Recent News */}
-              <Box sx={{ backgroundColor: 'background.paper', p: 2, borderRadius: 2, boxShadow: 1 }}>
+              <Box
+                sx={{ backgroundColor: 'background.paper', p: 2, borderRadius: 2, boxShadow: 1 }}
+              >
                 <Typography
                   variant="h6"
                   sx={{
                     mb: 2,
                     fontWeight: 700,
                     fontSize: '0.95rem',
-                    color: 'text.primary'
+                    color: 'text.primary',
                   }}
                 >
                   Notícias recentes
@@ -270,8 +297,8 @@ function NewsDetailPage() {
                       '&:last-child': {
                         borderBottom: 'none',
                         mb: 0,
-                        pb: 0
-                      }
+                        pb: 0,
+                      },
                     }}
                   >
                     <Typography
@@ -285,8 +312,8 @@ function NewsDetailPage() {
                         display: 'block',
                         '&:hover': {
                           color: 'primary.main',
-                          textDecoration: 'underline'
-                        }
+                          textDecoration: 'underline',
+                        },
                       }}
                     >
                       {item.title}

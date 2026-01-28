@@ -8,13 +8,13 @@ const slides = [
   {
     type: 'video',
     desktop: '/images/banner-video-v5.mp4',
-    mobile: '/images/banner-video-mobile-v2.mp4'
+    mobile: '/images/banner-video-mobile-v2.mp4',
   },
   {
     type: 'image',
     desktop: '/images/banner2corr.png',
-    mobile: '/images/banner2-mobile.png'
-  }
+    mobile: '/images/banner2-mobile.png',
+  },
 ];
 
 function Hero() {
@@ -67,7 +67,7 @@ function Hero() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        overflow: 'hidden'
+        overflow: 'hidden',
       }}
     >
       <Box
@@ -81,7 +81,7 @@ function Hero() {
           justifyContent: 'center',
           alignItems: 'center',
           overflow: 'visible',
-          mx: 'auto', 
+          mx: 'auto',
         }}
       >
         {/* Botão Anterior */}
@@ -126,14 +126,22 @@ function Hero() {
           <ArrowForwardIosIcon fontSize="small" />
         </IconButton>
 
-        <Box sx={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden', borderRadius: '20px' }}>
+        <Box
+          sx={{
+            width: '100%',
+            height: '100%',
+            position: 'relative',
+            overflow: 'hidden',
+            borderRadius: '20px',
+          }}
+        >
           {/* Imagens/Vídeos do Carrossel */}
           {slides.map((slide, index) => {
             const isActive = index === currentSlide;
             // Escolhe a fonte baseada no dispositivo
             const src = isMobile ? slide.mobile : slide.desktop;
             const isVideo = src.endsWith('.mp4');
-            
+
             return (
               <Box
                 key={index}

@@ -1,4 +1,9 @@
-import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse, type AxiosError } from 'axios';
+import axios, {
+  type AxiosInstance,
+  type AxiosRequestConfig,
+  type AxiosResponse,
+  type AxiosError,
+} from 'axios';
 
 // Create a custom axios instance with default config
 const api: AxiosInstance = axios.create({
@@ -9,7 +14,7 @@ const api: AxiosInstance = axios.create({
   withCredentials: true, // Important for sending cookies with CORS
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json',
+    Accept: 'application/json',
   },
 });
 
@@ -110,10 +115,7 @@ export const put = async <T>(
   return response.data;
 };
 
-export const del = async <T>(
-  url: string,
-  config?: AxiosRequestConfig
-): Promise<T> => {
+export const del = async <T>(url: string, config?: AxiosRequestConfig): Promise<T> => {
   const response = await api.delete<T>(url, config);
   return response.data;
 };

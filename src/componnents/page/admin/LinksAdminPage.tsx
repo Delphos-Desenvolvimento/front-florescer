@@ -20,10 +20,17 @@ import {
   CircularProgress,
   Switch,
   FormControlLabel,
-  Chip
+  Chip,
 } from '@mui/material';
 import { Edit, Delete, Add, DragIndicator } from '@mui/icons-material';
-import { getAllLinksAdmin, createLink, updateLink, deleteLink, type Link, type CreateLinkDto } from '../../../API/content';
+import {
+  getAllLinksAdmin,
+  createLink,
+  updateLink,
+  deleteLink,
+  type Link,
+  type CreateLinkDto,
+} from '../../../API/content';
 
 const LinksAdminPage: React.FC = () => {
   const [links, setLinks] = useState<Link[]>([]);
@@ -36,7 +43,7 @@ const LinksAdminPage: React.FC = () => {
     description: '',
     imageBase64: '',
     order: 0,
-    isActive: true
+    isActive: true,
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -73,7 +80,7 @@ const LinksAdminPage: React.FC = () => {
         description: link.description || '',
         imageBase64: link.imageBase64 || '',
         order: link.order,
-        isActive: link.isActive
+        isActive: link.isActive,
       });
     } else {
       setEditingLink(null);
@@ -83,7 +90,7 @@ const LinksAdminPage: React.FC = () => {
         description: '',
         imageBase64: '',
         order: links.length,
-        isActive: true
+        isActive: true,
       });
     }
     setOpenDialog(true);
@@ -98,7 +105,7 @@ const LinksAdminPage: React.FC = () => {
       description: '',
       imageBase64: '',
       order: 0,
-      isActive: true
+      isActive: true,
     });
     setError('');
   };
@@ -151,9 +158,9 @@ const LinksAdminPage: React.FC = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : (name === 'order' ? parseInt(value) || 0 : value)
+      [name]: type === 'checkbox' ? checked : name === 'order' ? parseInt(value) || 0 : value,
     }));
   };
 
@@ -175,9 +182,9 @@ const LinksAdminPage: React.FC = () => {
 
     const reader = new FileReader();
     reader.onloadend = () => {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        imageBase64: reader.result as string
+        imageBase64: reader.result as string,
       }));
       setError('');
     };
@@ -203,11 +210,7 @@ const LinksAdminPage: React.FC = () => {
           <Typography variant="h5" component="h2" fontWeight="bold" color="primary">
             Gerenciar Links Úteis
           </Typography>
-          <Button
-            variant="contained"
-            startIcon={<Add />}
-            onClick={() => handleOpenDialog()}
-          >
+          <Button variant="contained" startIcon={<Add />} onClick={() => handleOpenDialog()}>
             Adicionar Link
           </Button>
         </Box>
@@ -233,7 +236,9 @@ const LinksAdminPage: React.FC = () => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell width="40"><DragIndicator color="disabled" /></TableCell>
+                  <TableCell width="40">
+                    <DragIndicator color="disabled" />
+                  </TableCell>
                   <TableCell>Título</TableCell>
                   <TableCell>URL</TableCell>
                   <TableCell>Descrição</TableCell>
@@ -265,7 +270,11 @@ const LinksAdminPage: React.FC = () => {
                           href={link.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          sx={{ color: 'primary.main', textDecoration: 'none', '&:hover': { textDecoration: 'underline' } }}
+                          sx={{
+                            color: 'primary.main',
+                            textDecoration: 'none',
+                            '&:hover': { textDecoration: 'underline' },
+                          }}
                         >
                           {link.url.length > 40 ? link.url.substring(0, 40) + '...' : link.url}
                         </Typography>
@@ -311,9 +320,7 @@ const LinksAdminPage: React.FC = () => {
 
       {/* Dialog para adicionar/editar link */}
       <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="md" fullWidth>
-        <DialogTitle>
-          {editingLink ? 'Editar Link' : 'Adicionar Novo Link'}
-        </DialogTitle>
+        <DialogTitle>{editingLink ? 'Editar Link' : 'Adicionar Novo Link'}</DialogTitle>
         <form onSubmit={handleSubmit}>
           <DialogContent>
             <TextField
@@ -372,19 +379,9 @@ const LinksAdminPage: React.FC = () => {
               <Typography variant="subtitle2" sx={{ mb: 1 }}>
                 Imagem do Link (opcional)
               </Typography>
-              <Button
-                variant="outlined"
-                component="label"
-                fullWidth
-                sx={{ mb: 2 }}
-              >
+              <Button variant="outlined" component="label" fullWidth sx={{ mb: 2 }}>
                 Escolher Imagem
-                <input
-                  type="file"
-                  hidden
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                />
+                <input type="file" hidden accept="image/*" onChange={handleImageUpload} />
               </Button>
               {formData.imageBase64 && (
                 <Box sx={{ textAlign: 'center', mb: 2 }}>
@@ -395,14 +392,14 @@ const LinksAdminPage: React.FC = () => {
                       maxWidth: '200px',
                       maxHeight: '200px',
                       borderRadius: '8px',
-                      border: '1px solid #ddd'
+                      border: '1px solid #ddd',
                     }}
                   />
                   <Box>
                     <Button
                       size="small"
                       color="error"
-                      onClick={() => setFormData(prev => ({ ...prev, imageBase64: '' }))}
+                      onClick={() => setFormData((prev) => ({ ...prev, imageBase64: '' }))}
                       sx={{ mt: 1 }}
                     >
                       Remover Imagem

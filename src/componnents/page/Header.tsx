@@ -17,7 +17,7 @@ import {
   ListItemButton,
   ListItemText,
   ListItemIcon,
-  Divider
+  Divider,
 } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
@@ -142,21 +142,29 @@ function Header() {
     {
       title: 'Home',
       path: '/',
-      onClick: (e: React.MouseEvent) => scrollToSection(e, '')
+      onClick: (e: React.MouseEvent) => scrollToSection(e, ''),
     },
     {
       title: 'Sobre',
       path: '/#sobre',
-      onClick: (e: React.MouseEvent) => scrollToSection(e, 'sobre')
+      onClick: (e: React.MouseEvent) => scrollToSection(e, 'sobre'),
     },
   ];
 
   const drawer = (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `1px solid ${theme.palette.divider}` }}>
+      <Box
+        sx={{
+          p: 2,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          borderBottom: `1px solid ${theme.palette.divider}`,
+        }}
+      >
         <Box
           component="img"
-          src="/images/Logo.png"
+          src="/images/logo.png"
           alt="Logo"
           sx={{ height: 35, width: 'auto', objectFit: 'contain' }}
         />
@@ -174,21 +182,29 @@ function Header() {
               }}
               sx={{
                 py: 1.5,
-                color: location.pathname === item.path.replace('/#', '/') ? 'primary.main' : 'text.primary',
-                bgcolor: location.pathname === item.path.replace('/#', '/') ? alpha(theme.palette.primary.main, 0.05) : 'transparent',
+                color:
+                  location.pathname === item.path.replace('/#', '/')
+                    ? 'primary.main'
+                    : 'text.primary',
+                bgcolor:
+                  location.pathname === item.path.replace('/#', '/')
+                    ? alpha(theme.palette.primary.main, 0.05)
+                    : 'transparent',
               }}
             >
-              <ListItemText 
-                primary={item.title} 
-                primaryTypographyProps={{ fontWeight: 600 }}
-              />
+              <ListItemText primary={item.title} primaryTypographyProps={{ fontWeight: 600 }} />
               <ChevronRight size={16} color={theme.palette.text.secondary} />
             </ListItemButton>
           </ListItem>
         ))}
         <Divider sx={{ my: 2 }} />
         <ListItem disablePadding>
-          <ListItemButton onClick={(e) => { scrollToSection(e, 'contato'); handleDrawerToggle(); }}>
+          <ListItemButton
+            onClick={(e) => {
+              scrollToSection(e, 'contato');
+              handleDrawerToggle();
+            }}
+          >
             <ListItemIcon sx={{ minWidth: 40 }}>
               <Phone size={20} color={theme.palette.primary.main} />
             </ListItemIcon>
@@ -196,7 +212,7 @@ function Header() {
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
-          <ListItemButton onClick={() => window.location.href = 'https://app.florescer.tec.br'}>
+          <ListItemButton onClick={() => (window.location.href = 'https://app.florescer.tec.br')}>
             <ListItemIcon sx={{ minWidth: 40 }}>
               <LogIn size={20} color={theme.palette.primary.main} />
             </ListItemIcon>
@@ -208,9 +224,11 @@ function Header() {
   );
 
   return (
-    <StyledAppBar position="fixed" sx={{
-      zIndex: theme.zIndex.drawer + 1
-    }}
+    <StyledAppBar
+      position="fixed"
+      sx={{
+        zIndex: theme.zIndex.drawer + 1,
+      }}
     >
       <Container maxWidth={false} disableGutters>
         <Toolbar disableGutters>
@@ -238,7 +256,7 @@ function Header() {
             >
               <Box
                 component="img"
-                src="/images/Logo.png"
+                src="/images/logo.png"
                 alt="Logo"
                 sx={(theme) => ({
                   height: { xs: 35, md: 45 },
@@ -266,13 +284,17 @@ function Header() {
                         }
                         handleMenuOpen(e);
                       }}
-                      className={location.pathname.startsWith(item.path.replace('/#', '/')) ? 'active' : ''}
+                      className={
+                        location.pathname.startsWith(item.path.replace('/#', '/')) ? 'active' : ''
+                      }
                     >
                       {item.title}
                     </MenuButton>
                     <Menu
                       anchorEl={anchorEl}
-                      open={Boolean(anchorEl) && item.submenu?.some(sub => sub.title === item.title)}
+                      open={
+                        Boolean(anchorEl) && item.submenu?.some((sub) => sub.title === item.title)
+                      }
                       onClose={handleMenuClose}
                       anchorOrigin={{
                         vertical: 'bottom',
@@ -303,7 +325,8 @@ function Header() {
                           sx={{
                             py: 1.5,
                             px: 2.5,
-                            color: location.pathname === subItem.path ? 'primary.main' : 'text.primary',
+                            color:
+                              location.pathname === subItem.path ? 'primary.main' : 'text.primary',
                             '&:hover': {
                               backgroundColor: alpha(theme.palette.primary.main, 0.05),
                             },

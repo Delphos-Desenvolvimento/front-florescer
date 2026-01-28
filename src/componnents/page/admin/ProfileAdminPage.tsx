@@ -44,10 +44,20 @@ const ProfileAdminPage: React.FC = () => {
 
   return (
     <Box>
-      <Typography variant="h5" sx={{ mb: 3, color: 'primary.main' }}>Meu Perfil</Typography>
+      <Typography variant="h5" sx={{ mb: 3, color: 'primary.main' }}>
+        Meu Perfil
+      </Typography>
 
-      {error && !/status code\s*500/i.test(error) && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-      {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
+      {error && !/status code\s*500/i.test(error) && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+      {success && (
+        <Alert severity="success" sx={{ mb: 2 }}>
+          {success}
+        </Alert>
+      )}
 
       <Paper sx={{ p: 3, maxWidth: 600 }}>
         {current && (

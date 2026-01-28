@@ -15,7 +15,7 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
 } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material/Select';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
@@ -46,7 +46,7 @@ const NewsCard = ({
   date,
   category,
   images,
-  onClick
+  onClick,
 }: {
   id: number;
   title: string;
@@ -58,7 +58,9 @@ const NewsCard = ({
 }) => {
   const base64 = images && images.length > 0 ? images[0].base64 : undefined;
   const src = base64
-    ? (base64.startsWith('data:') ? base64 : `data:image/jpeg;base64,${base64}`)
+    ? base64.startsWith('data:')
+      ? base64
+      : `data:image/jpeg;base64,${base64}`
     : undefined;
 
   return (
@@ -74,12 +76,11 @@ const NewsCard = ({
               transition: 'transform 0.3s ease, box-shadow 0.3s ease',
               '&:hover': {
                 transform: 'translateY(-5px)',
-                boxShadow: 6
+                boxShadow: 6,
               },
               backgroundColor: 'background.paper',
               borderRadius: 2,
               overflow: 'hidden',
-
             }}
           >
             <Box
@@ -100,7 +101,7 @@ const NewsCard = ({
                 display="block"
                 mb={1}
                 sx={{
-                  fontSize: { xs: '0.7rem', sm: '0.75rem' }
+                  fontSize: { xs: '0.7rem', sm: '0.75rem' },
                 }}
               >
                 {date ? format(new Date(date), 'dd/MM/yyyy') : 'Sem data'}
@@ -140,7 +141,14 @@ const NewsCard = ({
               >
                 {stripHtml(description)}
               </Typography>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 'auto' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  mt: 'auto',
+                }}
+              >
                 <Chip label={category || 'Geral'} size="small" color="primary" variant="outlined" />
                 <Button
                   variant="text"
@@ -153,7 +161,7 @@ const NewsCard = ({
                     '&:hover': {
                       backgroundColor: 'transparent',
                       textDecoration: 'underline',
-                    }
+                    },
                   }}
                 >
                   Ler mais
@@ -185,17 +193,21 @@ function AllNewsPage() {
       try {
         setLoading(true);
         const newsData = await NewsService.getAll({ status: 'publicada' });
-        const formattedNews = newsData.map(item => ({
-          id: item.id || 0,
-          title: item.title,
-          description: item.content?.substring(0, 200) + (item.content?.length > 200 ? '...' : '') || '',
-          content: item.content || '',
-          date: item.date || new Date().toISOString().split('T')[0],
-          category: item.category || 'Geral',
-          status: item.status || 'publicada',
-          views: item.views || 0,
-          images: item.images || []
-        } as ExtendedNewsItem));
+        const formattedNews = newsData.map(
+          (item) =>
+            ({
+              id: item.id || 0,
+              title: item.title,
+              description:
+                item.content?.substring(0, 200) + (item.content?.length > 200 ? '...' : '') || '',
+              content: item.content || '',
+              date: item.date || new Date().toISOString().split('T')[0],
+              category: item.category || 'Geral',
+              status: item.status || 'publicada',
+              views: item.views || 0,
+              images: item.images || [],
+            }) as ExtendedNewsItem
+        );
         setNews(formattedNews);
       } catch (err) {
         console.error('Erro ao buscar notícias:', err);
@@ -208,16 +220,18 @@ function AllNewsPage() {
     fetchNews();
   }, []);
 
-  const categories = Array.from(new Set(['Todas', ...news.map(n => n.category || 'Geral')]))
-    .filter(cat => {
-      const c = (cat || '').toLowerCase();
-      if (c === 'todas' || c === 'notícia' || c === 'noticia') return false;
-      if (c === 'atualização' || c === 'atualizacao') return false;
-      return true;
-    });
+  const categories = Array.from(
+    new Set(['Todas', ...news.map((n) => n.category || 'Geral')])
+  ).filter((cat) => {
+    const c = (cat || '').toLowerCase();
+    if (c === 'todas' || c === 'notícia' || c === 'noticia') return false;
+    if (c === 'atualização' || c === 'atualizacao') return false;
+    return true;
+  });
 
-  const filtered = news.filter(n => {
-    const matchesCategory = selectedCategory === 'Todas' || (n.category || 'Geral') === selectedCategory;
+  const filtered = news.filter((n) => {
+    const matchesCategory =
+      selectedCategory === 'Todas' || (n.category || 'Geral') === selectedCategory;
     const q = search.trim().toLowerCase();
     const matchesSearch = q.length === 0 || `${n.title} ${n.description}`.toLowerCase().includes(q);
     return matchesCategory && matchesSearch;
@@ -238,14 +252,23 @@ function AllNewsPage() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px' }}>
+      <Box
+        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px' }}
+      >
         <CircularProgress />
       </Box>
     );
   }
 
   return (
-    <Box sx={{ pt: { xs: 12, sm: 14, md: 16 }, pb: { xs: 4, sm: 6, md: 8 }, backgroundColor: 'background.default', minHeight: '100vh' }}>
+    <Box
+      sx={{
+        pt: { xs: 12, sm: 14, md: 16 },
+        pb: { xs: 4, sm: 6, md: 8 },
+        backgroundColor: 'background.default',
+        minHeight: '100vh',
+      }}
+    >
       <Container maxWidth="lg">
         <Button
           component={RouterLink}
@@ -273,8 +296,8 @@ function AllNewsPage() {
               height: '4px',
               backgroundColor: 'primary.main',
               margin: '16px auto 0',
-              borderRadius: '2px'
-            }
+              borderRadius: '2px',
+            },
           }}
         >
           Todas as Notícias
@@ -284,16 +307,22 @@ function AllNewsPage() {
           <TextField
             fullWidth
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
             label="Buscar"
             placeholder="Digite para buscar por título ou descrição"
           />
           <Stack direction={'row'} spacing={1} sx={{ flexWrap: 'wrap' }}>
-            {categories.map(cat => (
+            {categories.map((cat) => (
               <Chip
                 key={cat}
                 label={cat}
-                onClick={() => { setSelectedCategory(cat); setPage(1); }}
+                onClick={() => {
+                  setSelectedCategory(cat);
+                  setPage(1);
+                }}
                 color={selectedCategory === cat ? 'primary' : 'default'}
                 variant={selectedCategory === cat ? 'filled' : 'outlined'}
               />
@@ -305,7 +334,10 @@ function AllNewsPage() {
               labelId="sort-label"
               label="Ordenar por"
               value={sort}
-              onChange={(e: SelectChangeEvent) => { setSort(e.target.value as 'recent' | 'oldest' | 'views'); setPage(1); }}
+              onChange={(e: SelectChangeEvent) => {
+                setSort(e.target.value as 'recent' | 'oldest' | 'views');
+                setPage(1);
+              }}
             >
               <MenuItem value="recent">Mais recentes</MenuItem>
               <MenuItem value="oldest">Mais antigos</MenuItem>
@@ -344,13 +376,12 @@ function AllNewsPage() {
         </Grid>
         {visible.length < sorted.length && (
           <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Button variant="contained" onClick={() => setPage(p => p + 1)}>
+            <Button variant="contained" onClick={() => setPage((p) => p + 1)}>
               Carregar mais
             </Button>
           </Box>
         )}
       </Container>
-
     </Box>
   );
 }

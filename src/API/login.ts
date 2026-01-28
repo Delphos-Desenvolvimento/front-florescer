@@ -20,12 +20,16 @@ export const login = async (username: string, password: string): Promise<LoginRe
   try {
     console.log('Attempting login with:', { username });
 
-    const response = await axios.post(`${API_URL}/login`, {
-      email: username,
-      password,
-    }, {
-      validateStatus: (status) => status < 500
-    });
+    const response = await axios.post(
+      `${API_URL}/login`,
+      {
+        email: username,
+        password,
+      },
+      {
+        validateStatus: (status) => status < 500,
+      }
+    );
 
     console.log('Login response:', response.data);
 
@@ -58,7 +62,11 @@ export const login = async (username: string, password: string): Promise<LoginRe
   }
 };
 
-export const register = async (username: string, password: string, role = 'user'): Promise<LoginResponse> => {
+export const register = async (
+  username: string,
+  password: string,
+  role = 'user'
+): Promise<LoginResponse> => {
   try {
     const response = await axios.post(`${API_URL}/register`, {
       email: username,
@@ -115,8 +123,8 @@ export const verifyToken = async (): Promise<User> => {
   try {
     const response = await axios.get(`${API_URL}/profile`, {
       headers: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
     return response.data;
   } catch {

@@ -1,5 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Paper, Table, TableHead, TableRow, TableCell, TableBody, Select, MenuItem, FormControl, InputLabel, Pagination, CircularProgress, Alert, Tooltip } from '@mui/material';
+import {
+  Box,
+  Typography,
+  Paper,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Pagination,
+  CircularProgress,
+  Alert,
+  Tooltip,
+} from '@mui/material';
 import { getAuditLogs, type AuditLogResponse, type AuditLogItem } from '../../../API/audit';
 
 const LogsAdminPage: React.FC = () => {
@@ -39,7 +56,11 @@ const LogsAdminPage: React.FC = () => {
     try {
       setLoading(true);
       setError('');
-      const res: AuditLogResponse = await getAuditLogs({ page: p, limit: 20, type: t || undefined });
+      const res: AuditLogResponse = await getAuditLogs({
+        page: p,
+        limit: 20,
+        type: t || undefined,
+      });
       setLogs(res.items);
       setPage(res.page);
       setTotalPages(res.totalPages);
@@ -57,7 +78,9 @@ const LogsAdminPage: React.FC = () => {
 
   return (
     <Box>
-      <Typography variant="h5" sx={{ mb: 3, color: 'primary.main' }}>Logs de Auditoria</Typography>
+      <Typography variant="h5" sx={{ mb: 3, color: 'primary.main' }}>
+        Logs de Auditoria
+      </Typography>
 
       <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
         <FormControl size="small" sx={{ minWidth: 200 }}>
@@ -66,7 +89,10 @@ const LogsAdminPage: React.FC = () => {
             labelId="type-label"
             value={typeFilter}
             label="Tipo"
-            onChange={(e) => { setTypeFilter(e.target.value); setPage(1); }}
+            onChange={(e) => {
+              setTypeFilter(e.target.value);
+              setPage(1);
+            }}
           >
             <MenuItem value="">Todos</MenuItem>
             <MenuItem value="news_create">Criação de notícia</MenuItem>
@@ -116,12 +142,19 @@ const LogsAdminPage: React.FC = () => {
             <TableBody>
               {logs.map((log) => (
                 <TableRow key={log.id}>
-                  <TableCell>{new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(log.createdAt))}</TableCell>
+                  <TableCell>
+                    {new Intl.DateTimeFormat('pt-BR', {
+                      dateStyle: 'short',
+                      timeStyle: 'short',
+                    }).format(new Date(log.createdAt))}
+                  </TableCell>
                   <TableCell>{typeLabels[log.type] ?? log.type}</TableCell>
                   <TableCell>{log.user?.user || '-'}</TableCell>
                   <TableCell>
                     {log.newsTitle ? (
-                      <Tooltip title={log.newsTitle}><span>{log.newsTitle}</span></Tooltip>
+                      <Tooltip title={log.newsTitle}>
+                        <span>{log.newsTitle}</span>
+                      </Tooltip>
                     ) : (
                       log.path || '-'
                     )}

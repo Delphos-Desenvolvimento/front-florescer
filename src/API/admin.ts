@@ -18,11 +18,16 @@ export async function getMe(): Promise<AdminUser> {
     if (res && (res as { data?: unknown }).data) {
       return res.data as AdminUser;
     }
-    throw (err instanceof Error ? err : new Error('Falha ao obter usuário atual'));
+    throw err instanceof Error ? err : new Error('Falha ao obter usuário atual');
   }
 }
 
-export async function updateMe(data: { user?: string; password?: string; role?: string; name?: string }): Promise<AdminUser> {
+export async function updateMe(data: {
+  user?: string;
+  password?: string;
+  role?: string;
+  name?: string;
+}): Promise<AdminUser> {
   const res = await api.post('/admin/users/me', data);
   return res.data.user as AdminUser;
 }

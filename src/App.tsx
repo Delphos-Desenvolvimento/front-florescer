@@ -18,7 +18,6 @@ import PublicLayout from './componnents/PublicLayout';
 import AccessibilityWidget from './componnents/common/AccessibilityWidget';
 import ChatFlora from './componnents/common/ChatFlora';
 
-
 // Componente de rota protegida
 // Componente de rota protegida
 // Componente de rota protegida
@@ -55,7 +54,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   if (isAuthenticated === null) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <Box
+        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}
+      >
         <CircularProgress />
       </Box>
     );
@@ -87,7 +88,9 @@ function App() {
         if (obj && typeof obj.darkMode === 'boolean') {
           setMode(obj.darkMode ? 'dark' : 'light');
         }
-      } catch { void 0 }
+      } catch {
+        void 0;
+      }
     }
 
     const handler = (e: Event) => {
@@ -124,7 +127,10 @@ function App() {
                   <Route path="/noticia/:id" element={<NewsDetailPage />} />
                   <Route path="/equipe" element={<TeamPage />} />
                   <Route path="/links-uteis" element={<UsefulLinks />} />
-                  <Route path="/login" element={<ExternalRedirect to="https://app.florescer.tec.br" />} />
+                  <Route
+                    path="/login"
+                    element={<ExternalRedirect to="https://app.florescer.tec.br" />}
+                  />
                 </Routes>
               </PublicLayout>
             }
