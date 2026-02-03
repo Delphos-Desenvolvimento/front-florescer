@@ -28,8 +28,13 @@ import { Phone, LogIn, Menu as MenuIcon, X, ChevronRight } from 'lucide-react';
 // Estilo personalizado para o AppBar
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
-  boxShadow: theme.shadows[2],
-  backdropFilter: 'saturate(180%) blur(8px)',
+  boxShadow: theme.shadows[1], // Sombra mais leve
+  // Remove backdrop-filter no mobile para melhorar performance
+  backdropFilter: 'none',
+  [theme.breakpoints.up('md')]: {
+    backdropFilter: 'saturate(180%) blur(8px)',
+    boxShadow: theme.shadows[2],
+  },
   '& .MuiToolbar-root': {
     minHeight: '50px',
     padding: theme.spacing(0, 2),
@@ -213,7 +218,7 @@ function Header() {
         </ListItem>
         <ListItem disablePadding>
           
-          <ListItemButton onClick={() => (window.location.href = 'http://localhost:5174')}>
+         <ListItemButton onClick={() => (window.location.href = 'https://app.florescer.tec.br')}>
             <ListItemIcon sx={{ minWidth: 40 }}>
               <LogIn size={20} color={theme.palette.primary.main} />
             </ListItemIcon>
@@ -381,7 +386,7 @@ function Header() {
               </MenuButton>
               <MenuButton
                 onClick={() => {
-                  window.location.href = 'http://localhost:5174';
+                  window.location.href = 'https://app.florescer.tec.br';
                 }}
                 startIcon={<LogIn size={14} />}
                 sx={{ ml: 1, boxShadow: 'none', '&:hover': { boxShadow: 'none' } }}
