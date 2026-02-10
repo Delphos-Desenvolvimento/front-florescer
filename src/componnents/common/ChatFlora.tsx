@@ -143,6 +143,8 @@ const ChatFlora = () => {
                   objectFit: 'contain',
                   transform: 'scale(1.6)',
                   transformOrigin: 'center',
+                  backgroundColor: 'transparent',
+                  mixBlendMode: 'multiply',
                 }}
               />
             </Box>
