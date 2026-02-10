@@ -11,20 +11,35 @@ export default function Partners() {
   const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
+    const nowIso = new Date().toISOString();
+    const mockLogoA = '/images/logo.png';
+    const mockLogoB = '/images/Captura%20de%20tela%202026-02-05%20174729.png';
+    const mockPartners: Partner[] = Array.from({ length: 10 }, (_, index) => ({
+      id: index + 1,
+      name: `Parceiro ${index + 1}`,
+      description: undefined,
+      logoBase64: index % 2 === 0 ? mockLogoA : mockLogoB,
+      displayOrder: index + 1,
+      active: true,
+      createdAt: nowIso,
+      updatedAt: nowIso,
+    }));
+
     const loadPartners = async () => {
       try {
         const activePartners = await PartnersService.getAll(true);
-        setPartners(activePartners);
+        setPartners(activePartners.length ? activePartners : mockPartners);
       } catch (error) {
-        console.error('Erro ao carregar parceiros:', error);
+        setPartners(mockPartners);
       }
     };
 
     loadPartners();
   }, []);
 
+  const logosPerView = 4;
+
   const handlePrevious = () => {
-    const logosPerView = isMobile ? 2 : isTablet ? 3 : 5;
     const maxIndex = Math.max(0, partners.length - logosPerView);
 
     setCurrentIndex((prevIndex) => {
@@ -36,7 +51,6 @@ export default function Partners() {
   };
 
   const handleNext = () => {
-    const logosPerView = isMobile ? 2 : isTablet ? 3 : 5;
     const maxIndex = Math.max(0, partners.length - logosPerView);
 
     setCurrentIndex((prevIndex) => {
@@ -47,12 +61,14 @@ export default function Partners() {
     });
   };
 
-  if (partners.length === 0) {
-    return null; // Don't show section if no partners
-  }
-
-  // Number of logos to show at once
-  const logosPerView = isMobile ? 2 : isTablet ? 3 : 5;
+  useEffect(() => {
+    const maxIndex = Math.max(0, partners.length - logosPerView);
+    if (maxIndex === 0) return;
+    const id = window.setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex >= maxIndex ? 0 : prevIndex + 1));
+    }, 3500);
+    return () => window.clearInterval(id);
+  }, [logosPerView, partners.length]);
 
   // Get visible partners - no repetition
   const getVisiblePartners = () => {
@@ -61,6 +77,14 @@ export default function Partners() {
   };
 
   const visiblePartners = getVisiblePartners();
+
+  const getLogoSrc = (logoBase64: string) => {
+    const value = (logoBase64 || '').trim();
+    if (!value) return '';
+    if (value.startsWith('data:')) return value;
+    if (value.startsWith('/') || value.startsWith('http')) return value;
+    return `data:image/jpeg;base64,${value}`;
+  };
 
   return (
     <Box
@@ -159,11 +183,7 @@ export default function Partners() {
                 }}
               >
                 <img
-                  src={
-                    partner.logoBase64.startsWith('data:')
-                      ? partner.logoBase64
-                      : `data:image/jpeg;base64,${partner.logoBase64}`
-                  }
+                  src={getLogoSrc(partner.logoBase64)}
                   alt={partner.name}
                   style={{
                     maxWidth: '100%',
@@ -171,14 +191,6 @@ export default function Partners() {
                     objectFit: 'contain',
                   }}
                 />
-                <Typography variant="subtitle1" sx={{ mt: 1.5, fontWeight: 600 }}>
-                  {partner.name}
-                </Typography>
-                {partner.description && (
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
-                    {partner.description}
-                  </Typography>
-                )}
               </Box>
             ))}
           </Box>

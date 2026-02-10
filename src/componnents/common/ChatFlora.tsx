@@ -101,18 +101,52 @@ const ChatFlora = () => {
             },
           }}
         >
-          <Box
-            component="img"
-            src="/images/chat flora sem fundo.png"
-            alt="Fale com a Flora"
-            sx={{
-              height: { xs: 140, md: 180 },
-              width: 'auto',
-              maxWidth: '100%',
-              display: 'block',
-              objectFit: 'contain',
-            }}
-          />
+          <Box sx={{ position: 'relative', display: 'inline-block' }}>
+            <Box
+              component="img"
+              src="/images/chat%20flora%20sem%20fundo%20SF.png"
+              alt="Fale com a Flora"
+              sx={{
+                height: { xs: 70, md: 90 },
+                width: 'auto',
+                maxWidth: '100%',
+                display: 'block',
+                objectFit: 'contain',
+              }}
+            />
+            <Box
+              sx={{
+                position: 'absolute',
+                right: -12,
+                top: 0,
+                height: '100%',
+                width: { xs: '56%', md: '50%' },
+                overflow: 'visible',
+                pointerEvents: 'none',
+                zIndex: 2,
+              }}
+            >
+              <Box
+                component="video"
+                src="/images/video%20sem%20fundo.webm"
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="auto"
+                sx={{
+                  position: 'absolute',
+                  top: -6,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  transform: 'scale(1.6)',
+                  transformOrigin: 'center',
+                }}
+              />
+            </Box>
+          </Box>
         </Box>
       )}
 
@@ -154,7 +188,7 @@ const ChatFlora = () => {
         >
           <Stack direction="row" spacing={2} alignItems="center">
             <Avatar
-              src="/images/chat flora sem fundo.png"
+              src="/images/chat%20flora%20sem%20fundo%20SF.png"
               sx={{
                 width: 45,
                 height: 45,

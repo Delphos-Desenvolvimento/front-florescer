@@ -21,7 +21,7 @@ import {
 } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
-import { Phone, LogIn, Menu as MenuIcon, X, ChevronRight } from 'lucide-react';
+import { LogIn, Menu as MenuIcon, X, ChevronRight } from 'lucide-react';
 
 // Componente simplificado sem efeito de scroll
 
@@ -204,21 +204,7 @@ function Header() {
         ))}
         <Divider sx={{ my: 2 }} />
         <ListItem disablePadding>
-          <ListItemButton
-            onClick={(e) => {
-              scrollToSection(e, 'contato');
-              handleDrawerToggle();
-            }}
-          >
-            <ListItemIcon sx={{ minWidth: 40 }}>
-              <Phone size={20} color={theme.palette.primary.main} />
-            </ListItemIcon>
-            <ListItemText primary="Contato" primaryTypographyProps={{ fontWeight: 600 }} />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          
-         <ListItemButton onClick={() => (window.location.href = 'https://app.florescer.tec.br')}>
+          <ListItemButton onClick={() => (window.location.href = 'https://app.florescer.tec.br')}>
             <ListItemIcon sx={{ minWidth: 40 }}>
               <LogIn size={20} color={theme.palette.primary.main} />
             </ListItemIcon>
@@ -377,13 +363,6 @@ function Header() {
 
             {/* Botões de ação */}
             <Box sx={{ display: 'flex', alignItems: 'center', ml: { xs: 1, md: 2 } }}>
-              <MenuButton
-                onClick={(e) => scrollToSection(e, 'contato')}
-                startIcon={<Phone size={14} />}
-                sx={{ ml: 1, boxShadow: 'none', '&:hover': { boxShadow: 'none' } }}
-              >
-                Contato
-              </MenuButton>
               <MenuButton
                 onClick={() => {
                   window.location.href = 'https://app.florescer.tec.br';

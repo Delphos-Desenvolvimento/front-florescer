@@ -1,6 +1,7 @@
 import Hero from './page/Hero';
 import About from './page/About';
 import Features from './page/Features';
+import Partners from './page/Partners';
 
 function Home() {
   return (
@@ -9,6 +10,7 @@ function Home() {
         <Hero />
         <About />
         <Features />
+        <Partners />
       </main>
     </>
   );

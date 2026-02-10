@@ -1,37 +1,6 @@
-import { Box, Typography, Container, Grid, Link, Divider, IconButton } from '@mui/material';
-import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
+import { Box, Typography, Container, Grid, Divider, IconButton, Button } from '@mui/material';
 // Ícones do Lucide React
-import { MapPin, Phone, Mail, Clock, Facebook, Linkedin, Instagram } from 'lucide-react';
-
-// Componente de link personalizado
-const FooterLink = ({
-  children,
-  href,
-  onClick,
-}: {
-  children: React.ReactNode;
-  href: string;
-  onClick?: (e: React.MouseEvent) => void;
-}) => (
-  <Link
-    component={RouterLink}
-    to={href}
-    onClick={onClick}
-    variant="body2"
-    sx={{
-      color: 'rgba(255, 255, 255, 0.9)',
-      display: 'block',
-      mb: 1.5,
-      textDecoration: 'none',
-      transition: 'all 0.2s ease',
-      '&:hover': {
-        color: '#64b5f6',
-      },
-    }}
-  >
-    {children}
-  </Link>
-);
+import { MapPin, Phone, Mail, Clock, Instagram } from 'lucide-react';
 
 // Componente de ícone de rede social
 const SocialIcon = ({ icon: Icon, url }: { icon: React.ElementType; url: string }) => (
@@ -80,29 +49,8 @@ const ContactItem = ({ icon, text }: { icon: React.ReactNode; text: string }) =>
 );
 
 const Footer = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const footerLinks = [
-    {
-      title: 'Empresa',
-      links: [
-        { label: 'Sobre Nós', href: '/#sobre' },
-        { label: 'Nossa Equipe', href: '/equipe' },
-      ],
-    },
-    {
-      title: 'Recursos',
-      links: [
-        { label: 'Perguntas Frequentes', href: '/faq' },
-        { label: 'Materiais Gratuitos', href: '/materiais' },
-      ],
-    },
-  ];
-
   const socialLinks = [
-    { icon: Facebook, url: 'https://facebook.com' },
     { icon: Instagram, url: 'https://www.instagram.com/vm_educar' },
-    { icon: Linkedin, url: 'https://linkedin.com' },
   ];
 
   const contactInfo = [
@@ -112,7 +60,7 @@ const Footer = () => {
     },
     {
       icon: <Phone size={18} />,
-      text: '+55 86 9999-9999',
+      text: '+55 86 9503-2521',
     },
     {
       icon: <Mail size={18} />,
@@ -124,37 +72,6 @@ const Footer = () => {
     },
   ];
 
-  const scrollToSobre = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (location.pathname === '/') {
-      const el = document.getElementById('sobre');
-      if (el) {
-        const target = (el.querySelector('h1') as HTMLElement) || el;
-        const headerEl = document.querySelector('header');
-        const headerH = headerEl ? (headerEl as HTMLElement).getBoundingClientRect().height : 80;
-        const y = target.getBoundingClientRect().top + window.scrollY - headerH;
-        window.scrollTo({ top: y, behavior: 'smooth' });
-        return;
-      }
-    }
-    navigate('/#sobre');
-  };
-  const scrollToSolucoes = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (location.pathname === '/') {
-      const el = document.getElementById('solucoes');
-      if (el) {
-        const target = (el.querySelector('h2') as HTMLElement) || el;
-        const headerEl = document.querySelector('header');
-        const headerH = headerEl ? (headerEl as HTMLElement).getBoundingClientRect().height : 80;
-        const y = target.getBoundingClientRect().top + window.scrollY - headerH;
-        window.scrollTo({ top: y, behavior: 'smooth' });
-        return;
-      }
-    }
-    navigate('/#solucoes');
-  };
-
   return (
     <Box
       component="footer"
@@ -162,8 +79,8 @@ const Footer = () => {
       sx={{
         backgroundColor: '#0a1929',
         color: 'rgba(255, 255, 255, 1)',
-        pt: { xs: 6, md: 12 },
-        pb: { xs: 4, md: 8 },
+        pt: { xs: 4, md: 7 },
+        pb: { xs: 3, md: 5 },
         position: 'relative',
         overflow: 'hidden',
         '&:before': {
@@ -178,9 +95,9 @@ const Footer = () => {
       }}
     >
       <Container maxWidth="lg">
-        <Grid container spacing={{ xs: 4, md: 6 }}>
+        <Grid container spacing={{ xs: 3, md: 4 }}>
           {/* Logo e descrição */}
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={6}>
             <Box
               component="img"
               src="/images/Logo%20branca.png"
@@ -190,14 +107,14 @@ const Footer = () => {
                 width: 'auto',
                 maxWidth: '245px',
                 objectFit: 'contain',
-                mb: 3,
+                mb: 2,
               }}
             />
             <Typography
               variant="body2"
               color="rgba(255, 255, 255, 0.85)"
               sx={{
-                mb: 3,
+                mb: 2,
                 lineHeight: 1.8,
                 fontSize: { xs: '0.875rem', md: '0.9rem' },
               }}
@@ -208,46 +125,15 @@ const Footer = () => {
           </Grid>
 
           {/* Informações de Contato */}
-          <Grid item xs={12} md={3}>
-            <Typography
-              variant="h6"
-              sx={{
-                color: '#64b5f6',
-                fontWeight: 700,
-                mb: 3,
-                fontSize: { xs: '1.1rem', md: '1.25rem' },
-                position: 'relative',
-                '&:after': {
-                  content: '""',
-                  position: 'absolute',
-                  bottom: -8,
-                  left: 0,
-                  width: '40px',
-                  height: '3px',
-                  background: '#64b5f6',
-                  borderRadius: '2px',
-                },
-              }}
-            >
-              Contato
-            </Typography>
-            <Box sx={{ mt: 4 }}>
-              {contactInfo.map((item, index) => (
-                <ContactItem key={index} icon={item.icon} text={item.text} />
-              ))}
-            </Box>
-          </Grid>
-
-          {/* Links do rodapé */}
-          {footerLinks.map((column, colIndex) => (
-            <Grid item xs={6} sm={4} md={2} key={colIndex}>
+          <Grid item xs={12} md={6} sx={{ display: 'flex', justifyContent: { xs: 'flex-start', md: 'flex-end' } }}>
+            <Box sx={{ width: '100%', maxWidth: 520 }}>
               <Typography
                 variant="h6"
                 sx={{
                   color: '#64b5f6',
                   fontWeight: 700,
-                  mb: 3,
-                  fontSize: { xs: '1rem', md: '1.1rem' },
+                  mb: 2,
+                  fontSize: { xs: '1.1rem', md: '1.25rem' },
                   position: 'relative',
                   '&:after': {
                     content: '""',
@@ -261,41 +147,69 @@ const Footer = () => {
                   },
                 }}
               >
-                {column.title}
+                Contato
               </Typography>
-              <Box component="ul" sx={{ listStyle: 'none', p: 0, m: 0, mt: 4 }}>
-                {column.links.map((link, linkIndex) => (
-                  <Box component="li" key={linkIndex}>
-                    {link.href === '/equipe' ? (
-                      <FooterLink href={link.href}>{link.label}</FooterLink>
-                    ) : link.href === '/#sobre' ? (
-                      <FooterLink href={link.href} onClick={scrollToSobre}>
-                        {link.label}
-                      </FooterLink>
-                    ) : link.href === '/#solucoes' ? (
-                      <FooterLink href={link.href} onClick={scrollToSolucoes}>
-                        {link.label}
-                      </FooterLink>
-                    ) : (
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color: 'rgba(255, 255, 255, 0.9)',
-                          mb: 1.5,
-                        }}
-                      >
-                        {link.label}
-                      </Typography>
-                    )}
-                  </Box>
+              <Box sx={{ mt: 3 }}>
+                {contactInfo.map((item, index) => (
+                  <ContactItem key={index} icon={item.icon} text={item.text} />
                 ))}
               </Box>
-            </Grid>
-          ))}
+            </Box>
+          </Grid>
+
+          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Box
+              sx={{
+                width: { xs: '100%', sm: '520px', md: '560px' },
+                px: { xs: 0, md: 0 },
+                py: { xs: 0, md: 0 },
+                borderRadius: 0,
+                backgroundColor: 'transparent',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexDirection: 'column',
+                gap: 1.5,
+              }}
+            >
+              <Typography
+                variant="h5"
+                sx={{
+                  color: 'white',
+                  textAlign: 'center',
+                }}
+              >
+                Ainda com alguma dúvida?
+              </Typography>
+              <Button
+                component="a"
+                href="https://api.whatsapp.com/send/?phone=995032521&text&type=phone_number&app_absent=0"
+                variant="outlined"
+                sx={{
+                  bgcolor: 'white',
+                  color: '#0d47a1',
+                  fontWeight: 800,
+                  borderRadius: 2,
+                  px: 3,
+                  py: 0.9,
+                  boxShadow: 'none',
+                  textTransform: 'none',
+                  border: '2px solid #0d47a1',
+                  '&:hover': {
+                    bgcolor: 'rgba(255, 255, 255, 0.92)',
+                    border: '2px solid #0d47a1',
+                    boxShadow: 'none',
+                  },
+                }}
+              >
+                Fale conosco
+              </Button>
+            </Box>
+          </Grid>
         </Grid>
 
         {/* Divider */}
-        <Divider sx={{ my: { xs: 4, md: 6 }, borderColor: 'rgba(255, 255, 255, 0.1)' }} />
+        <Divider sx={{ my: { xs: 3, md: 4 }, borderColor: 'rgba(255, 255, 255, 0.1)' }} />
 
         {/* Rodapé inferior */}
         <Box
