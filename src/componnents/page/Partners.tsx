@@ -37,7 +37,7 @@ export default function Partners() {
     loadPartners();
   }, []);
 
-  const logosPerView = 4;
+  const logosPerView = isMobile ? 1 : isTablet ? 2 : 4;
 
   const handlePrevious = () => {
     const maxIndex = Math.max(0, partners.length - logosPerView);
