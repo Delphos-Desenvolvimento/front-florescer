@@ -128,7 +128,6 @@ const ChatFlora = () => {
             >
               <Box
                 component="video"
-                src="/images/video%20sem%20fundo.webm"
                 autoPlay
                 loop
                 muted
@@ -143,10 +142,11 @@ const ChatFlora = () => {
                   objectFit: 'contain',
                   transform: 'scale(1.6)',
                   transformOrigin: 'center',
-                  backgroundColor: 'transparent',
-                  mixBlendMode: 'multiply',
                 }}
-              />
+              >
+                <source src="/images/video-sem-fundo-convertido.hevc.mp4" type='video/mp4; codecs="hvc1"' />
+                <source src="/images/video%20sem%20fundo.webm" type="video/webm" />
+              </Box>
             </Box>
           </Box>
         </Box>
