@@ -143,10 +143,11 @@ const ChatFlora = () => {
                   transform: 'scale(1.6)',
                   transformOrigin: 'center',
                   backgroundColor: 'transparent',
-                  mixBlendMode: 'screen', // Garante que o fundo preto fique transparente
                 }}
               >
+                {/* Tentativa de forçar reconhecimento de Alpha no iOS com diferentes tipos MIME */}
                 <source src="/images/video-sem-fundo-convertido.hevc.mp4" type='video/mp4; codecs="hvc1"' />
+                <source src="/images/video-sem-fundo-convertido.hevc.mp4" type="video/quicktime" />
                 <source src="/images/video%20sem%20fundo.webm" type="video/webm" />
               </Box>
             </Box>
