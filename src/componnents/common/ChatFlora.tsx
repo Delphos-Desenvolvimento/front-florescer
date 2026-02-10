@@ -142,6 +142,8 @@ const ChatFlora = () => {
                   objectFit: 'contain',
                   transform: 'scale(1.6)',
                   transformOrigin: 'center',
+                  backgroundColor: 'transparent',
+                  mixBlendMode: 'screen', // Garante que o fundo preto fique transparente
                 }}
               >
                 <source src="/images/video-sem-fundo-convertido.hevc.mp4" type='video/mp4; codecs="hvc1"' />
