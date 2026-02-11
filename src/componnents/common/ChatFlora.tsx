@@ -126,31 +126,27 @@ const ChatFlora = () => {
                 zIndex: 2,
               }}
             >
-              <Box
-                component="video"
+              <video
                 autoPlay
                 loop
                 muted
                 playsInline
-                preload="auto"
-                sx={{
-                    position: 'absolute',
-                    top: -6,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain',
-                    transform: 'scale(1.6)',
-                    transformOrigin: 'center',
-                    backgroundColor: 'transparent',
-                    mixBlendMode: 'screen', // Remove o fundo preto do vídeo flora 4.mov no iOS
-                  }}
+                style={{
+                  position: 'absolute',
+                  top: -6,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  transform: 'scale(1.6)',
+                  transformOrigin: 'center',
+                  backgroundColor: 'transparent',
+                }}
               >
-                {/* Vídeo flora 4.mov para iOS/Mobile e fallbacks para outros navegadores */}
                 <source src="/images/flora%204.mov" type='video/quicktime' />
                 <source src="/images/video-sem-fundo-convertido.hevc.mp4" type='video/mp4; codecs="hvc1"' />
                 <source src="/images/video%20sem%20fundo.webm" type="video/webm" />
-              </Box>
+              </video>
             </Box>
           </Box>
         </Box>
