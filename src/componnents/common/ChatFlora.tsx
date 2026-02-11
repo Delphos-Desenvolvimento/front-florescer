@@ -107,7 +107,7 @@ const ChatFlora = () => {
               src={isMobile ? "/images/chat%20flora%20sem%20fundo.png" : "/images/chat%20flora%20sem%20fundo%20SF.png"}
               alt="Fale com a Flora"
               sx={{
-                height: { xs: 120, md: 120 },
+                height: { xs: 110, md: 80 }, // Reduzido de 110 para 80 no desktop (md)
                 width: 'auto',
                 maxWidth: '100%',
                 display: 'block',
@@ -136,12 +136,12 @@ const ChatFlora = () => {
                   preload="auto"
                   sx={{
                     position: 'absolute',
-                    top: -6,
+                    top: -4, // Ajustado de -6
                     left: 0,
                     width: '100%',
                     height: '100%',
                     objectFit: 'contain',
-                    transform: 'scale(1.6)',
+                    transform: 'scale(1.4)', // Reduzido de 1.6 para 1.4
                     transformOrigin: 'center',
                     backgroundColor: 'transparent',
                   }}
