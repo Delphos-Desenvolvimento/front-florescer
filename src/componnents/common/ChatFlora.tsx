@@ -132,16 +132,17 @@ const ChatFlora = () => {
                 muted
                 playsInline
                 style={{
-                  position: 'absolute',
-                  top: -6,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                  transform: 'scale(1.6)',
-                  transformOrigin: 'center',
-                  backgroundColor: 'transparent',
-                }}
+                    position: 'absolute',
+                    top: -6,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    transform: 'scale(1.6)',
+                    transformOrigin: 'center',
+                    backgroundColor: 'transparent',
+                    mixBlendMode: 'screen', // Remove o fundo preto do vídeo no iOS
+                  }}
               >
                 <source src="/images/flora%204.mov" type='video/quicktime' />
                 <source src="/images/video-sem-fundo-convertido.hevc.mp4" type='video/mp4; codecs="hvc1"' />
