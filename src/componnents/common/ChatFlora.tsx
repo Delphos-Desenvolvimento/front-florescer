@@ -114,24 +114,27 @@ const ChatFlora = () => {
                 objectFit: 'contain',
               }}
             />
-            <Box
-              sx={{
-                position: 'absolute',
-                right: -12,
-                top: 0,
-                height: '100%',
-                width: { xs: '56%', md: '50%' },
-                overflow: 'visible',
-                pointerEvents: 'none',
-                zIndex: 2,
-              }}
-            >
-              <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                style={{
+            {!isMobile && (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  right: -12,
+                  top: 0,
+                  height: '100%',
+                  width: { xs: '56%', md: '50%' },
+                  overflow: 'visible',
+                  pointerEvents: 'none',
+                  zIndex: 2,
+                }}
+              >
+                <Box
+                  component="video"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="auto"
+                  sx={{
                     position: 'absolute',
                     top: -6,
                     left: 0,
@@ -141,14 +144,14 @@ const ChatFlora = () => {
                     transform: 'scale(1.6)',
                     transformOrigin: 'center',
                     backgroundColor: 'transparent',
-                    mixBlendMode: 'screen', // Remove o fundo preto do vídeo no iOS
                   }}
-              >
-                <source src="/images/flora%204.mov" type='video/quicktime' />
-                <source src="/images/video-sem-fundo-convertido.hevc.mp4" type='video/mp4; codecs="hvc1"' />
-                <source src="/images/video%20sem%20fundo.webm" type="video/webm" />
-              </video>
-            </Box>
+                >
+                  <source src="/images/video-sem-fundo-convertido.hevc.mp4" type='video/mp4; codecs="hvc1"' />
+                  <source src="/images/video-sem-fundo-convertido.hevc.mp4" type="video/quicktime" />
+                  <source src="/images/video%20sem%20fundo.webm" type="video/webm" />
+                </Box>
+              </Box>
+            )}
           </Box>
         </Box>
       )}
