@@ -134,16 +134,17 @@ const ChatFlora = () => {
                 playsInline
                 preload="auto"
                 sx={{
-                  position: 'absolute',
-                  top: -6,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                  transform: 'scale(1.6)',
-                  transformOrigin: 'center',
-                  backgroundColor: 'transparent',
-                }}
+                    position: 'absolute',
+                    top: -6,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    transform: 'scale(1.6)',
+                    transformOrigin: 'center',
+                    backgroundColor: 'transparent',
+                    mixBlendMode: 'screen', // Remove o fundo preto do vídeo flora 4.mov no iOS
+                  }}
               >
                 {/* Vídeo flora 4.mov para iOS/Mobile e fallbacks para outros navegadores */}
                 <source src="/images/flora%204.mov" type='video/quicktime' />
