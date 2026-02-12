@@ -145,6 +145,7 @@ const ChatFlora = () => {
                        backgroundColor: 'transparent',
                      }}
                    >
+                     <source src="/images/video%20sem%20fundo%20gif.gif" type="video/mp4" />
                      <source src="/images/flora%204_1.mov" type="video/quicktime" />
                      <source src="/images/video-sem-fundo-convertido.hevc.mp4" type='video/mp4; codecs="hvc1"' />
                      <source src="/images/video%20sem%20fundo.webm" type="video/webm" />
