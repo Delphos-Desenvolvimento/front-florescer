@@ -127,29 +127,28 @@ const ChatFlora = () => {
               }}
             >
               <Box
-                component="video"
-                autoPlay
-                loop
-                muted
-                playsInline
-                preload="auto"
-                sx={{
-                  position: 'absolute',
-                  top: -4,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                  transform: 'scale(1.4)',
-                  transformOrigin: 'center',
-                  backgroundColor: 'transparent',
-                }}
-              >
-                {/* Prioridade para .mov no mobile/iOS que suporta Alpha nativo */}
-                <source src="/images/flora%204.mov" type="video/quicktime" />
-                <source src="/images/video-sem-fundo-convertido.hevc.mp4" type='video/mp4; codecs="hvc1"' />
-                <source src="/images/video%20sem%20fundo.webm" type="video/webm" />
-              </Box>
+                  component="video"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="auto"
+                  sx={{
+                       position: 'absolute',
+                       top: -4,
+                       left: 0,
+                       width: '100%',
+                       height: '100%',
+                       objectFit: 'contain',
+                       transform: 'scale(1.4)',
+                       transformOrigin: 'center',
+                       backgroundColor: 'transparent',
+                     }}
+                   >
+                     <source src="/images/flora%204_1.mov" type="video/quicktime" />
+                     <source src="/images/video-sem-fundo-convertido.hevc.mp4" type='video/mp4; codecs="hvc1"' />
+                     <source src="/images/video%20sem%20fundo.webm" type="video/webm" />
+                   </Box>
             </Box>
           </Box>
         </Box>
