@@ -114,44 +114,43 @@ const ChatFlora = () => {
                 objectFit: 'contain',
               }}
             />
-            {!isMobile && (
+            <Box
+              sx={{
+                position: 'absolute',
+                right: -12,
+                top: 0,
+                height: '100%',
+                width: { xs: '56%', md: '50%' },
+                overflow: 'visible',
+                pointerEvents: 'none',
+                zIndex: 2,
+              }}
+            >
               <Box
+                component="video"
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="auto"
                 sx={{
                   position: 'absolute',
-                  right: -12,
-                  top: 0,
+                  top: -4,
+                  left: 0,
+                  width: '100%',
                   height: '100%',
-                  width: { xs: '56%', md: '50%' },
-                  overflow: 'visible',
-                  pointerEvents: 'none',
-                  zIndex: 2,
+                  objectFit: 'contain',
+                  transform: 'scale(1.4)',
+                  transformOrigin: 'center',
+                  backgroundColor: 'transparent',
                 }}
               >
-                <Box
-                  component="video"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  preload="auto"
-                  sx={{
-                    position: 'absolute',
-                    top: -4, // Ajustado de -6
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'contain',
-                    transform: 'scale(1.4)', // Reduzido de 1.6 para 1.4
-                    transformOrigin: 'center',
-                    backgroundColor: 'transparent',
-                  }}
-                >
-                  <source src="/images/video-sem-fundo-convertido.hevc.mp4" type='video/mp4; codecs="hvc1"' />
-                  <source src="/images/video-sem-fundo-convertido.hevc.mp4" type="video/quicktime" />
-                  <source src="/images/video%20sem%20fundo.webm" type="video/webm" />
-                </Box>
+                {/* Prioridade para .mov no mobile/iOS que suporta Alpha nativo */}
+                <source src="/images/flora%204.mov" type="video/quicktime" />
+                <source src="/images/video-sem-fundo-convertido.hevc.mp4" type='video/mp4; codecs="hvc1"' />
+                <source src="/images/video%20sem%20fundo.webm" type="video/webm" />
               </Box>
-            )}
+            </Box>
           </Box>
         </Box>
       )}
