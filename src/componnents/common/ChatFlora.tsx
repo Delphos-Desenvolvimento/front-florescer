@@ -103,27 +103,52 @@ const ChatFlora = () => {
         >
           <Box sx={{ position: 'relative', display: 'inline-block' }}>
             <Box
+              component="img"
+              src={isMobile ? "/images/chat%20flora%20sem%20fundo.png" : "/images/chat%20flora%20sem%20fundo%20SF.png"}
+              alt="Fale com a Flora"
               sx={{
-                height: { xs: 110, md: 80 },
-                width: { xs: 110, md: 80 },
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
+                height: { xs: 110, md: 80 }, // Reduzido de 110 para 80 no desktop (md)
+                width: 'auto',
+                maxWidth: '100%',
+                display: 'block',
+                objectFit: 'contain',
+              }}
+            />
+            <Box
+              sx={{
+                position: 'absolute',
+                right: -12,
+                top: 0,
+                height: '100%',
+                width: { xs: '56%', md: '50%' },
+                overflow: 'visible',
+                pointerEvents: 'none',
+                zIndex: 2,
               }}
             >
               <Box
-                component="img"
-                src="/images/video%20sem%20fundo%20gif.gif"
-                alt="Flora"
-                sx={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                  transform: 'scale(1.4)',
-                  transformOrigin: 'center',
-                }}
-              />
+                  component="video"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="auto"
+                  sx={{
+                       position: 'absolute',
+                       top: -4,
+                       left: 0,
+                       width: '100%',
+                       height: '100%',
+                       objectFit: 'contain',
+                       transform: 'scale(1.4)',
+                       transformOrigin: 'center',
+                       backgroundColor: 'transparent',
+                     }}
+                   >
+                     <source src="/images/flora%204_1.mov" type="video/quicktime" />
+                     <source src="/images/video-sem-fundo-convertido.hevc.mp4" type='video/mp4; codecs="hvc1"' />
+                     <source src="/images/video%20sem%20fundo.webm" type="video/webm" />
+                   </Box>
             </Box>
           </Box>
         </Box>

@@ -60,7 +60,7 @@ const Footer = () => {
     },
     {
       icon: <Phone size={18} />,
-      text: '+55 86 8165-9277',
+      text: '+55 86 98165-9277',
     },
     {
       icon: <Mail size={18} />,
@@ -183,7 +183,9 @@ const Footer = () => {
               </Typography>
               <Button
                 component="a"
-                href="https://api.whatsapp.com/send/?phone=81659277&text&type=phone_number&app_absent=0"
+                href="https://api.whatsapp.com/send/?phone=5586981659277&text=Olá! Gostaria de saber mais sobre o Projeto Florescer."
+                target="_blank"
+                rel="noopener noreferrer"
                 variant="outlined"
                 sx={{
                   bgcolor: 'white',
