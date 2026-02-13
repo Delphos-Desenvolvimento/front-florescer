@@ -36,6 +36,43 @@ const ChatFlora = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Efeito para o Canvas (Técnica para remover fundo preto no iOS)
+  useEffect(() => {
+    let animationFrameId: number;
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+
+    if (!video || !canvas) return;
+
+    const ctx = canvas.getContext('2d', { alpha: true });
+    if (!ctx) return;
+
+    const render = () => {
+      if (video.paused || video.ended) {
+        animationFrameId = requestAnimationFrame(render);
+        return;
+      }
+
+      if (video.videoWidth > 0) {
+        if (canvas.width !== video.videoWidth) {
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+        }
+        ctx.drawImage(video, 0, 0);
+      }
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, []);
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -81,6 +118,18 @@ const ChatFlora = () => {
 
   return (
     <>
+      {/* Filtro SVG para remover o preto (usado no Canvas) */}
+      <svg width="0" height="0" style={{ position: 'absolute' }}>
+        <filter id="remove-black" colorInterpolationFilters="sRGB">
+          <feColorMatrix 
+            type="matrix" 
+            values="1 0 0 0 0 
+                    0 1 0 0 0 
+                    0 0 1 0 0 
+                    10 10 10 0 -0.1" 
+          />
+        </filter>
+      </svg>
       {/* Botão Flutuante (Imagem Recortada - Área Clicável Justa) */}
       {!open && (
         <Box
@@ -126,29 +175,43 @@ const ChatFlora = () => {
                 zIndex: 2,
               }}
             >
+              {/* Vídeo oculto que serve de fonte para o Canvas */}
+              <video
+                ref={videoRef}
+                src="/images/flora%204_1.mov"
+                loop
+                muted
+                playsInline
+                autoPlay
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '1px',
+                  height: '1px',
+                  opacity: 0.01,
+                  pointerEvents: 'none',
+                }}
+              />
+
+              {/* Canvas que renderiza o vídeo com o filtro de remoção de preto */}
               <Box
-                  component="video"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  preload="auto"
-                  sx={{
-                       position: 'absolute',
-                       top: -4,
-                       left: 0,
-                       width: '100%',
-                       height: '100%',
-                       objectFit: 'contain',
-                       transform: 'scale(1.4)',
-                       transformOrigin: 'center',
-                       backgroundColor: 'transparent',
-                     }}
-                   >
-                     <source src="/images/flora%204_1.mov" type="video/quicktime" />
-                     <source src="/images/video-sem-fundo-convertido.hevc.mp4" type='video/mp4; codecs="hvc1"' />
-                     <source src="/images/video%20sem%20fundo.webm" type="video/webm" />
-                   </Box>
+                component="canvas"
+                ref={canvasRef}
+                sx={{
+                  position: 'absolute',
+                  top: -4,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  transform: 'scale(1.4)',
+                  transformOrigin: 'center',
+                  filter: 'url(#remove-black)',
+                  WebkitFilter: 'url(#remove-black)',
+                  willChange: 'filter',
+                }}
+              />
             </Box>
           </Box>
         </Box>
