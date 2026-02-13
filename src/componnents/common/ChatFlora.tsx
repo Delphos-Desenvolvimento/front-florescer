@@ -39,39 +39,62 @@ const ChatFlora = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Efeito para o Canvas (Técnica para remover fundo preto no iOS)
+  // Lógica Mobile conforme solicitado
   useEffect(() => {
-    let animationFrameId: number;
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
+    if (!isMobile) return;
 
-    if (!video || !canvas) return;
+    const v = videoRef.current;
+    const c = canvasRef.current;
+    if (!v || !c) return;
 
-    const ctx = canvas.getContext('2d', { alpha: true });
+    const ctx = c.getContext('2d', { alpha: true });
     if (!ctx) return;
 
-    const render = () => {
-      if (video.paused || video.ended) {
-        animationFrameId = requestAnimationFrame(render);
+    let active = true;
+
+    function render() {
+      if (!active) return;
+      
+      const currentV = videoRef.current;
+      const currentC = canvasRef.current;
+      
+      if (!currentV || !currentC || currentV.paused || currentV.ended) {
+        requestAnimationFrame(render);
         return;
       }
 
-      if (video.videoWidth > 0) {
-        if (canvas.width !== video.videoWidth) {
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-        }
-        ctx.drawImage(video, 0, 0);
-      }
-      animationFrameId = requestAnimationFrame(render);
-    };
+      const ctx = currentC.getContext('2d', { alpha: true });
+      if (!ctx) return;
 
-    render();
+      if (currentV.videoWidth > 0) {
+        if (currentC.width !== currentV.videoWidth) {
+          currentC.width = currentV.videoWidth;
+          currentC.height = currentV.videoHeight;
+        }
+        ctx.drawImage(currentV, 0, 0);
+      }
+      requestAnimationFrame(render);
+    }
+
+    // Tentar play automático (muted auto-play é permitido na maioria dos browsers mobile)
+    v.play().then(() => {
+      render();
+    }).catch(err => {
+      console.error("Erro no auto-play mobile:", err);
+      // Fallback: tenta rodar de novo em qualquer clique
+      const retryPlay = () => {
+        v.play().then(() => {
+          render();
+          window.removeEventListener('click', retryPlay);
+        });
+      };
+      window.addEventListener('click', retryPlay);
+    });
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      active = false;
     };
-  }, []);
+  }, [isMobile]);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -118,7 +141,7 @@ const ChatFlora = () => {
 
   return (
     <>
-      {/* Filtro SVG para remover o preto (usado no Canvas) */}
+      {/* Filtro SVG para remover o preto (fallback para navegadores que suportam) */}
       <svg width="0" height="0" style={{ position: 'absolute' }}>
         <filter id="remove-black" colorInterpolationFilters="sRGB">
           <feColorMatrix 
@@ -153,16 +176,17 @@ const ChatFlora = () => {
           <Box sx={{ position: 'relative', display: 'inline-block' }}>
             <Box
               component="img"
-              src={isMobile ? "/images/chat%20flora%20sem%20fundo.png" : "/images/chat%20flora%20sem%20fundo%20SF.png"}
-              alt="Fale com a Flora"
+              src="/images/chat%20flora%20sem%20fundo%20SF.png"
+              alt="Chat Flora"
               sx={{
-                height: { xs: 110, md: 80 }, // Reduzido de 110 para 80 no desktop (md)
+                height: { xs: 80, md: 65 },
                 width: 'auto',
                 maxWidth: '100%',
                 display: 'block',
                 objectFit: 'contain',
               }}
             />
+            {/* Container do Vídeo / Canvas */}
             <Box
               sx={{
                 position: 'absolute',
@@ -175,43 +199,71 @@ const ChatFlora = () => {
                 zIndex: 2,
               }}
             >
-              {/* Vídeo oculto que serve de fonte para o Canvas */}
-              <video
-                ref={videoRef}
-                src="/images/flora%204_1.mov"
-                loop
-                muted
-                playsInline
-                autoPlay
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '1px',
-                  height: '1px',
-                  opacity: 0.01,
-                  pointerEvents: 'none',
-                }}
-              />
-
-              {/* Canvas que renderiza o vídeo com o filtro de remoção de preto */}
-              <Box
-                component="canvas"
-                ref={canvasRef}
-                sx={{
-                  position: 'absolute',
-                  top: -4,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                  transform: 'scale(1.4)',
-                  transformOrigin: 'center',
-                  filter: 'url(#remove-black)',
-                  WebkitFilter: 'url(#remove-black)',
-                  willChange: 'filter',
-                }}
-              />
+              {isMobile ? (
+                <>
+                  {/* Lógica para Mobile (iPhone Fix) */}
+                    <video
+                      ref={videoRef}
+                      src="/images/Flora%204novo.mp4"
+                      loop
+                      muted
+                      playsInline
+                      webkit-playsinline="true"
+                      autoPlay
+                      crossOrigin="anonymous"
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '1px',
+                        height: '1px',
+                        opacity: 0.01,
+                        pointerEvents: 'none',
+                      }}
+                    />
+                  <Box
+                    component="canvas"
+                    ref={canvasRef}
+                    sx={{
+                          position: 'absolute',
+                          top: -8,
+                          left: -5,
+                          width: '110%',
+                          height: '110%',
+                          objectFit: 'contain',
+                          transform: 'scale(1.5)',
+                          transformOrigin: 'center',
+                          filter: 'url(#remove-black)',
+                          WebkitFilter: 'url(#remove-black)',
+                        }}
+                  />
+                </>
+              ) : (
+                /* Lógica para Desktop (Normal) */
+                <Box
+                  component="video"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="auto"
+                  sx={{
+                     position: 'absolute',
+                     top: -8,
+                     left: -5,
+                     width: '110%',
+                     height: '110%',
+                     objectFit: 'contain',
+                     transform: 'scale(1.5)',
+                     transformOrigin: 'center',
+                     backgroundColor: 'transparent',
+                   }}
+                >
+                  <source src="/images/flora%204_1.mov" type="video/quicktime" />
+                  <source src="/images/video-sem-fundo-convertido.hevc.mp4" type='video/mp4; codecs="hvc1"' />
+                  <source src="/images/video%20sem%20fundo.webm" type="video/webm" />
+                </Box>
+              )}
             </Box>
           </Box>
         </Box>
