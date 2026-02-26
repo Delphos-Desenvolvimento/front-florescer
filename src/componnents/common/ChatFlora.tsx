@@ -162,7 +162,7 @@ const ChatFlora = () => {
       setChatHistory((prev) => [...prev, botResponse]);
     } catch {
       const botResponse: Message = {
-        text: 'Não consegui responder agora. Verifique se o backend está ligado na porta 3000.',
+        text: 'Não consegui responder agora. Verifique se o backend está ligado na porta 3001.',
         isBot: true,
         timestamp: new Date(),
       };

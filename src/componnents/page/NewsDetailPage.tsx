@@ -15,6 +15,31 @@ import { ArrowLeft } from 'lucide-react';
 import NewsService from '../../API/news';
 import type { NewsItem } from '../../API/news';
 
+const MOCK_NEWS_ITEM: NewsItem = {
+  id: 999,
+  title: 'Notícia de Teste: Florescer Lança Nova Iniciativa!',
+  content: `
+      <p>É com grande entusiasmo que anunciamos o lançamento de uma nova iniciativa revolucionária da Florescer, focada em sustentabilidade e inovação tecnológica. Este projeto visa transformar a maneira como interagimos com o meio ambiente, utilizando inteligência artificial para otimizar recursos e promover práticas mais ecológicas.</p>
+      <p>A iniciativa inclui o desenvolvimento de uma plataforma interativa que permitirá aos usuários monitorar seu impacto ambiental, receber dicas personalizadas para reduzir o consumo e participar de desafios comunitários. Além disso, teremos uma série de workshops e eventos educativos para engajar a comunidade e disseminar conhecimento sobre as melhores práticas de sustentabilidade.</p>
+      <h2>Tecnologia a Serviço do Planeta</h2>
+      <p>Nossa equipe de engenheiros e cientistas trabalhou incansavelmente para integrar as mais recentes tecnologias de IA e aprendizado de máquina. A plataforma será capaz de analisar dados em tempo real, prever tendências e oferecer soluções proativas para problemas ambientais. Acreditamos que a tecnologia, quando usada com responsabilidade, tem o poder de criar um futuro mais verde e próspero para todos.</p>
+      <img src="https://picsum.photos/800/400?random=1" alt="Tecnologia e Natureza" />
+      <h3>Como Participar?</h3>
+      <p>Convidamos a todos a se juntarem a nós nesta jornada. A plataforma estará disponível para acesso público a partir do próximo mês. Fique atento às nossas redes sociais e ao nosso site para mais informações sobre como se registrar e começar a fazer a diferença.</p>
+      <p>Juntos, podemos fazer a Florescer florescer ainda mais, construindo um legado de inovação e cuidado com o nosso planeta.</p>
+    `,
+  date: '2026-02-23T10:00:00Z',
+  category: 'Sustentabilidade',
+  status: 'publicada',
+  views: 0,
+  images: [
+    {
+      id: 1,
+      base64: 'https://picsum.photos/1200/600?random=1',
+      altText: 'Imagem de capa da notícia de teste',
+    },
+  ],
+};
 
 function NewsDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -25,32 +50,6 @@ function NewsDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  const mockNewsItem: NewsItem = {
-    id: 999,
-    title: 'Notícia de Teste: Florescer Lança Nova Iniciativa!',
-    content: `
-      <p>É com grande entusiasmo que anunciamos o lançamento de uma nova iniciativa revolucionária da Florescer, focada em sustentabilidade e inovação tecnológica. Este projeto visa transformar a maneira como interagimos com o meio ambiente, utilizando inteligência artificial para otimizar recursos e promover práticas mais ecológicas.</p>
-      <p>A iniciativa inclui o desenvolvimento de uma plataforma interativa que permitirá aos usuários monitorar seu impacto ambiental, receber dicas personalizadas para reduzir o consumo e participar de desafios comunitários. Além disso, teremos uma série de workshops e eventos educativos para engajar a comunidade e disseminar conhecimento sobre as melhores práticas de sustentabilidade.</p>
-      <h2>Tecnologia a Serviço do Planeta</h2>
-      <p>Nossa equipe de engenheiros e cientistas trabalhou incansavelmente para integrar as mais recentes tecnologias de IA e aprendizado de máquina. A plataforma será capaz de analisar dados em tempo real, prever tendências e oferecer soluções proativas para problemas ambientais. Acreditamos que a tecnologia, quando usada com responsabilidade, tem o poder de criar um futuro mais verde e próspero para todos.</p>
-      <img src="https://picsum.photos/800/400?random=1" alt="Tecnologia e Natureza" />
-      <h3>Como Participar?</h3>
-      <p>Convidamos a todos a se juntarem a nós nesta jornada. A plataforma estará disponível para acesso público a partir do próximo mês. Fique atento às nossas redes sociais e ao nosso site para mais informações sobre como se registrar e começar a fazer a diferença.</p>
-      <p>Juntos, podemos fazer a Florescer florescer ainda mais, construindo um legado de inovação e cuidado com o nosso planeta.</p>
-    `,
-    date: '2026-02-23T10:00:00Z',
-    category: 'Sustentabilidade',
-    author: 'Equipe Florescer',
-    status: 'publicada',
-    images: [
-      {
-        id: 1,
-        base64: 'https://picsum.photos/1200/600?random=1',
-        altText: 'Imagem de capa da notícia de teste',
-      },
-    ],
-  };
-
   useEffect(() => {
     const fetchNews = async () => {
       try {
@@ -59,7 +58,7 @@ function NewsDetailPage() {
 
         if (!id) {
           // Se não houver ID, usa a notícia mockada
-          newsData = mockNewsItem;
+          newsData = MOCK_NEWS_ITEM;
         } else {
           // Se houver ID, busca a notícia pelo ID
           newsData = await NewsService.getById(parseInt(id));

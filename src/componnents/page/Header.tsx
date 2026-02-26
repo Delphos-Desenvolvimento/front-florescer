@@ -204,7 +204,7 @@ function Header() {
         ))}
         <Divider sx={{ my: 2 }} />
         <ListItem disablePadding>
-          <ListItemButton onClick={() => (window.location.href = '/admin/login')}>
+          <ListItemButton onClick={() => (window.location.href = 'https://app.florescer.tec.br/')}>
             <ListItemIcon sx={{ minWidth: 40 }}>
               <LogIn size={20} color={theme.palette.primary.main} />
             </ListItemIcon>
@@ -365,7 +365,7 @@ function Header() {
             <Box sx={{ display: 'flex', alignItems: 'center', ml: { xs: 1, md: 2 } }}>
               <MenuButton
                 onClick={() => {
-                  window.location.href = '/admin/login';
+                  window.location.href = 'https://app.florescer.tec.br/';
                 }}
                 startIcon={<LogIn size={14} />}
                 sx={{ ml: 1, boxShadow: 'none', '&:hover': { boxShadow: 'none' } }}

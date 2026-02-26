@@ -182,6 +182,23 @@ export default function Partners() {
                     objectFit: 'contain',
                   }}
                 />
+                <Typography
+                  variant="subtitle1"
+                  title={partner.name}
+                  sx={{
+                    mt: 2,
+                    fontWeight: 700,
+                    color: 'hsla(226, 100%, 29%, 1.00)',
+                    maxWidth: '100%',
+                    whiteSpace: 'normal',
+                    overflowWrap: 'anywhere',
+                    wordBreak: 'break-word',
+                    lineHeight: 1.25,
+                    fontSize: { xs: '1rem', md: '1.1rem' },
+                  }}
+                >
+                  {partner.name}
+                </Typography>
               </Box>
             ))}
           </Box>

@@ -146,7 +146,7 @@ function App() {
                   <Route path="/avisos" element={<Notices />} />
                   <Route
                     path="/login"
-                    element={<ExternalRedirect to="https://app.florescer.tec.br" />}
+                    element={<ExternalRedirect to="https://app.florescer.tec.br/" />}
                   />
                 </Routes>
               </PublicLayout>
