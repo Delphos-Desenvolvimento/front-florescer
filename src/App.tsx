@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 import { Box, CircularProgress } from '@mui/material';
@@ -10,10 +10,12 @@ import { verifyToken, isTokenValidLocal } from './API/login';
 // Importações das páginas
 import Home from './componnents/home';
 import AdminHome from './componnents/adminpage/adminhome';
+import Login from './componnents/adminpage/login';
 import AllNewsPage from './componnents/page/AllNewsPage';
 import NewsDetailPage from './componnents/page/NewsDetailPage';
 import TeamPage from './componnents/page/TeamPage';
 import UsefulLinks from './componnents/page/UsefulLinks';
+import Notices from './componnents/page/Notices';
 import PublicLayout from './componnents/PublicLayout';
 import AccessibilityWidget from './componnents/common/AccessibilityWidget';
 import ChatFlora from './componnents/common/ChatFlora';
@@ -30,6 +32,7 @@ const ExternalRedirect = ({ to }: { to: string }) => {
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const location = useLocation();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -63,7 +66,13 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!isAuthenticated) {
-    return <ExternalRedirect to="https://app.florescer.tec.br" />;
+    return (
+      <Navigate
+        to="/admin/login"
+        replace
+        state={{ from: { pathname: location.pathname } }}
+      />
+    );
   }
 
   return children;
@@ -76,6 +85,12 @@ const ScrollToTop = () => {
   }, [location.pathname]);
   return null;
 };
+
+function ChatFloraConditional() {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
+  return isAdminRoute ? null : <ChatFlora />;
+}
 
 function App() {
   const [mode, setMode] = useState<'light' | 'dark'>('light');
@@ -109,6 +124,7 @@ function App() {
       <Router>
         <ScrollToTop />
         <Routes>
+          <Route path="/admin/login" element={<Login />} />
           <Route
             path="/admin/*"
             element={
@@ -127,6 +143,7 @@ function App() {
                   <Route path="/noticia/:id" element={<NewsDetailPage />} />
                   <Route path="/equipe" element={<TeamPage />} />
                   <Route path="/links-uteis" element={<UsefulLinks />} />
+                  <Route path="/avisos" element={<Notices />} />
                   <Route
                     path="/login"
                     element={<ExternalRedirect to="https://app.florescer.tec.br" />}
@@ -137,7 +154,7 @@ function App() {
           />
         </Routes>
         <AccessibilityWidget />
-        <ChatFlora />
+        <ChatFloraConditional />
       </Router>
     </ThemeProvider>
   );

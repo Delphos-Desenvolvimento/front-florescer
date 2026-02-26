@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import CloseIconMui from '@mui/icons-material/Close';
 import SendIconMui from '@mui/icons-material/Send';
+import { apiPublic } from '../../API';
 
 interface Message {
   text: string;
@@ -25,6 +26,7 @@ interface Message {
 const ChatFlora = () => {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState('');
+  const [isSending, setIsSending] = useState(false);
   const [chatHistory, setChatHistory] = useState<Message[]>([
     {
       text: 'Olá! Eu sou a Flora, sua assistente virtual. Como posso ajudar você hoje?',
@@ -109,8 +111,9 @@ const ChatFlora = () => {
     }
   }, [chatHistory, open]);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!message.trim()) return;
+    if (isSending) return;
 
     const newUserMessage: Message = {
       text: message,
@@ -121,21 +124,58 @@ const ChatFlora = () => {
     setChatHistory((prev) => [...prev, newUserMessage]);
     setMessage('');
 
-    // Simulação de resposta da Flora
-    setTimeout(() => {
+    setIsSending(true);
+    try {
+      const headings = Array.from(document.querySelectorAll('h1, h2, h3'))
+        .map((el) => (el.textContent || '').trim())
+        .filter(Boolean)
+        .slice(0, 12);
+      const buttons = Array.from(document.querySelectorAll('button, a'))
+        .map((el) => ((el as HTMLElement).innerText || el.textContent || '').trim())
+        .filter(Boolean)
+        .slice(0, 12);
+
+      const currentPageInfo = [
+        `Title: ${(document.title || '').trim() || '(none)'}`,
+        `URL: ${window.location.href}`,
+        headings.length ? `Headings: ${headings.join(' | ')}` : '',
+        buttons.length ? `Buttons: ${buttons.join(' | ')}` : '',
+      ]
+        .filter(Boolean)
+        .join('\n');
+
+      const res = await apiPublic.post<{ reply?: string }>(
+        '/chatflora',
+        {
+          currentPageInfo,
+          userMessage: newUserMessage.text,
+        },
+        { headers: { 'X-Skip-Interceptor': '1' } }
+      );
+
+      const reply = typeof res.data?.reply === 'string' ? res.data.reply.trim() : '';
       const botResponse: Message = {
-        text: 'Estamos treinando nossa assistente virtual para tirar todas as suas dúvidas instantaneamente. Funcionalidade chegando em breve.',
+        text: reply || 'Não consegui gerar uma resposta agora.',
         isBot: true,
         timestamp: new Date(),
       };
       setChatHistory((prev) => [...prev, botResponse]);
-    }, 1500);
+    } catch {
+      const botResponse: Message = {
+        text: 'Não consegui responder agora. Verifique se o backend está ligado na porta 3000.',
+        isBot: true,
+        timestamp: new Date(),
+      };
+      setChatHistory((prev) => [...prev, botResponse]);
+    } finally {
+      setIsSending(false);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSendMessage();
+      void handleSendMessage();
     }
   };
 
@@ -307,7 +347,7 @@ const ChatFlora = () => {
         >
           <Stack direction="row" spacing={2} alignItems="center">
             <Avatar
-              src="/images/chat%20flora%20sem%20fundo%20SF.png"
+              src="/images/banner2corr.png"
               sx={{
                 width: 45,
                 height: 45,
@@ -364,6 +404,14 @@ const ChatFlora = () => {
               flexDirection: 'column',
               gap: 2,
               py: 1,
+              // Esconde a barra de rolagem para WebKit (Chrome, Safari, Edge)
+              '&::-webkit-scrollbar': {
+                display: 'none',
+              },
+              // Esconde a barra de rolagem para Firefox
+              scrollbarWidth: 'none',
+              // Esconde a barra de rolagem para IE e Edge
+              '-ms-overflow-style': 'none',
             }}
           >
             <Typography variant="caption" align="center" sx={{ color: 'text.secondary', my: 1 }}>
@@ -435,14 +483,16 @@ const ChatFlora = () => {
             />
             <IconButton
               onClick={handleSendMessage}
-              disabled={!message.trim()}
+              disabled={!message.trim() || isSending}
               color="primary"
               sx={{
-                bgcolor: message.trim() ? '#0288d1' : '#f0f0f0',
-                color: message.trim() ? 'white' : '#a0a0a0',
+                bgcolor: message.trim() && !isSending ? '#0288d1' : '#f0f0f0',
+                color: message.trim() && !isSending ? 'white' : '#a0a0a0',
                 width: 45,
                 height: 45,
-                '&:hover': { bgcolor: message.trim() ? '#01579b' : '#f0f0f0' },
+                '&:hover': {
+                  bgcolor: message.trim() && !isSending ? '#01579b' : '#f0f0f0',
+                },
                 transition: 'all 0.2s',
                 flexShrink: 0,
               }}

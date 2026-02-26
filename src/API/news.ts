@@ -17,14 +17,7 @@ export interface NewsItem {
   images?: NewsImage[];
 }
 
-async function fileToDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result));
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
+// Removido: conversão para base64 (usamos FormData com arquivos)
 
 const NewsService = {
   /**
@@ -61,12 +54,18 @@ const NewsService = {
     imageFiles?: File[]
   ): Promise<NewsItem> {
     try {
-      const imagesBase64 =
-        Array.isArray(imageFiles) && imageFiles.length > 0
-          ? await Promise.all(imageFiles.map(fileToDataUrl))
-          : undefined;
-      const payload = imagesBase64 ? { ...newsData, imagesBase64 } : { ...newsData };
-      const response = await api.post<NewsItem>('/news', payload);
+      const form = new FormData();
+      form.append('title', newsData.title);
+      form.append('content', newsData.content);
+      form.append('category', newsData.category);
+      if (newsData.status) form.append('status', String(newsData.status));
+      if (newsData.date) form.append('date', String(newsData.date));
+      if (Array.isArray(imageFiles)) {
+        imageFiles.forEach((file) => form.append('images', file));
+      }
+      const response = await api.post<NewsItem>('/news', form, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
       return response.data;
     } catch (error) {
       console.error('Erro ao criar notícia:', error);
@@ -79,12 +78,18 @@ const NewsService = {
    */
   async update(id: number, newsData: Partial<NewsItem>, imageFiles?: File[]): Promise<NewsItem> {
     try {
-      const imagesBase64 =
-        Array.isArray(imageFiles) && imageFiles.length > 0
-          ? await Promise.all(imageFiles.map(fileToDataUrl))
-          : undefined;
-      const payload = imagesBase64 ? { ...newsData, imagesBase64 } : { ...newsData };
-      const response = await api.patch<NewsItem>(`/news/${id}`, payload);
+      const form = new FormData();
+      if (newsData.title) form.append('title', newsData.title);
+      if (newsData.content) form.append('content', newsData.content);
+      if (newsData.category) form.append('category', newsData.category);
+      if (newsData.status) form.append('status', String(newsData.status));
+      if (newsData.date) form.append('date', String(newsData.date));
+      if (Array.isArray(imageFiles) && imageFiles.length > 0) {
+        imageFiles.forEach((file) => form.append('images', file));
+      }
+      const response = await api.patch<NewsItem>(`/news/${id}`, form, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
       return response.data;
     } catch (error) {
       console.error(`Erro ao atualizar notícia com ID ${id}:`, error);
