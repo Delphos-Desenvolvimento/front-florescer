@@ -150,7 +150,7 @@ export default function Login() {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundImage: 'url(/images/Pagina_Principal_sem_textos[1].png)',
+        backgroundImage: 'url(/images/Fundo.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -181,7 +181,7 @@ export default function Login() {
         >
           <Box
             component="img"
-            src="/images/Logo_sem_fundo_Contab_2[1].png"
+            src="/images/logo.png"
             alt="Logo"
             sx={{
               width: '280px',

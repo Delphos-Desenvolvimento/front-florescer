@@ -76,11 +76,8 @@ import {
   CloudUpload as CloudUploadIcon,
   Visibility as VisibilityIcon,
   Handshake as HandshakeIcon,
-  Link as LinkIcon,
-  Group as GroupIcon,
   Menu as MenuIcon,
 } from '@mui/icons-material';
-import { History as HistoryIcon, Person as PersonIcon } from '@mui/icons-material';
 
 interface ListItemLinkProps {
   icon?: React.ReactNode;
@@ -133,7 +130,7 @@ export default function AdminHome() {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    navigate('/login');
+    navigate('/');
   };
 
   const drawer = (
@@ -156,11 +153,7 @@ export default function AdminHome() {
           <ListItemLink to="/admin" icon={<DashboardIcon />} primary="Dashboard" />
           <ListItemLink to="/admin/noticias" icon={<ArticleIcon />} primary="Notícias" />
           <ListItemLink to="/admin/parceiros" icon={<HandshakeIcon />} primary="Parceiros" />
-          <ListItemLink to="/admin/links-uteis" icon={<LinkIcon />} primary="Links Úteis" />
           <ListItemLink to="/admin/conteudo" icon={<DescriptionIcon />} primary="Conteúdo" />
-          <ListItemLink to="/admin/equipe" icon={<GroupIcon />} primary="Nossa Equipe" />
-          <ListItemLink to="/admin/logs" icon={<HistoryIcon />} primary="Logs" />
-          <ListItemLink to="/admin/perfil" icon={<PersonIcon />} primary="Perfil" />
         </List>
       </div>
       <div>

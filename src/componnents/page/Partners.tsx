@@ -11,29 +11,15 @@ export default function Partners() {
   const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
   useEffect(() => {
-    const nowIso = new Date().toISOString();
-    const mockLogoA = '/images/logo.png';
-    const mockLogoB = '/images/Captura%20de%20tela%202026-02-05%20174729.png';
-    const mockPartners: Partner[] = Array.from({ length: 10 }, (_, index) => ({
-      id: index + 1,
-      name: `Parceiro ${index + 1}`,
-      description: undefined,
-      logoBase64: index % 2 === 0 ? mockLogoA : mockLogoB,
-      displayOrder: index + 1,
-      active: true,
-      createdAt: nowIso,
-      updatedAt: nowIso,
-    }));
-
     const loadPartners = async () => {
       try {
         const activePartners = await PartnersService.getAll(true);
-        setPartners(activePartners.length ? activePartners : mockPartners);
+        setPartners(activePartners);
       } catch (error) {
-        setPartners(mockPartners);
+        console.error('Erro ao carregar parceiros:', error);
+        setPartners([]);
       }
     };
-
     loadPartners();
   }, []);
 
@@ -111,6 +97,11 @@ export default function Partners() {
           Nossos Parceiros
         </Typography>
 
+        {partners.length === 0 ? (
+          <Box sx={{ textAlign: 'center', color: 'text.secondary' }}>
+            <Typography variant="body2">Nenhum parceiro cadastrado ainda.</Typography>
+          </Box>
+        ) : (
         <Box sx={{ position: 'relative' }}>
           {/* Navigation Arrows - only show if there are more partners than visible */}
           {partners.length > logosPerView && (
@@ -195,6 +186,7 @@ export default function Partners() {
             ))}
           </Box>
         </Box>
+        )}
       </Container>
     </Box>
   );
