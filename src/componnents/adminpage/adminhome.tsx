@@ -72,7 +72,6 @@ import {
   Description as DescriptionIcon,
   CheckCircle as CheckCircleIcon,
   Pending as PendingIcon,
-  People as PeopleIcon,
   CloudUpload as CloudUploadIcon,
   Visibility as VisibilityIcon,
   Handshake as HandshakeIcon,
@@ -1607,28 +1606,6 @@ export default function AdminHome() {
                 Visão Geral
               </Typography>
               <Grid container spacing={3} sx={{ mb: 4 }}>
-                <Grid item xs={12} sm={6} md={4}>
-                  <Card>
-                    <CardContent>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          mb: 2,
-                        }}
-                      >
-                        <Typography color="textSecondary" variant="body2">
-                          Total de Usuários
-                        </Typography>
-                        <PeopleIcon fontSize="large" color="primary" />
-                      </Box>
-                      <Typography variant="h5" component="div">
-                        {overviewStats?.adminCount || 0}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
                 <Grid item xs={12} sm={6} md={4}>
                   <Card>
                     <CardContent>
