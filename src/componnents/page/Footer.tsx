@@ -64,7 +64,7 @@ const Footer = () => {
     },
     {
       icon: <Mail size={18} />,
-      text: 'Projetoflorescer@vmeducar.com.br',
+      text: 'projetoflorescer@vmeducar.com.br',
     },
     {
       icon: <Clock size={18} />,
